@@ -10,36 +10,14 @@ import Foundation
 import Security
 
 
+public class AttributeBag {
+    var attributes : [String : AnyObject] = [ : ]
 
-/*
-Encapsulates the attributes of a keychain item
-*/
-public class KeychainAttributeBag {
-    var attributes : [SecAttr : AnyObject] = [ : ]
-
-    subscript(attribute: SecAttr) -> AnyObject? {
+    subscript(attribute: String) -> AnyObject? {
         return attributes[attribute]
     }
 
-    public var itemAccessGroup: String? {
-        get { return attributes[.AccessGroup] as? String }
-        set { attributes[.AccessGroup] = newValue }
-    }
-
-    public var itemLabel: String? {
-        set { attributes[.Label] = newValue }
-        get { return attributes[.Label] as? String }
-    }
-
-    public var itemCreationDate: NSDate? {
-        get { return attributes[.CreationDate] as? NSDate }
-    }
-
-    public var itemModificationDate: NSDate? {
-        get { return attributes[.ModificationDate] as? NSDate }
-    }
-
-    init(attributeBag: KeychainAttributeBag? = nil) {
+    init(attributeBag: AttributeBag? = nil) {
         if attributeBag != nil {
             self.attributes = attributeBag!.attributes
         }
@@ -48,15 +26,37 @@ public class KeychainAttributeBag {
 
     init(keychainAttributes: NSDictionary) {
         for (key, object) in keychainAttributes {
-            if let enumKey = SecAttr.secAttr(key) {
-                attributes[enumKey] = object
+            if let key = key as? String {
+                attributes[key] = object
             }
         }
     }
+}
 
-    init(attributeBag: KeychainAttributeBag) {
-        self.attributes = attributeBag.attributes
+
+/*
+Encapsulates the attributes of a keychain item
+*/
+public class KeychainAttributeBag : AttributeBag {
+
+    public var itemAccessGroup: String? {
+        get { return attributes[String(kSecAttrAccessGroup)] as? String }
+        set { attributes[String(kSecAttrAccessGroup)] = newValue }
     }
+
+    public var itemLabel: String? {
+        set { attributes[String(kSecAttrLabel)] = newValue }
+        get { return attributes[String(kSecAttrLabel)] as? String }
+    }
+
+    public var itemCreationDate: NSDate? {
+        get { return attributes[String(kSecAttrCreationDate)] as? NSDate }
+    }
+
+    public var itemModificationDate: NSDate? {
+        get { return attributes[String(kSecAttrModificationDate)] as? NSDate }
+    }
+
 }
 
 

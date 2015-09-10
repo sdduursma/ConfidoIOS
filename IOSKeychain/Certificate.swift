@@ -1,51 +1,34 @@
 //
 //  Certificate.swift
-//  ExpendSecurity
 //
 //  Created by Rudolph van Graan on 23/08/2015.
-//  Copyright (c) 2015 Curoo Limited. All rights reserved.
 //
 
 import Foundation
 
-
 public class Certificate : KeychainItem {
+    var secCertificate: SecCertificate?
+    public private(set) var subject: String?
+    var issuerName: String?
+    var serialNumber: NSData?
+    var certificateType: NSNumber?
+    var expiryDate: NSDate?
 
-    public class func keychainKeyFromAttributes(keychainAttributes attributes: NSDictionary) -> KeychainKey? {
-        let keyClass = KeyClass.keyClass(attributes[String(kSecAttrKeyClass)])
-        switch keyClass {
-        case .PrivateKey: return PrivateKey(keychainAttributes: attributes)
-        case .PublicKey:  return PublicKey(keychainAttributes: attributes)
-        default:          return KeychainKey(keychainAttributes: attributes)
+
+    public class func certificate(derEncodedCertificateData: NSData) -> Certificate? {
+        let secCertificate = SecCertificateCreateWithData(nil, derEncodedCertificateData)
+        if secCertificate != nil {
+            return Certificate(secCertificate: secCertificate.takeRetainedValue())
         }
+        return nil;
     }
 
-    var keySecKey: SecKey?
-
-    public init(keyRef: SecKey) {
-        keySecKey = keyRef
-        super.init(securityClass: .Key)
+    public init(secCertificate: SecCertificate) {
+        super.init(securityClass: .Certificate, attributeBag: nil)
+        self.secCertificate = secCertificate
+        let unManagedSubjectSummary = SecCertificateCopySubjectSummary(secCertificate)
+        self.subject = unManagedSubjectSummary.takeRetainedValue() as String
     }
-
-    public init(keychainAttributes attributes: NSDictionary) {
-        super.init(securityClass: .Key, keychainAttributes: attributes)
-        self.keySecKey = KeychainKey.getKeySecKey(keychainAttributes: attributes)
-    }
-
-    class func getKeySecKey(keychainAttributes attributes: NSDictionary) -> SecKey? {
-        if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
-            if CFGetTypeID(valueRef) == SecKeyGetTypeID() {
-                return (valueRef as! SecKey)
-            }
-        }
-        return nil
-    }
-
-    override public func specifierMatchingProperties() -> Set<SecAttr> {
-        return kKeyItemMatchingProperties
-    }
-
-
 }
 
 //public class Certificate: KeyChainItem {

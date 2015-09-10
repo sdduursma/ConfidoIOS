@@ -11,16 +11,9 @@ import XCTest
 import IOSKeychain
 
 class KeyPairTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
 
     func testGenerateNamedKeyPair() {
-        clearKeychainItems()
+        clearKeychainItems(.Key)
         var (status, items) = Keychain.keyChainItems(.Key)
         XCTAssertEqual(status, .OK)
         XCTAssertEqual(count(items),0)
@@ -63,7 +56,7 @@ class KeyPairTests: XCTestCase {
     }
 
     func testGenerateUnnamedKeyPair() {
-        clearKeychainItems()
+        clearKeychainItems(.Key)
         var (status, items) = Keychain.keyChainItems(.Key)
         XCTAssertEqual(status, .OK)
         XCTAssertEqual(count(items),0)
@@ -93,7 +86,7 @@ class KeyPairTests: XCTestCase {
 
 
     func testDuplicateKeyPairMatching() {
-        clearKeychainItems()
+        clearKeychainItems(.Key)
         var (status, items) = Keychain.keyChainItems(.Key)
         XCTAssertEqual(status, .OK)
         XCTAssertEqual(count(items),0)
@@ -124,8 +117,76 @@ class KeyPairTests: XCTestCase {
 
     }
 
-    func clearKeychainItems() {
+
+
+    func testExportCSR (){
+        clearKeychainItems(.Key)
         var (status, items) = Keychain.keyChainItems(.Key)
+        XCTAssertEqual(status, .OK)
+        XCTAssertEqual(count(items),0)
+
+        var keyPairSpecifier = PermanentKeyPairSpecification(keyType: .RSA, keySize: 1024, keyLabel: "KeyPair1")
+        var keyPair : KeyPair?
+        (status, keyPair) = Keychain.generateKeyPair(keyPairSpecifier)
+        XCTAssertEqual(status, .OK)
+        XCTAssertNotNil(keyPair)
+
+        let attributes = [
+            "UID" : "Test Device",
+            "CN" : "Expend Device ABCD" ]
+
+        let csr : NSData! = keyPair?.certificateSigningRequest(attributes)
+        XCTAssertNotNil(csr)
+        let csrString : NSString! = NSString(data: csr, encoding: NSUTF8StringEncoding)
+        XCTAssert(csrString.hasPrefix("-----BEGIN CERTIFICATE REQUEST-----\n"))
+        XCTAssert(csrString.hasSuffix("-----END CERTIFICATE REQUEST-----\n"))
+        println("CSR:")
+        println(csrString)
+    }
+
+
+    func testImportIdentity() {
+
+        clearKeychainItems(.Identity)
+        clearKeychainItems(.Key)
+        clearKeychainItems(.Certificate)
+
+        var error: NSError?
+        let bundle = NSBundle(forClass: self.dynamicType)
+
+        let keyPairPEMData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
+
+        XCTAssertNotNil(keyPairPEMData)
+
+        let certificateData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1 certificate", ofType: "x509")!)
+
+        XCTAssertNotNil(certificateData)
+
+        let openSSLKeyPair = OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password", error: &error)
+
+        XCTAssertNotNil(openSSLKeyPair)
+        XCTAssertNil(error)
+
+        var openSSLIdentity = OpenSSL.pkcs12IdentityWithKeyPair(openSSLKeyPair!, certificate: OpenSSLCertificate(certificateData: certificateData), protectedWithPassphrase: "randompassword", error: &error)
+
+
+        XCTAssertNotNil(openSSLIdentity)
+        XCTAssertNil(error)
+
+        let p12Identity = P12Identity(openSSLIdentity: openSSLIdentity!, importPassphrase: "randompassword")
+
+
+        let ref = Keychain.importP12Identity(p12Identity)
+        XCTAssertNotNil(ref)
+
+        let specifier = IdentityImportSpecifier(identityReference: ref!, itemLabel: "SomeLabel")
+        Keychain.addIdentity(specifier)
+    }
+
+
+
+    func clearKeychainItems(type: SecurityClass) {
+        var (status, items) = Keychain.keyChainItems(type)
         XCTAssertEqual(status, .OK)
 
         var n = count(items)
@@ -133,7 +194,7 @@ class KeyPairTests: XCTestCase {
             status = Keychain.deleteKeyChainItem(itemSpecifier: item.specifier())
             XCTAssertEqual(status, .OK)
 
-            (status, items) = Keychain.keyChainItems(.Key)
+            (status, items) = Keychain.keyChainItems(type)
             XCTAssertEqual(status, .OK)
 
             XCTAssertEqual(count(items),n-1)
@@ -141,5 +202,9 @@ class KeyPairTests: XCTestCase {
         }
         XCTAssertEqual(count(items),0)
     }
+
+
+
+
 
 }

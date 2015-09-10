@@ -9,7 +9,7 @@
 import Foundation
 import Security
 
-public let kCommonMatchingProperties : Set<SecAttr> = [ .Label ]
+public let kCommonMatchingProperties : Set<String> = [ String(kSecAttrLabel) ]
 
 //kSecClassGenericPassword item attributes:
 //  * kSecAttrAccessible
@@ -28,7 +28,7 @@ public let kCommonMatchingProperties : Set<SecAttr> = [ .Label ]
 //    kSecAttrService
 //    kSecAttrGeneric
 
-public let kGenericPasswordMatchingProperties : Set<SecAttr> = [ .Label, .Account, .Service ]
+public let kGenericPasswordMatchingProperties : Set<String> = [ String(kSecAttrLabel), String(kSecAttrAccount), String(kSecAttrService) ]
 
 
 //kSecClassInternetPassword item attributes:
@@ -52,13 +52,12 @@ public let kGenericPasswordMatchingProperties : Set<SecAttr> = [ .Label, .Accoun
 //    kSecAttrPort
 //    kSecAttrPath
 
-public let kInternetPasswordMatchingProperties : Set<SecAttr> = [
-    .Label, .Account, .Service ]
+public let kInternetPasswordMatchingProperties : Set<String> = [ String(kSecAttrLabel), String(kSecAttrAccount), String(kSecAttrService) ]
 
-public let kInternetPasswordProperties : Set<SecAttr> = [
-    .Label, .AccessGroup, .Accessible, .AccessControl,
-    .Account, .CreationDate, .ModificationDate, .Description, .Comment, .Creator,
-    .AttrType, .IsInvisible, .IsNegative, .Service, .Generic ]
+//public let kInternetPasswordProperties : Set<String> = [
+//    String(kSecAttrLabel), String(kSecAttrAccessGroup), String(kSecAttrAccessible), String(kSecAttrAccessControl),
+//    String(kSecAttrAccount), String(kSecAttrCreationDate), String(kSecAttrModificationDate), String(kSecAttrDescription), String(kSecAttrComment), String(kSecAttrCreator),
+//    String(kSecAttrType), String(kSecAttrIsInvisible), String(kSecAttrIsNegative), String(kSecAttrService), String(kSecAttrGeneric) ]
 
 //kSecClassCertificate item attributes:
 //  * kSecAttrAccessible
@@ -74,7 +73,7 @@ public let kInternetPasswordProperties : Set<SecAttr> = [
 //    kSecAttrPublicKeyHash
 //
 
-public let kCertificateSearchProperties : Set<SecAttr> = [ .Label, .Subject, .SubjectKeyID, .PublicKeyHash ]
+public let kCertificateSearchProperties : Set<String> = [ String(kSecAttrLabel), String(kSecAttrSubject), String(kSecAttrSubjectKeyID), String(kSecAttrPublicKeyHash) ]
 
 //kSecClassIdentity item attributes:
 //  Since an identity is the combination of a private key and a
@@ -102,13 +101,14 @@ public let kCertificateSearchProperties : Set<SecAttr> = [ .Label, .Subject, .Su
 //    kSecAttrCanWrap
 //    kSecAttrCanUnwrap
 
-public let kKeyItemMatchingProperties :     Set<SecAttr> = [ .Label, .ApplicationTag, .ApplicationLabel, .KeyClass, .KeyType, .KeySizeInBits ]
+public let kKeyItemMatchingProperties :     Set<String> = [ String(kSecAttrLabel), String(kSecAttrApplicationTag),
+    String(kSecAttrApplicationLabel), String(kSecAttrKeyClass), String(kSecAttrKeyType), String(kSecAttrKeySizeInBits) ]
 
-public let kKeyItemProperties : Set<SecAttr> = [
-    .Label, .AccessGroup, .Accessible, .AccessControl,
-    .KeyClass, .KeyType, .ApplicationLabel, .IsPermanent, .ApplicationTag,
-    .KeySizeInBits, .EffectiveKeySize, .CanEncrypt, .CanDecrypt,
-    .CanDerive, .CanSign, .CanVerify, .CanWrap, .CanUnwrap  ]
+//public let kKeyItemProperties : Set<String> = [
+//    .Label, .AccessGroup, .Accessible, .AccessControl,
+//    .KeyClass, .KeyType, .ApplicationLabel, .IsPermanent, .ApplicationTag,
+//    .KeySizeInBits, .EffectiveKeySize, .CanEncrypt, .CanDecrypt,
+//    .CanDerive, .CanSign, .CanVerify, .CanWrap, .CanUnwrap  ]
 
 public enum KeychainStatus {
     case UnimplementedError, ParamError, AllocateError, NotAvailableError,
@@ -156,114 +156,6 @@ public enum KeychainStatus {
     ]
 }
 
-
-public enum SecAttr {
-    case Accessible, AccessControl, AccessGroup, CreationDate,  ModificationDate, Description, Comment,
-    Creator, AttrType, Label, IsInvisible, IsNegative, Account,
-    Service, Generic, SecurityDomain, Server, AttrProtocol, AuthenticationType, Port, Path,
-    CertificateType, CertificateEncoding, Subject, Issuer, SerialNumber, SubjectKeyID,
-    PublicKeyHash, KeyClass, ApplicationLabel, IsPermanent, ApplicationTag, KeyType,
-    KeySizeInBits, EffectiveKeySize, CanEncrypt, CanDecrypt, CanDerive, CanSign,
-    CanVerify, CanWrap, CanUnwrap
-
-    static func kSecAttr(attribute: SecAttr) -> CFStringRef {
-        return forwardMapping[attribute]!
-    }
-
-    static func secAttr(kSecAttr: AnyObject) -> SecAttr? {
-        if kSecAttr is CFStringRef {
-            let secAttr = kSecAttr as! CFStringRef
-            if secAttr == kSecAttrAccessible             { return Accessible }
-            if secAttr == kSecAttrAccessControl          { return AccessControl }
-            if secAttr == kSecAttrAccessGroup            { return AccessGroup }
-            if secAttr == kSecAttrCreationDate           { return CreationDate }
-            if secAttr == kSecAttrModificationDate       { return ModificationDate }
-            if secAttr == kSecAttrDescription            { return Description }
-            if secAttr == kSecAttrComment                { return Comment }
-            if secAttr == kSecAttrCreator                { return Creator }
-            if secAttr == kSecAttrType                   { return AttrType }
-            if secAttr == kSecAttrLabel                  { return Label }
-            if secAttr == kSecAttrIsInvisible            { return IsInvisible }
-            if secAttr == kSecAttrIsNegative             { return IsNegative }
-            if secAttr == kSecAttrAccount                { return Account }
-            if secAttr == kSecAttrService                { return Service }
-            if secAttr == kSecAttrGeneric                { return Generic }
-            if secAttr == kSecAttrSecurityDomain         { return SecurityDomain }
-            if secAttr == kSecAttrServer                 { return Server }
-            if secAttr == kSecAttrProtocol               { return AttrProtocol }
-            if secAttr == kSecAttrAuthenticationType     { return AuthenticationType }
-            if secAttr == kSecAttrPort                   { return Port }
-            if secAttr == kSecAttrPath                   { return Path }
-            if secAttr == kSecAttrCertificateType        { return CertificateType }
-            if secAttr == kSecAttrCertificateEncoding    { return CertificateEncoding }
-            if secAttr == kSecAttrSubject                { return Subject }
-            if secAttr == kSecAttrIssuer                 { return Issuer }
-            if secAttr == kSecAttrSerialNumber           { return SerialNumber }
-            if secAttr == kSecAttrSubjectKeyID           { return SubjectKeyID }
-            if secAttr == kSecAttrPublicKeyHash          { return PublicKeyHash }
-            if secAttr == kSecAttrKeyClass               { return KeyClass }
-            if secAttr == kSecAttrApplicationLabel       { return ApplicationLabel }
-            if secAttr == kSecAttrIsPermanent            { return IsPermanent }
-            if secAttr == kSecAttrApplicationTag         { return ApplicationTag }
-            if secAttr == kSecAttrKeyType                { return KeyType }
-            if secAttr == kSecAttrKeySizeInBits          { return KeySizeInBits }
-            if secAttr == kSecAttrEffectiveKeySize       { return EffectiveKeySize }
-            if secAttr == kSecAttrCanEncrypt             { return CanEncrypt }
-            if secAttr == kSecAttrCanDecrypt             { return CanDecrypt }
-            if secAttr == kSecAttrCanDerive              { return CanDerive }
-            if secAttr == kSecAttrCanSign                { return CanSign }
-            if secAttr == kSecAttrCanVerify              { return CanVerify }
-            if secAttr == kSecAttrCanWrap                { return CanWrap }
-            if secAttr == kSecAttrCanUnwrap              { return CanUnwrap }
-        }
-        return nil
-    }
-
-    static let forwardMapping: [SecAttr: CFStringRef] = [
-        Accessible:          kSecAttrAccessible,
-        AccessControl:       kSecAttrAccessControl,
-        AccessGroup:         kSecAttrAccessGroup,
-        CreationDate:        kSecAttrCreationDate,
-        ModificationDate:    kSecAttrModificationDate,
-        Description:         kSecAttrDescription,
-        Comment:             kSecAttrComment,
-        Creator:             kSecAttrCreator,
-        AttrType:            kSecAttrType,
-        Label:               kSecAttrLabel,
-        IsInvisible:         kSecAttrIsInvisible,
-        IsNegative:          kSecAttrIsNegative,
-        Account:             kSecAttrAccount,
-        Service:             kSecAttrService,
-        Generic:             kSecAttrGeneric,
-        SecurityDomain:      kSecAttrSecurityDomain,
-        Server:              kSecAttrServer,
-        AttrProtocol:        kSecAttrProtocol,
-        AuthenticationType:  kSecAttrAuthenticationType,
-        Port:                kSecAttrPort,
-        Path:                kSecAttrPath,
-        CertificateType:     kSecAttrCertificateType,
-        CertificateEncoding: kSecAttrCertificateEncoding,
-        Subject:             kSecAttrSubject,
-        Issuer:              kSecAttrIssuer,
-        SerialNumber:        kSecAttrSerialNumber,
-        SubjectKeyID:        kSecAttrSubjectKeyID,
-        PublicKeyHash:       kSecAttrPublicKeyHash,
-        KeyClass:            kSecAttrKeyClass,
-        ApplicationLabel:    kSecAttrApplicationLabel,
-        IsPermanent:         kSecAttrIsPermanent,
-        ApplicationTag:      kSecAttrApplicationTag,
-        KeyType:             kSecAttrKeyType,
-        KeySizeInBits:       kSecAttrKeySizeInBits,
-        EffectiveKeySize:    kSecAttrEffectiveKeySize,
-        CanEncrypt:          kSecAttrCanEncrypt,
-        CanDecrypt:          kSecAttrCanDecrypt,
-        CanDerive:           kSecAttrCanDerive,
-        CanSign:             kSecAttrCanSign,
-        CanVerify:           kSecAttrCanVerify,
-        CanWrap:             kSecAttrCanWrap,
-        CanUnwrap:           kSecAttrCanUnwrap
-    ]
-}
 
 
 public enum SecurityClass {

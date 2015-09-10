@@ -40,17 +40,17 @@ public class KeychainKey : KeychainItem {
         return nil
     }
 
-    override public func specifierMatchingProperties() -> Set<SecAttr> {
+    override public func specifierMatchingProperties() -> Set<String> {
        return kKeyItemMatchingProperties
     }
 
     public var keyAppTag: String? {
-        get { return attributes[.ApplicationTag] as? String }
+        get { return attributes[String(kSecAttrApplicationTag)] as? String }
     }
 
     public var keyAppLabel: String? {
         get {
-            if let data = attributes[.ApplicationLabel] as? NSData {
+            if let data = attributes[String(kSecAttrApplicationLabel)] as? NSData {
                 return NSString(data: data, encoding: NSUTF8StringEncoding) as? String
             } else {
                 return nil
@@ -60,23 +60,23 @@ public class KeychainKey : KeychainItem {
 
     public var keyClass: KeyClass {
         get {
-            return KeyClass.keyClass(attributes[.KeyClass])
+            return KeyClass.keyClass(attributes[String(kSecAttrKeyClass)])
         }
     }
 
     public var keyType:  KeyType {
-        get { return KeyType.keyType(attributes[.KeyType]!) }
+        get { return KeyType.keyType(attributes[String(kSecAttrKeyType)]!) }
     }
 
     public var keySize: Int {
         get {
-            return (attributes[.KeySizeInBits] as? NSNumber)!.integerValue
+            return (attributes[String(kSecAttrKeySizeInBits)] as? NSNumber)!.integerValue
         }
     }
 
     public var keyPermanent: Bool {
         get {
-            return (attributes[.IsPermanent] as? NSNumber)?.boolValue ?? false
+            return (attributes[String(kSecAttrIsPermanent)] as? NSNumber)?.boolValue ?? false
         }
     }
 

@@ -37,7 +37,7 @@ public class KeychainItem: KeychainAttributeBag {
         super.init(keychainAttributes: attributes)
     }
 
-    public func specifierMatchingProperties() -> Set<SecAttr> {
+    public func specifierMatchingProperties() -> Set<String> {
         return kCommonMatchingProperties
     }
 
