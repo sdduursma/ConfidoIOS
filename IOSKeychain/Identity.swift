@@ -17,7 +17,7 @@ public class IdentityReference {
     }
 }
 
-public class IdentitySpecifier : KeychainItemSpecifier, KeychainQuery {
+public class IdentitySpecifier : KeychainItemSpecifier {
     public init(keySpecifier: KeySpecifier) {
         super.init(itemSpecifier: keySpecifier)
     }
@@ -32,7 +32,7 @@ public class IdentitySpecifier : KeychainItemSpecifier, KeychainQuery {
     }
 }
 
-public class IdentityImportSpecifier : KeychainItemSpecifier, KeychainQuery {
+public class IdentityImportSpecifier : KeychainItemSpecifier {
 
     public init(identityReference: IdentityReference, itemLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
             super.init(securityClass: .Identity, itemLabel: nil)

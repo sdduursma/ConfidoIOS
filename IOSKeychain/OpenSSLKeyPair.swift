@@ -56,7 +56,7 @@ private extension NSInteger {
         }
 
         // Long form
-        var i = (self / 256) + 1
+        let i = (self / 256) + 1
         var len = self
         var result: [CUnsignedChar] = [CUnsignedChar(i + 0x80)]
 
@@ -98,8 +98,8 @@ private extension NSInteger {
 private extension NSData {
     convenience init(modulus: NSData, exponent: NSData) {
         // Make sure neither the modulus nor the exponent start with a null byte
-        var modulusBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: UnsafePointer<CUnsignedChar>(modulus.bytes), count: modulus.length / sizeof(CUnsignedChar)))
-        var exponentBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: UnsafePointer<CUnsignedChar>(exponent.bytes), count: exponent.length / sizeof(CUnsignedChar)))
+        let modulusBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: UnsafePointer<CUnsignedChar>(modulus.bytes), count: modulus.length / sizeof(CUnsignedChar)))
+        let exponentBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: UnsafePointer<CUnsignedChar>(exponent.bytes), count: exponent.length / sizeof(CUnsignedChar)))
 
         // Lengths
         let modulusLengthOctets = modulusBytes.count.encodedOctets()
@@ -114,20 +114,20 @@ private extension NSData {
 
         // Container type and size
         builder.append(0x30)
-        builder.extend(totalLengthOctets)
+        builder.appendContentsOf(totalLengthOctets)
         data.appendBytes(builder, length: builder.count)
         builder.removeAll(keepCapacity: false)
 
         // Modulus
         builder.append(0x02)
-        builder.extend(modulusLengthOctets)
+        builder.appendContentsOf(modulusLengthOctets)
         data.appendBytes(builder, length: builder.count)
         builder.removeAll(keepCapacity: false)
         data.appendBytes(modulusBytes, length: modulusBytes.count)
 
         // Exponent
         builder.append(0x02)
-        builder.extend(exponentLengthOctets)
+        builder.appendContentsOf(exponentLengthOctets)
         data.appendBytes(builder, length: builder.count)
         data.appendBytes(exponentBytes, length: exponentBytes.count)
 
@@ -173,7 +173,7 @@ private extension NSData {
     func dataByPrependingX509RSAHeader() -> NSData {
         let result = NSMutableData()
 
-        let encodingLength: Int = count((self.length + 1).encodedOctets())
+        let encodingLength: Int = (self.length + 1).encodedOctets().count
         let OID: [CUnsignedChar] = [0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
             0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]
 
@@ -185,13 +185,13 @@ private extension NSData {
         // Overall size, made of OID + bitstring encoding + actual key
         let size = OID.count + 2 + encodingLength + self.length
         let encodedSize = size.encodedOctets()
-        builder.extend(encodedSize)
+        builder.appendContentsOf(encodedSize)
         result.appendBytes(builder, length: builder.count)
         result.appendBytes(OID, length: OID.count)
         builder.removeAll(keepCapacity: false)
 
         builder.append(0x03)
-        builder.extend((self.length + 1).encodedOctets())
+        builder.appendContentsOf((self.length + 1).encodedOctets())
         builder.append(0x00)
         result.appendBytes(builder, length: builder.count)
 

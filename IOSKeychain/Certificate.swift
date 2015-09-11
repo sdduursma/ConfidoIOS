@@ -18,7 +18,7 @@ public class Certificate : KeychainItem {
     public class func certificate(derEncodedCertificateData: NSData) -> Certificate? {
         let secCertificate = SecCertificateCreateWithData(nil, derEncodedCertificateData)
         if secCertificate != nil {
-            return Certificate(secCertificate: secCertificate.takeRetainedValue())
+            return Certificate(secCertificate: secCertificate!)
         }
         return nil;
     }
@@ -26,8 +26,7 @@ public class Certificate : KeychainItem {
     public init(secCertificate: SecCertificate) {
         super.init(securityClass: .Certificate, attributeBag: nil)
         self.secCertificate = secCertificate
-        let unManagedSubjectSummary = SecCertificateCopySubjectSummary(secCertificate)
-        self.subject = unManagedSubjectSummary.takeRetainedValue() as String
+        self.subject = SecCertificateCopySubjectSummary(secCertificate) as String
     }
 }
 

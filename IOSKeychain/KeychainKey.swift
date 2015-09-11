@@ -64,8 +64,12 @@ public class KeychainKey : KeychainItem {
         }
     }
 
-    public var keyType:  KeyType {
-        get { return KeyType.keyType(attributes[String(kSecAttrKeyType)]!) }
+    // There is a bug in the Key Chain. You send KeyType as a String (kSecAttrKeyTypeRSA), but what is returned is an NSNumber
+    public var keyType:  AnyObject {
+        get {
+            return attributes[String(kSecAttrKeyType)]!
+        }
+ 
     }
 
     public var keySize: Int {

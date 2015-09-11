@@ -62,17 +62,19 @@ public class KeyPair : KeychainItem {
     }
 
     public func certificateSigningRequest(attributes: [ String : String]) -> NSData? {
-        if let openSSLKeyPair = self.openSSLKeyPair,
-            let privateKeyData = self.privateKey.keyData,
-            let publicKeyData = self.publicKey.keyData {
-            var error: NSError?
-            return OpenSSL.generateCSRWithKeyPair(openSSLKeyPair, csrData: attributes, error: &error)
+        if let openSSLKeyPair = self.openSSLKeyPair {
+            do {
+                return try OpenSSL.generateCSRWithKeyPair(openSSLKeyPair, csrData: attributes)
+            } catch _ {
+                return nil
+            }
         }
         return nil
     }
 
     public lazy var openSSLKeyPair : OpenSSLKeyPair? = {
-        if self.privateKey.keyType == .RSA,
+        
+        if self.privateKey.keyType as? NSObject == 42,
             let privateKeyData = self.privateKey.keyData, let publicKeyData = self.publicKey.keyData {
             return OpenSSLRSAKeyPair(keyLength: self.publicKey.keySize, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
         }

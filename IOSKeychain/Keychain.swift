@@ -21,7 +21,7 @@ func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right:
 
 public class SecurityWrapper {
     public class func secItemCopyMatchingItem<T>(query: KeychainQueryData) -> (KeychainStatus, T?) {
-        var dictionary = NSMutableDictionary()
+        let dictionary = NSMutableDictionary()
         dictionary[String(kSecMatchLimit)]       = kSecMatchLimitOne
         dictionary.addEntriesFromDictionary(query)
 
@@ -38,7 +38,7 @@ public class SecurityWrapper {
     }
 
     public class func secItemCopyMatchingItems(query: KeychainQueryData) -> (KeychainStatus, [ItemAttributes]) {
-        var attributes = NSMutableDictionary()
+        let attributes = NSMutableDictionary()
         attributes[String(kSecMatchLimit)]       = kSecMatchLimitAll
         attributes.addEntriesFromDictionary(query)
 
@@ -64,9 +64,9 @@ public class SecurityWrapper {
         )
 
         if status == .OK {
-            println(persistedRef)
+            print(persistedRef)
             if let data = persistedRef as? NSData {
-                println(data)
+                print(data)
             }
         }
 
@@ -84,7 +84,7 @@ public class SecurityWrapper {
 
 
     public class func secItemDelete(query: KeychainQueryData) -> KeychainStatus {
-        var dictionary = NSMutableDictionary()
+        let dictionary = NSMutableDictionary()
         dictionary.addEntriesFromDictionary(query)
 
         let status = KeychainStatus.statusFromOSStatus(SecItemDelete(dictionary))
@@ -92,16 +92,13 @@ public class SecurityWrapper {
     }
 
     public class func secKeyGeneratePair(query: KeychainQueryData) -> (KeychainStatus, SecKey?, SecKey?) {
-        var publicKeyRef  : Unmanaged<SecKey>?
-        var privateKeyRef : Unmanaged<SecKey>?
-
-        var dictionary = NSMutableDictionary()
-        dictionary.addEntriesFromDictionary(query)
+        var publicKeyRef  : SecKey?
+        var privateKeyRef : SecKey?
 
         let status = KeychainStatus.statusFromOSStatus(
             SecKeyGeneratePair(query, &publicKeyRef, &privateKeyRef))
         if status == .OK {
-            return (status, publicKeyRef?.takeRetainedValue(), privateKeyRef?.takeRetainedValue())
+            return (status, publicKeyRef, privateKeyRef)
         } else {
             return (status, nil, nil)
         }
@@ -163,7 +160,7 @@ public class Keychain {
 
         query += specifier.keychainQuery()
 
-        let (result, itemDict: ItemAttributes?) = SecurityWrapper.secItemCopyMatchingItem(query)
+        let (result, itemDict): (KeychainStatus, ItemAttributes?) = SecurityWrapper.secItemCopyMatchingItem(query)
 
         if result == .OK {
             return (.OK, makeKeyChainItem(specifier.securityClass, keychainItemAttributes:  itemDict!))
@@ -213,7 +210,7 @@ public class Keychain {
 
         item += key.keychainQuery()
 
-        let (result, itemRefs: AnyObject?) = SecurityWrapper.secItemAdd(item)
+        let (result, itemRefs): (KeychainStatus, AnyObject?) = SecurityWrapper.secItemAdd(item)
 
         if result == .OK {
             return (result, findKeyPair(key))
@@ -231,7 +228,7 @@ public class Keychain {
         //There seems to be a bug in the keychain that causes the SecItemAdd for Identities to fail silently when kSecClass is specified :S
         item.removeValueForKey(String(kSecClass))
 
-        let (result, itemRefs: AnyObject?) = SecurityWrapper.secItemAdd(item)
+        let (result, itemRefs): (KeychainStatus, AnyObject?) = SecurityWrapper.secItemAdd(item)
 
         return (.OK, nil)
 
@@ -248,7 +245,7 @@ public class Keychain {
         query[String(kSecMatchLimit)]       = kSecMatchLimitOne
         query += specifier.keychainQuery()
 
-        let (result, itemDict: NSData?) = SecurityWrapper.secItemCopyMatchingItem(query)
+        let (result, itemDict): (KeychainStatus, NSData?) = SecurityWrapper.secItemCopyMatchingItem(query)
 
         if result == .OK {
             return (.OK, itemDict)
@@ -260,12 +257,12 @@ public class Keychain {
     public class func importP12Identity(identity: P12Identity) -> IdentityReference? {
         var options : KeychainQueryData = [ : ]
 
-        options[kSecImportExportPassphrase.takeRetainedValue() as String] = identity.importPassphrase
+        options[kSecImportExportPassphrase as String] = identity.importPassphrase
 
         let (result, itemRefs) = SecurityWrapper.secPKCS12Import(identity.p12EncodedIdentityData, options: options)
-        if count(itemRefs) == 1 {
+        if itemRefs.count == 1 {
             let item = itemRefs[0]
-            let identityRef : SecIdentityRef = itemRefs[0][kSecImportItemIdentity.takeRetainedValue() as String] as! SecIdentityRef
+            let identityRef : SecIdentityRef = itemRefs[0][kSecImportItemIdentity as String] as! SecIdentityRef
             return IdentityReference(reference: identityRef)
         }
         return nil

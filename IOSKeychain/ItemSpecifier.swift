@@ -46,7 +46,7 @@ public class KeychainItemSpecifier : KeychainItem, KeychainQuery {
 }
 
 
-public class KeySpecifier : KeychainItemSpecifier, KeychainQuery {
+public class KeySpecifier : KeychainItemSpecifier {
     public init(keySpecifier: KeySpecifier) {
         super.init(itemSpecifier: keySpecifier)
     }
@@ -55,7 +55,7 @@ public class KeySpecifier : KeychainItemSpecifier, KeychainQuery {
         keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
             super.init(securityClass: .Key, itemLabel: keyLabel)
             if keyType != nil {
-                attributes[String(kSecAttrKeyType)]          = KeyType.kSecAttrKeyType(keyType!)
+                attributes[String(kSecAttrKeyType)]          = keyType!.rawValue
             }
             if keySize != nil  {
                 attributes[String(kSecAttrKeySizeInBits)]    = keySize!
@@ -86,8 +86,7 @@ public protocol KeyPairQuery : KeychainQuery {
 
 public class KeySpecification : KeySpecifier {
     public class func specification(PEMEncodedPrivateKey privateKeyData: NSData, passphrase: String, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) -> KeyPairImportSpecification? {
-        var error: NSError? = nil
-        if let openSSLKeyPair = OpenSSL.keyPairFromPEMData(privateKeyData, encryptedWithPassword: passphrase, error:&error) {
+        if let openSSLKeyPair = try? OpenSSL.keyPairFromPEMData(privateKeyData, encryptedWithPassword: passphrase) {
             return KeyPairImportSpecification(openSSLKeypair: openSSLKeyPair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
         }
         return nil;
@@ -105,13 +104,13 @@ public class KeyPairSpecification : KeySpecification, KeyPairQuery {
     }
 
     public func privateKeySpecifier() -> KeySpecifier {
-        var specifier = KeySpecifier(keySpecifier: self)
+        let specifier = KeySpecifier(keySpecifier: self)
         specifier.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
         return specifier
     }
 
     public func publicKeySpecifier() -> KeySpecifier {
-        var specifier = KeySpecifier(keySpecifier: self)
+        let specifier = KeySpecifier(keySpecifier: self)
         specifier.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
         return specifier
     }
@@ -119,7 +118,7 @@ public class KeyPairSpecification : KeySpecification, KeyPairQuery {
 
 
 
-public class TemporaryKeyPairSpecification : KeyPairSpecification, KeyPairQuery {
+public class TemporaryKeyPairSpecification : KeyPairSpecification {
     public init(keyType: KeyType, keySize: Int) {
         super.init(keyType: keyType, keySize: keySize)
         attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: false)
@@ -127,7 +126,7 @@ public class TemporaryKeyPairSpecification : KeyPairSpecification, KeyPairQuery 
 }
 
 
-public class PermanentKeyPairSpecification : KeyPairSpecification, KeyPairQuery {
+public class PermanentKeyPairSpecification : KeyPairSpecification {
     public init(keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
         super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel )
         attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)

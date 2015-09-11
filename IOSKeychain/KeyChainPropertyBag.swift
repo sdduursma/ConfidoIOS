@@ -33,6 +33,26 @@ public class AttributeBag {
     }
 }
 
+public protocol KeychainA {
+//    var accessible: LocksmithAccessibleOption? { get }
+    var accessGroup: String? { get }
+}
+
+public extension KeychainA {
+    var attributes : [String : AnyObject] = [ : ]
+
+    //    var accessible: LocksmithAccessibleOption? { return nil }
+    var accessGroup: String? { return nil }
+
+    var secureStorableBaseStoragePropertyDictionary: [String: AnyObject] {
+        let dictionary = [
+            String(kSecAttrAccessGroup): self.accessGroup,
+            String(kSecAttrAccessible): self.accessible?.rawValue
+        ]
+
+        return Dictionary(withoutOptionalValues: dictionary)
+    }
+}
 
 /*
 Encapsulates the attributes of a keychain item

@@ -235,27 +235,32 @@ public enum KeyClass {
     ]
 }
 
-public enum KeyType {
+
+public enum KeyType: RawRepresentable {
     case RSA, ElypticCurve
 
-    static func kSecAttrKeyType(keyType: KeyType) -> CFStringRef {
-        return forwardMapping[keyType]!
+    public init?(rawValue: String) {
+        switch rawValue {
+        case String(kSecAttrKeyTypeRSA):
+            self = RSA
+        case String(kSecAttrKeyTypeEC):
+            self = ElypticCurve
+        default:
+            print("Accessible: invalid rawValue provided. Defaulting to KeyType.RSA")
+            self = RSA
+        }
     }
 
-    static func keyType(kKeyType: AnyObject) -> KeyType {
-        return reverseMapping[kKeyType as! String]!
+    public var rawValue: String {
+        switch self {
+        case .RSA:
+            return String(kSecAttrKeyTypeRSA)
+        case .ElypticCurve:
+            return String(kSecAttrKeyTypeEC)
+        }
     }
-
-    static let forwardMapping: [KeyType: CFStringRef] = [
-        RSA:             kSecAttrKeyTypeRSA,
-        ElypticCurve:    kSecAttrKeyTypeEC
-    ]
-
-    static let reverseMapping: [String: KeyType] = [
-        kSecAttrKeyTypeRSA as String: RSA,
-        kSecAttrKeyTypeEC as String: ElypticCurve
-    ]
 }
+
 
 public enum Accessible {
     case WhenUnlock, AfterFirstUnlock, Always, WhenPasscodeSetThisDeviceOnly,
