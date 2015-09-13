@@ -17,11 +17,7 @@ public class IdentityReference {
     }
 }
 
-public class IdentitySpecifier : KeychainItemSpecifier {
-    public init(keySpecifier: KeySpecifier) {
-        super.init(itemSpecifier: keySpecifier)
-    }
-
+public class IdentitySpecifier : KeychainProperties {
     public init(itemLabel: String) {
             super.init(securityClass: .Identity, itemLabel: itemLabel)
     }
@@ -32,12 +28,12 @@ public class IdentitySpecifier : KeychainItemSpecifier {
     }
 }
 
-public class IdentityImportSpecifier : KeychainItemSpecifier {
+public class IdentityImportSpecifier : KeychainProperties {
 
     public init(identityReference: IdentityReference, itemLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
             super.init(securityClass: .Identity, itemLabel: nil)
             if keyAppLabel != nil {
-                attributes[String(kSecAttrApplicationLabel)] = KeySpecifier.encodeKeyAppLabel(keyAppLabel)
+                attributes[String(kSecAttrApplicationLabel)] = KeychainKeyProperties.encodeKeyAppLabel(keyAppLabel)
             }
             if keyAppTag != nil {
                 attributes[String(kSecAttrApplicationTag)]   = keyAppTag!
@@ -61,6 +57,6 @@ public class P12Identity {
     }
 }
 
-public class Identity : KeyPair {
+public class Identity : KeychainItem {
 
 }

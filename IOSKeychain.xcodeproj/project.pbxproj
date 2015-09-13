@@ -25,11 +25,10 @@
 		AB710ECB1BA0613E003AE8B0 /* KeyChainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC31BA0613E003AE8B0 /* KeyChainItem.swift */; };
 		AB710ECC1BA0613E003AE8B0 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC41BA0613E003AE8B0 /* Keychain.swift */; };
 		AB710ECD1BA0613E003AE8B0 /* SecurityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */; };
-		AB710ECE1BA0613E003AE8B0 /* KeyChainPropertyBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC61BA0613E003AE8B0 /* KeyChainPropertyBag.swift */; };
 		AB710ECF1BA0613E003AE8B0 /* ItemSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */; };
 		AB710ED01BA0613E003AE8B0 /* KeychainKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */; };
 		AB710ED11BA0613E003AE8B0 /* Certificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC91BA0613E003AE8B0 /* Certificate.swift */; };
-		AB710ED21BA0613E003AE8B0 /* PublicPrivateKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ECA1BA0613E003AE8B0 /* PublicPrivateKey.swift */; };
+		AB710ED21BA0613E003AE8B0 /* KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ECA1BA0613E003AE8B0 /* KeyPair.swift */; };
 		AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */; };
 		AB710ED61BA066A3003AE8B0 /* OpenSSL.m in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED51BA066A3003AE8B0 /* OpenSSL.m */; };
 		AB710EDB1BA06E07003AE8B0 /* OpenSSL.h in Headers */ = {isa = PBXBuildFile; fileRef = AB710ED71BA066D2003AE8B0 /* OpenSSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,6 +37,7 @@
 		AB710EE41BA07402003AE8B0 /* test keypair 1 identity.p12 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EDF1BA07402003AE8B0 /* test keypair 1 identity.p12 */; };
 		AB710EE51BA07402003AE8B0 /* test keypair 1.pem in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE01BA07402003AE8B0 /* test keypair 1.pem */; };
 		AB710EE61BA07402003AE8B0 /* test keypair 1 certificate.x509 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */; };
+		ABB02D9E1BA33B5E004DF178 /* KeychainProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,11 +76,10 @@
 		AB710EC31BA0613E003AE8B0 /* KeyChainItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyChainItem.swift; sourceTree = "<group>"; };
 		AB710EC41BA0613E003AE8B0 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityMappings.swift; sourceTree = "<group>"; };
-		AB710EC61BA0613E003AE8B0 /* KeyChainPropertyBag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyChainPropertyBag.swift; sourceTree = "<group>"; };
 		AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemSpecifier.swift; sourceTree = "<group>"; };
 		AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKey.swift; sourceTree = "<group>"; };
 		AB710EC91BA0613E003AE8B0 /* Certificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Certificate.swift; sourceTree = "<group>"; };
-		AB710ECA1BA0613E003AE8B0 /* PublicPrivateKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicPrivateKey.swift; sourceTree = "<group>"; };
+		AB710ECA1BA0613E003AE8B0 /* KeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPair.swift; sourceTree = "<group>"; };
 		AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
 		AB710ED51BA066A3003AE8B0 /* OpenSSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenSSL.m; sourceTree = "<group>"; };
 		AB710ED71BA066D2003AE8B0 /* OpenSSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSSL.h; sourceTree = "<group>"; };
@@ -89,6 +88,7 @@
 		AB710EDF1BA07402003AE8B0 /* test keypair 1 identity.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test keypair 1 identity.p12"; sourceTree = "<group>"; };
 		AB710EE01BA07402003AE8B0 /* test keypair 1.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1.pem"; sourceTree = "<group>"; };
 		AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1 certificate.x509"; sourceTree = "<group>"; };
+		ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,23 +135,23 @@
 		AB710EA91BA060FB003AE8B0 /* IOSKeychain */ = {
 			isa = PBXGroup;
 			children = (
+				AB710EC91BA0613E003AE8B0 /* Certificate.swift */,
+				AB16CF7F1BA19704008C9D1C /* Identity.swift */,
+				AB710EAC1BA060FB003AE8B0 /* IOSKeychain.h */,
+				AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */,
+				AB710EC41BA0613E003AE8B0 /* Keychain.swift */,
+				AB710EC31BA0613E003AE8B0 /* KeyChainItem.swift */,
+				AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */,
+				ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */,
+				AB710ECA1BA0613E003AE8B0 /* KeyPair.swift */,
 				AB710ED71BA066D2003AE8B0 /* OpenSSL.h */,
 				AB710ED51BA066A3003AE8B0 /* OpenSSL.m */,
-				AB710EC31BA0613E003AE8B0 /* KeyChainItem.swift */,
-				AB710EC41BA0613E003AE8B0 /* Keychain.swift */,
-				AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */,
-				AB710EC61BA0613E003AE8B0 /* KeyChainPropertyBag.swift */,
-				AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */,
-				AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */,
-				AB710EC91BA0613E003AE8B0 /* Certificate.swift */,
-				AB710ECA1BA0613E003AE8B0 /* PublicPrivateKey.swift */,
-				AB710EAC1BA060FB003AE8B0 /* IOSKeychain.h */,
-				AB710EAA1BA060FB003AE8B0 /* Supporting Files */,
-				AB16CF751BA15EB3008C9D1C /* OpenSSLKeyPair.swift */,
-				AB16CF791BA180CF008C9D1C /* OpenSSLIdentity.swift */,
 				AB16CF7B1BA180DF008C9D1C /* OpenSSLCertificate.swift */,
+				AB16CF791BA180CF008C9D1C /* OpenSSLIdentity.swift */,
+				AB16CF751BA15EB3008C9D1C /* OpenSSLKeyPair.swift */,
 				AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */,
-				AB16CF7F1BA19704008C9D1C /* Identity.swift */,
+				AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */,
+				AB710EAA1BA060FB003AE8B0 /* Supporting Files */,
 			);
 			path = IOSKeychain;
 			sourceTree = "<group>";
@@ -410,12 +410,12 @@
 				AB16CF7A1BA180CF008C9D1C /* OpenSSLIdentity.swift in Sources */,
 				AB710ECB1BA0613E003AE8B0 /* KeyChainItem.swift in Sources */,
 				AB710ECD1BA0613E003AE8B0 /* SecurityMappings.swift in Sources */,
+				ABB02D9E1BA33B5E004DF178 /* KeychainProtocol.swift in Sources */,
 				AB710ECF1BA0613E003AE8B0 /* ItemSpecifier.swift in Sources */,
-				AB710ED21BA0613E003AE8B0 /* PublicPrivateKey.swift in Sources */,
+				AB710ED21BA0613E003AE8B0 /* KeyPair.swift in Sources */,
 				AB16CF761BA15EB3008C9D1C /* OpenSSLKeyPair.swift in Sources */,
 				AB710ECC1BA0613E003AE8B0 /* Keychain.swift in Sources */,
 				AB16CF7E1BA18224008C9D1C /* OpenSSLObject.swift in Sources */,
-				AB710ECE1BA0613E003AE8B0 /* KeyChainPropertyBag.swift in Sources */,
 				AB710ED01BA0613E003AE8B0 /* KeychainKey.swift in Sources */,
 				AB16CF7C1BA180DF008C9D1C /* OpenSSLCertificate.swift in Sources */,
 				AB710ED61BA066A3003AE8B0 /* OpenSSL.m in Sources */,

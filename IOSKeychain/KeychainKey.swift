@@ -8,26 +8,26 @@
 
 import Foundation
 
-public class KeychainKey : KeychainItem {
 
-    public class func keychainKeyFromAttributes(keychainAttributes attributes: NSDictionary) -> KeychainKey? {
+public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
+    public class func keychainKeyFromAttributes(SecItemAttributes attributes: SecItemAttributes) -> KeychainKey? {
         let keyClass = KeyClass.keyClass(attributes[String(kSecAttrKeyClass)])
         switch keyClass {
-        case .PrivateKey: return PrivateKey(keychainAttributes: attributes)
-        case .PublicKey:  return PublicKey(keychainAttributes: attributes)
-        default:          return KeychainKey(keychainAttributes: attributes)
+        case .PrivateKey: return KeychainPrivateKey(SecItemAttributes: attributes)
+        case .PublicKey:  return KeychainPublicKey(SecItemAttributes: attributes)
+        default:          return KeychainKey(SecItemAttributes: attributes)
         }
     }
 
     var keySecKey: SecKey?
 
-    public init(specification: KeySpecification, keyRef: SecKey) {
+    public init(properties: KeychainKeyProperties, keyRef: SecKey) {
         keySecKey = keyRef
-        super.init(securityClass: .Key,  attributeBag: specification)
+        super.init(securityClass: .Key,  byCopyingAttributes: properties)
     }
 
-    public init(keychainAttributes attributes: NSDictionary) {
-        super.init(securityClass: .Key, keychainAttributes: attributes)
+    public init(SecItemAttributes attributes: SecItemAttributes) {
+        super.init(securityClass: SecurityClass.Key, SecItemAttributes: attributes)
         self.keySecKey = KeychainKey.getKeySecKey(keychainAttributes: attributes)
     }
 
@@ -44,45 +44,6 @@ public class KeychainKey : KeychainItem {
        return kKeyItemMatchingProperties
     }
 
-    public var keyAppTag: String? {
-        get { return attributes[String(kSecAttrApplicationTag)] as? String }
-    }
-
-    public var keyAppLabel: String? {
-        get {
-            if let data = attributes[String(kSecAttrApplicationLabel)] as? NSData {
-                return NSString(data: data, encoding: NSUTF8StringEncoding) as? String
-            } else {
-                return nil
-            }
-        }
-    }
-
-    public var keyClass: KeyClass {
-        get {
-            return KeyClass.keyClass(attributes[String(kSecAttrKeyClass)])
-        }
-    }
-
-    // There is a bug in the Key Chain. You send KeyType as a String (kSecAttrKeyTypeRSA), but what is returned is an NSNumber
-    public var keyType:  AnyObject {
-        get {
-            return attributes[String(kSecAttrKeyType)]!
-        }
- 
-    }
-
-    public var keySize: Int {
-        get {
-            return (attributes[String(kSecAttrKeySizeInBits)] as? NSNumber)!.integerValue
-        }
-    }
-
-    public var keyPermanent: Bool {
-        get {
-            return (attributes[String(kSecAttrIsPermanent)] as? NSNumber)?.boolValue ?? false
-        }
-    }
 
     public lazy var keyData: NSData? = {
         // It is possible that a key is not permanent, then there isn't any data to return

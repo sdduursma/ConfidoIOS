@@ -24,7 +24,7 @@ public class Certificate : KeychainItem {
     }
 
     public init(secCertificate: SecCertificate) {
-        super.init(securityClass: .Certificate, attributeBag: nil)
+        super.init(securityClass: .Certificate)
         self.secCertificate = secCertificate
         self.subject = SecCertificateCopySubjectSummary(secCertificate) as String
     }

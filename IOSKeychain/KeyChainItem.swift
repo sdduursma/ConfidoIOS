@@ -13,58 +13,123 @@ import Security
 
 // Update -> Add writers for functions, populate separate dictionary, something calls update
 
-public class KeychainItem: KeychainAttributeBag {
+/**
+Abstract Item that has a securityClass and attributes. Two classes derive from it.
+KeychainItem that represents actual objects in the IOS Keychain and KeychainProperties that describe
+the attributes of either a IOS Keychain search (the input dictionary) or the attributes of an object (such as a KeychainKey that could be generated or imported.
+*/
+public class AbstractItem: KeychainItemClass, KeyChainAttributeStorage {
     public private(set) var securityClass: SecurityClass
+    //A dictionary of IOS Keychain attributes keyed by their kSecAttr constants and stored in the format the IOS Keychain requires them
+    public var attributes : [String : AnyObject] = [ : ]
 
-    public class func itemFromAttributes(securityClass: SecurityClass, keychainAttributes attributes: ItemAttributes) -> KeychainItem? {
-        switch securityClass {
-        case .Key: return KeychainKey.keychainKeyFromAttributes(keychainAttributes: attributes)
-        default: return nil
-        }
-    }
-
-    init(securityClass: SecurityClass, attributeBag: KeychainAttributeBag? = nil) {
+    public init(securityClass: SecurityClass) {
         self.securityClass = securityClass
-        super.init(attributeBag: attributeBag)
     }
 
-    init(securityClass: SecurityClass, keychainAttributes attributes: NSDictionary) {
+    init(securityClass: SecurityClass, byCopyingAttributes attributes: KeyChainAttributeStorage? ) {
+        self.securityClass = securityClass
+        self.initAttributes(attributes)
+    }
+
+    // Initialises the AbstractItem with the contents from an IOS Keychain Attribute Dictionary
+    init(securityClass: SecurityClass, SecItemAttributes attributes: SecItemAttributes) {
         if let secClass: AnyObject = attributes[String(kSecClass)] {
             self.securityClass = SecurityClass.securityClass(secClass)!
         } else {
             self.securityClass = securityClass
         }
-        super.init(keychainAttributes: attributes)
+        self.initAttributes(attributes)
+    }
+
+    func initAttributes(attributes: KeyChainAttributeStorage?) {
+        if attributes != nil {
+            self.attributes = attributes!.attributes
+        }
+    }
+
+    func initAttributes(keychainAttributes: NSDictionary) {
+        for (key, object) in keychainAttributes {
+            // -TODO: This method should only copy the attributes that belongs to the item and not everything as yet. Some types (KeychainIdentity is composed of KeychainCertificate and the KeychainIdentify object should not store the KeychainCertificate's properties, etc.
+            if let key = key as? String {
+                attributes[key] = object
+            }
+        }
+    }
+}
+
+public class KeychainItem: AbstractItem, KeychainCommonClassProperties {
+    public class func itemFromAttributes(securityClass: SecurityClass, SecItemAttributes attributes: SecItemAttributes) -> KeychainItem? {
+        switch securityClass {
+        case .Key: return KeychainKey.keychainKeyFromAttributes(SecItemAttributes: attributes)
+        default: return nil
+        }
+    }
+
+    public override init(securityClass: SecurityClass) {
+        super.init(securityClass: securityClass)
+    }
+
+    override init(securityClass: SecurityClass, byCopyingAttributes attributes: KeyChainAttributeStorage? ) {
+        super.init(securityClass: securityClass, byCopyingAttributes: attributes)
+    }
+
+    override init(securityClass: SecurityClass, SecItemAttributes attributes: SecItemAttributes) {
+        super.init(securityClass: securityClass, SecItemAttributes: attributes)
     }
 
     public func specifierMatchingProperties() -> Set<String> {
         return kCommonMatchingProperties
     }
+}
 
-    public func specifier() -> KeychainItemSpecifier {
-        return KeychainItemSpecifier(keychainItem: self)
+public class KeychainProperties : AbstractItem, KeychainMatchable {
+    /**
+    Initialises keychain properties from a KeychainItem
+
+    :param: keychainItem
+
+    :returns: a new instance of KeychainProperties.
+    */
+    public init(keychainItem: KeychainItem) {
+        super.init(securityClass: keychainItem.securityClass)
+        for matchingProperty in keychainItem.specifierMatchingProperties() {
+            if let value: AnyObject = keychainItem[matchingProperty] {
+                attributes[matchingProperty] = value
+            }
+        }
+    }
+
+    public init(properties: KeychainProperties) {
+        super.init(securityClass: properties.securityClass)
+        self.attributes = properties.attributes
+    }
+
+    override init(securityClass: SecurityClass, byCopyingAttributes attributes: KeyChainAttributeStorage? ) {
+        super.init(securityClass: securityClass, byCopyingAttributes: attributes)
     }
 
 
+    public init(securityClass: SecurityClass, itemLabel: String? = nil) {
+        super.init(securityClass: securityClass)
+        if (itemLabel != nil) {
+            attributes[String(kSecAttrLabel)] = itemLabel
+        }
+    }
+
+    /**
+    Provides the dictionary of IOS Keychain attributes that will be used to match IOS Keychain Items against. This is the dictionary that is passed to SecItemCopyMatching()
+
+    :returns: a dictionary of IOS Keychain Attributes.
+    */
+    //TODO: Rename this to iosKeychainMatchDictionary()
+    public func keychainMatchPropertyValues() -> [ String: AnyObject ] {
+        var dictionary : [ String : AnyObject] = [ : ]
+        dictionary[String(kSecClass)] = SecurityClass.kSecClass(securityClass)
+        for (attribute, value) in attributes {
+            dictionary[attribute] = value
+        }
+        return dictionary
+    }
 }
 
-
-//public class KeychainInternetPassword : KeychainItem {
-//
-//    public init(userAccount: String, service: String = ExpendDefaultService) {
-//        super.init(securityClass: .GenericPassword)
-//        self.userAccount = userAccount
-//        self.itemService = service
-//    }
-//
-//    public static let searchProperties = kInternetPasswordSearchProperties
-//    public static let itemProperties   = kInternetPasswordProperties
-//
-//}
-
-
-
-
-//
-//}
-//
