@@ -22,11 +22,25 @@ extension KeyChainAttributeStorage where Self : KeyChainAttributeStorage {
 }
 
 
+// MARK: KeychainMatchable
+
+// Indicates that items in the IOS keychain of securityClass can matched with keychainMatchPropertyValues()
+public protocol KeychainMatchable {
+    /**
+    Returns the properties to pass to SecItemCopyMatching() to match IOS keychain items with
+    :returns: a dictionary of IOS Keychain values (See Apple Documentation)
+    */
+    func keychainMatchPropertyValues() -> [ String: AnyObject ]
+    var securityClass: SecurityClass { get }
+}
+
+
+
 // MARK: KeychainFindable
 
 // Marks that the item provides a findInKeychain() method that returns matching keychain items
 public protocol KeychainFindable {
-    typealias QueryType //: KeychainProperties
+    typealias QueryType : KeychainMatchable
     typealias ResultType : KeychainItem
     static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
 }
@@ -35,21 +49,26 @@ public protocol InjectKeychainFind : KeychainFindable {
 
 }
 
-//TODO: Exclude KeychainKeyPair with a WHERE clause
-extension InjectKeychainFind where Self : InjectKeychainFind {
+extension KeychainFindable where Self : KeychainFindable, Self : InjectKeychainFind {
     public static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?  {
-        //let (result, keyItem) = Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties)
-
-//        let (result, keyItem: ResultType) = (KeychainStatus.OK, nil)
-//        if (result == .OK) {
-//            return keyItem
-//        }
-//        return nil
-        let result : ResultType? = nil
-        return result
+        if let keychainItem = try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) {
+            return keychainItem as? ResultType
+        }
+        return nil
    }
 }
 
+//extension KeychainPrivateKey {
+//    public static func findInKeychain(matchingProperties: KeychainKeyProperties) throws -> KeychainPrivateKey? {
+//        return try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) as? KeychainPrivateKey
+//    }
+//}
+//
+//extension KeychainPublicKey {
+//    public static func findInKeychain(matchingProperties: KeychainKeyProperties) throws -> KeychainPublicKey? {
+//        return try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) as? KeychainPublicKey
+//    }
+//}
 
 
 // MARK: KeychainMatching
@@ -63,18 +82,6 @@ extension KeychainItem  {
     public func keychainMatchPropertyValues() -> KeychainProperties {
         return KeychainProperties(keychainItem: self)
     }
-}
-
-// MARK: KeychainMatchable
-
-// Indicates that items in the IOS keychain of securityClass can matched with keychainMatchPropertyValues()
-public protocol KeychainMatchable {
-    /**
-    Returns the properties to pass to SecItemCopyMatching() to match IOS keychain items with
-    :returns: a dictionary of IOS Keychain values (See Apple Documentation)
-    */
-    func keychainMatchPropertyValues() -> [ String: AnyObject ]
-    var securityClass: SecurityClass { get } 
 }
 
 // MARK: KeychainAddable
@@ -93,23 +100,21 @@ public protocol KeychainAddable {
 public func addItemToKeychain<A:KeychainAddable,F:KeychainFindable where
     A.KeychainClassType == F.ResultType, A: SecItemAddable, A == F.QueryType
     > (a: A) throws -> F.ResultType? {
-        let result = try a.secItemAdd()
+        try a.secItemAdd()
         return try F.findInKeychain(a as F.QueryType)
 }
 //where Self : KeychainAddable, Self : SecItemAddable
 
 extension DetachedPrivateKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPrivateKey? {
-        let result = try self.secItemAdd()
+        try self.secItemAdd()
         return try KeychainPrivateKey.findInKeychain(self)
-        // let F = self.dynamicType.KeychainClassType.self
-        // return F.findInKeychain(self)
     }
 }
 //where Self : KeychainAddable, Self : SecItemAddable
 extension DetachedPublicKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPublicKey? {
-        let result = try self.secItemAdd()
+        try self.secItemAdd()
         return try KeychainPublicKey.findInKeychain(self)
     }
 }

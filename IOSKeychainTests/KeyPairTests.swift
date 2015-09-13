@@ -109,11 +109,12 @@ class KeyPairTests: XCTestCase {
             XCTAssertEqual(items.count,2)
 
             // Test that labels make the keypair unique
-            keyPair = try Keychain.generateKeyPair(keyPairSpecifier)
-
-            // keySize, keyLabel, keyAppTag, keyAppLabel all the same --> DuplicateItemError
-//TODO:    XCTAssertEqual(status, KeychainStatus.DuplicateItemError)
-            XCTAssertNil(keyPair)
+            do {
+                keyPair = try Keychain.generateKeyPair(keyPairSpecifier)
+                XCTFail("Expected DuplicateItemError")
+            } catch KeychainStatus.DuplicateItemError {
+                // keySize, keyLabel, keyAppTag, keyAppLabel all the same --> DuplicateItemError
+            }
 
             // different keySize
             keyPairSpecifier = PermanentKeychainKeyPairProperties(keyType: .RSA, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")

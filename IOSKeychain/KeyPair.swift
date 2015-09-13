@@ -38,7 +38,7 @@ extension PublicKey where Self : PublicKey {
 /**
 An instance of an IOS Keychain Public Key
 */
-public class KeychainPublicKey : KeychainKey, PublicKey, InjectKeychainFind {
+public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, InjectKeychainFind {
     public typealias QueryType = KeychainKeyProperties
     public typealias ResultType = KeychainPublicKey
 
@@ -57,7 +57,7 @@ public class KeychainPublicKey : KeychainKey, PublicKey, InjectKeychainFind {
 /**
 An instance of an IOS Keychain Private Key
 */
-public class KeychainPrivateKey : KeychainKey, PrivateKey, InjectKeychainFind {
+public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  InjectKeychainFind {
     public typealias QueryType = KeychainKeyProperties
     public typealias ResultType = KeychainPrivateKey
 

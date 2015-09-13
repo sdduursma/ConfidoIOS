@@ -32,7 +32,7 @@ public class SecurityWrapper {
             )
         if status == .OK, let returnValue = result as? T {
             return returnValue
-        } else if status == .OK {
+        } else if status == .OK || status == .ItemNotFoundError {
             return nil
         }
         throw status
@@ -50,7 +50,7 @@ public class SecurityWrapper {
         )
         if status == .OK, let items = result as? [SecItemAttributes] {
             return items
-        } else if status == .OK {
+        } else if status == .OK || status == .ItemNotFoundError {
             return []
         }
         throw status
