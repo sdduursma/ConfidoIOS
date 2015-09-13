@@ -47,8 +47,14 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
 
     public lazy var keyData: NSData? = {
         // It is possible that a key is not permanent, then there isn't any data to return
-        let (result, optionalData) = Keychain.keyData(self)
-        return optionalData
+        do {
+            return try Keychain.keyData(self)
+        }
+        catch let error {
+            //TODO: Fix
+            print("error \(error)")
+            return nil
+        }
         }()
 }
 

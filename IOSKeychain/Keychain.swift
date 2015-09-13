@@ -20,7 +20,7 @@ func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right:
 }
 
 public class SecurityWrapper {
-    public class func secItemCopyMatchingItem<T>(query: KeyChainPropertiesData) -> (KeychainStatus, T?) {
+    public class func secItemCopyMatchingItem<T>(query: KeyChainPropertiesData) throws -> T? {
         let dictionary = NSMutableDictionary()
         dictionary[String(kSecMatchLimit)]       = kSecMatchLimitOne
         dictionary.addEntriesFromDictionary(query)
@@ -31,12 +31,14 @@ public class SecurityWrapper {
             withUnsafeMutablePointer(&result) { SecItemCopyMatching(dictionary, UnsafeMutablePointer($0)) }
             )
         if status == .OK, let returnValue = result as? T {
-            return (status, returnValue)
+            return returnValue
+        } else if status == .OK {
+            return nil
         }
-        return (status, nil)
+        throw status
     }
 
-    public class func secItemCopyMatchingItems(query: KeyChainPropertiesData) -> (KeychainStatus, [SecItemAttributes]) {
+    public class func secItemCopyMatchingItems(query: KeyChainPropertiesData) throws -> [SecItemAttributes] {
         let attributes = NSMutableDictionary()
         attributes[String(kSecMatchLimit)]       = kSecMatchLimitAll
         attributes.addEntriesFromDictionary(query)
@@ -47,13 +49,15 @@ public class SecurityWrapper {
             withUnsafeMutablePointer(&result) { SecItemCopyMatching(attributes, UnsafeMutablePointer($0)) }
         )
         if status == .OK, let items = result as? [SecItemAttributes] {
-            return (status, items)
+            return items
+        } else if status == .OK {
+            return []
         }
-        return (status, [])
+        throw status
     }
 
 
-    public class func secItemAdd(attributes: KeychainItemData) -> (KeychainStatus, AnyObject?) {
+    public class func secItemAdd(attributes: KeychainItemData) throws -> AnyObject?  {
         var persistedRef: AnyObject?
 
         let status = KeychainStatus.statusFromOSStatus(
@@ -68,7 +72,7 @@ public class SecurityWrapper {
         }
 
 
-        return (.OK,[])
+        return []
 //        println(status)
 //        println(result)
 //        if status == .OK {
@@ -80,45 +84,50 @@ public class SecurityWrapper {
 
 
 
-    public class func secItemDelete(query: KeyChainPropertiesData) -> KeychainStatus {
+    public class func secItemDelete(query: KeyChainPropertiesData) throws  {
         let dictionary = NSMutableDictionary()
         dictionary.addEntriesFromDictionary(query)
 
         let status = KeychainStatus.statusFromOSStatus(SecItemDelete(dictionary))
-        return status
+        if status == .OK {
+            return
+        }
+        throw status
     }
 
-    public class func secKeyGeneratePair(query: KeyChainPropertiesData) -> (KeychainStatus, SecKey?, SecKey?) {
+    public class func secKeyGeneratePair(query: KeyChainPropertiesData) throws -> (SecKey?, SecKey?) {
         var publicKeyRef  : SecKey?
         var privateKeyRef : SecKey?
 
         let status = KeychainStatus.statusFromOSStatus(
             SecKeyGeneratePair(query, &publicKeyRef, &privateKeyRef))
         if status == .OK {
-            return (status, publicKeyRef, privateKeyRef)
-        } else {
-            return (status, nil, nil)
+            return (publicKeyRef, privateKeyRef)
         }
-
+        throw status
     }
 
-    public class func secPKCS12Import(pkcs12Data: NSData, options: KeyChainPropertiesData) -> (KeychainStatus, [SecItemAttributes]) {
+    public class func secPKCS12Import(pkcs12Data: NSData, options: KeyChainPropertiesData) throws -> [SecItemAttributes] {
         var result: NSArray?
         let status = KeychainStatus.statusFromOSStatus(
             withUnsafeMutablePointer(&result) { SecPKCS12Import(pkcs12Data, options, UnsafeMutablePointer($0)) }
         )
         if status == .OK, let items = result as? [SecItemAttributes]
         {
-            return (status, items)
+            return items
         }
-        return (status, [])
+        else if status == .OK {
+            return []
+        }
+        throw status
     }
-
-
 }
 
+
+
+
 public class Keychain {
-    public class func keyChainItems(securityClass: SecurityClass) -> (KeychainStatus, [KeychainItem]) {
+    public class func keyChainItems(securityClass: SecurityClass) throws -> [KeychainItem] {
         var query : KeyChainPropertiesData = [ : ]
         query[String(kSecClass)]               = SecurityClass.kSecClass(securityClass)
         query[String(kSecReturnData)]          = kCFBooleanFalse
@@ -127,10 +136,9 @@ public class Keychain {
         query[String(kSecReturnPersistentRef)] = kCFBooleanFalse
         query[String(kSecMatchLimit)]          = kSecMatchLimitAll
 
-        let result   : KeychainStatus
         let itemDicts: [SecItemAttributes]
 
-        (result, itemDicts) = SecurityWrapper.secItemCopyMatchingItems(query)
+        itemDicts = try SecurityWrapper.secItemCopyMatchingItems(query)
 
         var items : [KeychainItem] = []
 
@@ -139,14 +147,11 @@ public class Keychain {
                 items.append(item)
             }
         }
-        if result == .OK || result == .ItemNotFoundError {
-            return (.OK, items)
-        } else {
-            return (result, items)
-        }
+        return items
+        //TODO: Test and implement ItemNotFound
     }
 
-    public class func fetchMatchingItem(thatMatchesProperties properties: KeychainMatchable) -> (KeychainStatus, KeychainItem?) {
+    public class func fetchMatchingItem(thatMatchesProperties properties: KeychainMatchable) throws -> KeychainItem? {
         var query : KeyChainPropertiesData = [ : ]
 
         query[String(kSecClass)]            = SecurityClass.kSecClass(properties.securityClass)
@@ -157,19 +162,15 @@ public class Keychain {
 
         query += properties.keychainMatchPropertyValues()
 
-        let (result, itemDict): (KeychainStatus, SecItemAttributes?) = SecurityWrapper.secItemCopyMatchingItem(query)
+        let itemDict : SecItemAttributes? = try SecurityWrapper.secItemCopyMatchingItem(query)
 
-        if result == .OK {
-            return (KeychainStatus.OK, makeKeyChainItem(properties.securityClass, keychainItemAttributes:  itemDict!))
-        }
-
-        return (result, nil)
+        return makeKeyChainItem(properties.securityClass, keychainItemAttributes:  itemDict!)
     }
 
 
 
-    public class func deleteKeyChainItem(itemSpecifier specifier: KeychainMatchable) -> KeychainStatus {
-        return SecurityWrapper.secItemDelete(specifier.keychainMatchPropertyValues())
+    public class func deleteKeyChainItem(itemSpecifier specifier: KeychainMatchable) throws  {
+        try SecurityWrapper.secItemDelete(specifier.keychainMatchPropertyValues())
     }
 
     class func makeKeyChainItem(securityClass: SecurityClass, keychainItemAttributes attributes: SecItemAttributes) -> KeychainItem? {
@@ -177,34 +178,27 @@ public class Keychain {
     }
 
 
-    public class func generateKeyPair(properties: KeychainKeyPairProperties) throws -> (KeychainStatus, KeychainKeyPair?) {
+    public class func generateKeyPair(properties: KeychainKeyPairProperties) throws -> KeychainKeyPair? {
 
-        let (result, publicKeyRef, privateKeyRef) = SecurityWrapper.secKeyGeneratePair(properties.keychainMatchPropertyValues())
-
-        if result == .OK {
-            return (result, try KeychainKeyPair.findInKeychain(properties))
-        } else {
-            return (result, nil)
-        }
+        let (publicKeyRef, privateKeyRef) = try SecurityWrapper.secKeyGeneratePair(properties.keychainMatchPropertyValues())
+        return try KeychainKeyPair.findInKeychain(properties)
     }
 
 
-    public class func addIdentity(identity: IdentityImportSpecifier) -> (KeychainStatus, Identity?) {
-        var item : KeyChainPropertiesData = [ : ]
-        item[String(kSecReturnPersistentRef)] = NSNumber(bool: true);
+//    public class func addIdentity(identity: IdentityImportSpecifier) throws -> (KeychainStatus, Identity?) {
+//        var item : KeyChainPropertiesData = [ : ]
+//        item[String(kSecReturnPersistentRef)] = NSNumber(bool: true);
+//
+//        item += identity.keychainMatchPropertyValues()
+//
+//        //There seems to be a bug in the keychain that causes the SecItemAdd for Identities to fail silently when kSecClass is specified :S
+//        item.removeValueForKey(String(kSecClass))
+//
+//        let itemRefs: AnyObject? = try SecurityWrapper.secItemAdd(item)
+//
+//    }
 
-        item += identity.keychainMatchPropertyValues()
-
-        //There seems to be a bug in the keychain that causes the SecItemAdd for Identities to fail silently when kSecClass is specified :S
-        item.removeValueForKey(String(kSecClass))
-
-        let (result, itemRefs): (KeychainStatus, AnyObject?) = SecurityWrapper.secItemAdd(item)
-
-        return (.OK, nil)
-
-    }
-
-    public class func keyData(key: KeychainKey) -> (KeychainStatus, NSData?) {
+    public class func keyData(key: KeychainKey) throws -> NSData? {
         var keyRef: Unmanaged<AnyObject>?
 
         var query : KeyChainPropertiesData = [ : ]
@@ -215,23 +209,18 @@ public class Keychain {
         query[String(kSecMatchLimit)]       = kSecMatchLimitOne
         query += specifier.keychainMatchPropertyValues()
 
-        let (result, itemDict): (KeychainStatus, NSData?) = SecurityWrapper.secItemCopyMatchingItem(query)
+        let keyData: NSData? = try SecurityWrapper.secItemCopyMatchingItem(query)
+        return keyData
 
-        if result == .OK {
-            return (.OK, itemDict)
-        }
-
-        return (result, nil)
     }
 
-    public class func importP12Identity(identity: P12Identity) -> IdentityReference? {
+    public class func importP12Identity(identity: P12Identity) throws -> IdentityReference? {
         var options : KeyChainPropertiesData = [ : ]
 
         options[kSecImportExportPassphrase as String] = identity.importPassphrase
 
-        let (result, itemRefs) = SecurityWrapper.secPKCS12Import(identity.p12EncodedIdentityData, options: options)
+        let itemRefs = try SecurityWrapper.secPKCS12Import(identity.p12EncodedIdentityData, options: options)
         if itemRefs.count == 1 {
-            let item = itemRefs[0]
             let identityRef : SecIdentityRef = itemRefs[0][kSecImportItemIdentity as String] as! SecIdentityRef
             return IdentityReference(reference: identityRef)
         }

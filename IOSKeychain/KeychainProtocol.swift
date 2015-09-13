@@ -26,7 +26,7 @@ extension KeyChainAttributeStorage where Self : KeyChainAttributeStorage {
 
 // Marks that the item provides a findInKeychain() method that returns matching keychain items
 public protocol KeychainFindable {
-    typealias QueryType : KeychainProperties
+    typealias QueryType //: KeychainProperties
     typealias ResultType : KeychainItem
     static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
 }
@@ -82,8 +82,7 @@ public protocol KeychainMatchable {
 
 // Indicates that the item can be added to the IOS keychain
 public protocol KeychainAddable {
-    typealias KeychainClassType : KeychainFindable
-
+    typealias KeychainClassType : KeychainItem, KeychainFindable
     /**
     Adds the item to the IOS keychain
     :returns: an instance of KeychainClassType
@@ -91,37 +90,27 @@ public protocol KeychainAddable {
     func addToKeychain() throws -> KeychainClassType?
 }
 
-//public func addItemToKeychain<A:KeychainAddable,F:KeychainFindable where
-//    A.KeychainClassType == F.ResultType //, A == F.QueryType, A: SecItemAddable
-//    >
-//    (addable: A) throws -> F.ResultType? {
-////        let (result, _) = addable.secItemAdd()
-////        if (result == .OK) {
-////            return F.findInKeychain(addable)
-////        }
-//        return nil
-//}
+public func addItemToKeychain<A:KeychainAddable,F:KeychainFindable where
+    A.KeychainClassType == F.ResultType, A: SecItemAddable, A == F.QueryType
+    > (a: A) throws -> F.ResultType? {
+        let result = try a.secItemAdd()
+        return try F.findInKeychain(a as F.QueryType)
+}
 //where Self : KeychainAddable, Self : SecItemAddable
 
 extension DetachedPrivateKey : KeychainAddable  {
-   public func addToKeychain() throws -> KeychainPrivateKey? {
-        let (result, _) = self.secItemAdd()
-        if (result == .OK) {
-            return try KeychainPrivateKey.findInKeychain(self)
-//            let F = self.dynamicType.KeychainClassType.self
-//            return F.findInKeychain(self)
-        }
-        return nil
+    public func addToKeychain() throws -> KeychainPrivateKey? {
+        let result = try self.secItemAdd()
+        return try KeychainPrivateKey.findInKeychain(self)
+        // let F = self.dynamicType.KeychainClassType.self
+        // return F.findInKeychain(self)
     }
 }
 //where Self : KeychainAddable, Self : SecItemAddable
 extension DetachedPublicKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPublicKey? {
-        let (result, _) = self.secItemAdd()
-        if (result == .OK) {
-            return try KeychainPublicKey.findInKeychain(self)
-        }
-        return nil
+        let result = try self.secItemAdd()
+        return try KeychainPublicKey.findInKeychain(self)
     }
 }
 
@@ -135,17 +124,17 @@ extension DetachedPublicKey : KeychainAddable  {
 
 // MARK: SecItemAddable
 public protocol SecItemAddable {
-    func secItemAdd() -> (KeychainStatus, AnyObject?)
+    func secItemAdd() throws -> AnyObject?
 }
 
 
 extension SecItemAddable where Self : SecItemAddable, Self : KeychainMatchable {
-    public func secItemAdd() -> (KeychainStatus, AnyObject?) {
+    public func secItemAdd() throws -> AnyObject? {
         var item : KeyChainPropertiesData = [ : ]
         item[String(kSecClass)] = SecurityClass.kSecClass(securityClass)
         item += keychainMatchPropertyValues()
-        let (result, itemRef): (KeychainStatus, AnyObject?) = SecurityWrapper.secItemAdd(item)
-        return (result, itemRef)
+        let itemRef: AnyObject? = try SecurityWrapper.secItemAdd(item)
+        return itemRef
     }
 }
 

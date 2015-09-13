@@ -110,7 +110,7 @@ public let kKeyItemMatchingProperties :     Set<String> = [ String(kSecAttrLabel
 //    .KeySizeInBits, .EffectiveKeySize, .CanEncrypt, .CanDecrypt,
 //    .CanDerive, .CanSign, .CanVerify, .CanWrap, .CanUnwrap  ]
 
-public enum KeychainStatus {
+public enum KeychainStatus : ErrorType {
     case UnimplementedError, ParamError, AllocateError, NotAvailableError,
     AuthFailedError, DuplicateItemError, ItemNotFoundError, InteractionNotAllowedError,
     DecodeError, UnknownError, OK
