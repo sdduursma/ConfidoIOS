@@ -11,7 +11,7 @@ import UIKit
 import XCTest
 import IOSKeychain
 
-class OpenSSLCSRTests: XCTestCase {
+class OpenSSLCSRTests: BaseTests {
     // Check that generateCSRWithPublicKeyData correctly returns an error
     func testCSRWithCorruptDataAndError() {
         let keyPair = OpenSSLRSAKeyPair(keyLength: 2048, privateKeyData: NSData(), publicKeyData: NSData())
@@ -33,13 +33,12 @@ class OpenSSLCSRTests: XCTestCase {
     }
 
     func testGenerateCSR() {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let keypairData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
-        let attributes : [ NSObject : AnyObject] = [ : ]
-
-        XCTAssertNotNil(keypairData)
-        let openSSLKeyPair: OpenSSLKeyPair?
         do {
+            let keypairData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
+            let attributes : [ NSObject : AnyObject] = [ : ]
+
+            XCTAssertNotNil(keypairData)
+            let openSSLKeyPair: OpenSSLKeyPair?
             openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keypairData, encryptedWithPassword: "password")
             XCTAssertNotNil(openSSLKeyPair)
             XCTAssertNotNil(openSSLKeyPair!.privateKeyData)
@@ -76,15 +75,13 @@ class OpenSSLCSRTests: XCTestCase {
     }
 }
 
-class OpenSSLKeyPairTests: XCTestCase {
+class OpenSSLKeyPairTests: BaseTests {
 
     func testKeyPairFromPEM() {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let pemFileData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
-
-        XCTAssertNotNil(pemFileData)
-        let openSSLKeyPair: OpenSSLKeyPair?
         do {
+            let pemFileData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
+
+            let openSSLKeyPair: OpenSSLKeyPair?
             openSSLKeyPair = try OpenSSL.keyPairFromPEMData(pemFileData, encryptedWithPassword: "password")
             XCTAssertNotNil(openSSLKeyPair)
 
@@ -96,11 +93,8 @@ class OpenSSLKeyPairTests: XCTestCase {
 
 
     func testKeyPairWrongPassphrase() {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let pemFileData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
-
-        XCTAssertNotNil(pemFileData)
         do {
+            let pemFileData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
             _ = try OpenSSL.keyPairFromPEMData(pemFileData, encryptedWithPassword: "wrongpassword")
             XCTAssert(false, "Exception should have been raised")
         } catch let error as NSError {
@@ -113,11 +107,10 @@ class OpenSSLKeyPairTests: XCTestCase {
     // These tests are not exhaustive. There are many paths through the code and ideally there should be tests for every combination of input.
 
     func testKeyPairCorruptData() {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let corruptPEMFileData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1 identity", ofType: "p12")!)
 
-        XCTAssertNotNil(corruptPEMFileData)
         do {
+            let corruptPEMFileData = try contentsOfBundleResource("test keypair 1 identity", ofType: "p12")
+            XCTAssertNotNil(corruptPEMFileData)
             _ = try OpenSSL.keyPairFromPEMData(corruptPEMFileData, encryptedWithPassword: "wrongpassword")
             XCTAssert(false, "Exception should have been raised")
         } catch let error as NSError {
@@ -129,18 +122,15 @@ class OpenSSLKeyPairTests: XCTestCase {
 
 
 
-class OpenSSLIdentityTests: XCTestCase {
+class OpenSSLIdentityTests: BaseTests {
     func testIdentityFromX509File() {
-        let bundle = NSBundle(forClass: self.dynamicType)
-        let keyPairPEMData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
+        do {
+        let keyPairPEMData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
 
-        XCTAssertNotNil(keyPairPEMData)
-
-        let certificateData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1 certificate", ofType: "x509")!)
+        let certificateData = try contentsOfBundleResource("test keypair 1 certificate", ofType: "x509")
 
         XCTAssertNotNil(certificateData)
 
-        do {
 
             let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
 

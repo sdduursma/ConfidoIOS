@@ -14,36 +14,32 @@ import Security
 
 
 public protocol Key {
-
 }
 
 public protocol PublicKey : Key {
-
 }
 
 
 extension PublicKey where Self : PublicKey {
-
 }
 
 
 public protocol PrivateKey : Key {
-
 }
 
 extension PublicKey where Self : PublicKey {
-
 }
 
 /**
 An instance of an IOS Keychain Public Key
 */
-public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, InjectKeychainFind {
-    public typealias QueryType = KeychainKeyProperties
+public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, GenerateKeychainFind {
+    //This specifies the argument type and return value for the generated functions
+    public typealias QueryType = KeychainKeyDescriptor
     public typealias ResultType = KeychainPublicKey
 
-    override public init(properties: KeychainKeyProperties, keyRef: SecKey) {
-        super.init(properties: properties, keyRef: keyRef)
+    override public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
+        super.init(descriptor: descriptor, keyRef: keyRef)
         attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
     }
 
@@ -57,12 +53,13 @@ public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, Injec
 /**
 An instance of an IOS Keychain Private Key
 */
-public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  InjectKeychainFind {
-    public typealias QueryType = KeychainKeyProperties
+public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  GenerateKeychainFind {
+    //This specifies the argument type and return value for the generated functions
+    public typealias QueryType = KeychainKeyDescriptor
     public typealias ResultType = KeychainPrivateKey
 
-    override public init(properties: KeychainKeyProperties, keyRef: SecKey) {
-        super.init(properties: properties, keyRef: keyRef)
+    override public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
+        super.init(descriptor: descriptor, keyRef: keyRef)
         attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
     }
 
@@ -92,26 +89,24 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
     public let privateKey: KeychainPrivateKey
     public let publicKey:  KeychainPublicKey
 
-
     public class func importKeyPair(pemEncodedData keyData: NSData, encryptedWithPassphrase passphrase: String, keyLabel: String? = nil , keyAppTag: String? = nil, keyAppLabel: String? = nil) throws -> DetachedKeyPair {
         let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyData, encryptedWithPassword: passphrase)
         return DetachedKeyPair(openSSLKeypair: openSSLKeyPair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
     }
 
-    public class func findInKeychain(matchingProperties: KeychainKeyPairProperties) throws -> KeychainKeyPair? {
-        let privateKey = try KeychainPrivateKey.findInKeychain(matchingProperties.privateKeyQueryProperties() as KeychainPrivateKey.QueryType)
-        let publicKey = try KeychainPublicKey.findInKeychain(matchingProperties.publicKeyQueryProperties())
+    public class func findInKeychain(matchingDescriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair? {
+        let privateKey = try KeychainPrivateKey.findInKeychain(matchingDescriptor.privateKeyDescriptor()  as KeychainPrivateKey.QueryType)
+        let publicKey = try KeychainPublicKey.findInKeychain(matchingDescriptor.publicKeyDescriptor())
         if let privateKey = privateKey, let publicKey = publicKey {
             return KeychainKeyPair(publicKey: publicKey as KeychainPublicKey, privateKey: privateKey as KeychainPrivateKey)
-
         }
         return nil
     }
 
 
-    public init(properties: KeychainKeyPairProperties, publicKeyRef: SecKey, privateKeyRef: SecKey) {
-        self.privateKey = KeychainPrivateKey(properties: properties, keyRef: privateKeyRef)
-        self.publicKey  = KeychainPublicKey(properties: properties, keyRef: publicKeyRef)
+    public init(descriptor: KeychainKeyPairDescriptor, publicKeyRef: SecKey, privateKeyRef: SecKey) {
+        self.privateKey = KeychainPrivateKey(descriptor: descriptor, keyRef: privateKeyRef)
+        self.publicKey  = KeychainPublicKey(descriptor: descriptor, keyRef: publicKeyRef)
         super.init(securityClass: SecurityClass.Key)
     }
 
@@ -148,7 +143,7 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
     }()
 }
 
-public class DetachedPrivateKey : KeychainKeyProperties, SecItemAddable {
+public class DetachedPrivateKey : KeychainKeyDescriptor, SecItemAddable {
     init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
         super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PrivateKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
         attributes[String(kSecValueData)] = keypair.privateKeyData
@@ -156,19 +151,16 @@ public class DetachedPrivateKey : KeychainKeyProperties, SecItemAddable {
     }
 }
 
-public class DetachedPublicKey : KeychainKeyProperties, SecItemAddable {
+public class DetachedPublicKey : KeychainKeyDescriptor, SecItemAddable {
     init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
         super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PublicKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
         attributes[String(kSecValueData)] = keypair.publicKeyData
     }
-
 }
 
-public class DetachedKeyPair :KeychainKeyPairProperties,  KeychainAddable {
+public class DetachedKeyPair :KeychainKeyPairDescriptor,  KeychainAddable {
     //Marks that this class maps to KeychainKeyPair when matching
     public typealias KeychainClassType = KeychainKeyPair
-//    public typealias QueryType = KeychainKeyPairQueryProperties
-//    public typealias ResultType = KeychainKeyPair
 
     let openSSLKeyPair: OpenSSLKeyPair
     let privateKey : DetachedPrivateKey

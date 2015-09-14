@@ -12,15 +12,13 @@ import UIKit
 import XCTest
 import IOSKeychain
 
-class CertificateTests: XCTestCase {
+class CertificateTests: BaseTests {
 
     func testCertificateFromCERFile() {
 
-        let bundle = NSBundle(forClass: self.dynamicType)
+        let certificateDERData : NSData! = NSData(contentsOfFile: testsBundle().pathForResource("Curoo Root CA", ofType: "cer")!)
 
-        let certificateDERData : NSData! = NSData(contentsOfFile: bundle.pathForResource("Curoo Root CA", ofType: "cer")!)
-
-        let certificate : Certificate! = Certificate.certificate(certificateDERData)
+        let certificate : KeychainCertificate! = KeychainCertificate.certificate(certificateDERData)
         XCTAssertNotNil(certificate)
         XCTAssertEqual(certificate.subject!, "Curoo Limited Certification Authority")
 

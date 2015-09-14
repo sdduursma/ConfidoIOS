@@ -83,13 +83,13 @@ public class KeychainItem: AbstractItem, KeychainCommonClassProperties {
     }
 }
 
-public class KeychainProperties : AbstractItem, KeychainMatchable {
+public class KeychainDescriptor : AbstractItem, KeychainMatchable {
     /**
     Initialises keychain properties from a KeychainItem
 
     :param: keychainItem
 
-    :returns: a new instance of KeychainProperties.
+    :returns: a new instance of KeychainDescriptor.
     */
     public init(keychainItem: KeychainItem) {
         super.init(securityClass: keychainItem.securityClass)
@@ -100,9 +100,9 @@ public class KeychainProperties : AbstractItem, KeychainMatchable {
         }
     }
 
-    public init(properties: KeychainProperties) {
-        super.init(securityClass: properties.securityClass)
-        self.attributes = properties.attributes
+    public init(descriptor: KeychainDescriptor) {
+        super.init(securityClass: descriptor.securityClass)
+        self.attributes = descriptor.attributes
     }
 
     override init(securityClass: SecurityClass, byCopyingAttributes attributes: KeyChainAttributeStorage? ) {

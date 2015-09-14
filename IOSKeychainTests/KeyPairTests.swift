@@ -3,14 +3,13 @@
 //  ExpendSecurity
 //
 //  Created by Rudolph van Graan on 19/08/2015.
-//  Copyright (c) 2015 Curoo Limited. All rights reserved.
 //
 
 import UIKit
 import XCTest
 import IOSKeychain
 
-class KeyPairTests: XCTestCase {
+class KeyPairTests: BaseTests {
 
     func testGenerateNamedKeyPair() {
         do {
@@ -18,17 +17,17 @@ class KeyPairTests: XCTestCase {
             var items = try Keychain.keyChainItems(SecurityClass.Key)
             XCTAssertEqual(items.count,0)
 
-            let keyPairSpecifier = PermanentKeychainKeyPairProperties(keyType: .RSA, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
+            let keypairDescriptor = PermanentKeychainKeyPairDescriptor(keyType: .RSA, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
             var keyPair : KeychainKeyPair?
-            keyPair = try Keychain.generateKeyPair(keyPairSpecifier)
+            keyPair = try Keychain.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
 
             items = try Keychain.keyChainItems(.Key)
             XCTAssertEqual(items.count,2)
 
-            let keyQuery = KeychainKeyProperties(keyLabel: "AAA")
+            let keyDescriptor = KeychainKeyDescriptor(keyLabel: "AAA")
             var keyItem: KeychainItem?
-            keyItem = try Keychain.fetchMatchingItem(thatMatchesProperties: keyQuery)
+            keyItem = try Keychain.fetchMatchingItem(thatMatchesProperties: keyDescriptor)
             XCTAssertNotNil(keyItem)
 
             XCTAssertEqual(keyPair!.privateKey.keyType, KeyType.RSA)
@@ -69,8 +68,8 @@ class KeyPairTests: XCTestCase {
             var items = try Keychain.keyChainItems(SecurityClass.Key)
             XCTAssertEqual(items.count,0)
 
-            let keyPairSpecifier = TemporaryKeychainKeyPairProperties(keyType: .RSA, keySize: 1024)
-            let keyPair = try Keychain.generateKeyPair(keyPairSpecifier)
+            let keypairDescriptor = TemporaryKeychainKeyPairDescriptor(keyType: .RSA, keySize: 1024)
+            let keyPair = try Keychain.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
 
             items =  try Keychain.keyChainItems(.Key)
@@ -100,8 +99,8 @@ class KeyPairTests: XCTestCase {
             var items = try Keychain.keyChainItems(SecurityClass.Key)
             XCTAssertEqual(items.count,0)
 
-            var keyPairSpecifier = PermanentKeychainKeyPairProperties(keyType: .RSA, keySize: 1024, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")
-            var keyPair : KeychainKeyPair? = try Keychain.generateKeyPair(keyPairSpecifier)
+            var keypairDescriptor = PermanentKeychainKeyPairDescriptor(keyType: .RSA, keySize: 1024, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")
+            var keyPair : KeychainKeyPair? = try Keychain.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
 
 
@@ -110,20 +109,20 @@ class KeyPairTests: XCTestCase {
 
             // Test that labels make the keypair unique
             do {
-                keyPair = try Keychain.generateKeyPair(keyPairSpecifier)
+                keyPair = try Keychain.generateKeyPair(keypairDescriptor)
                 XCTFail("Expected DuplicateItemError")
             } catch KeychainStatus.DuplicateItemError {
                 // keySize, keyLabel, keyAppTag, keyAppLabel all the same --> DuplicateItemError
             }
 
             // different keySize
-            keyPairSpecifier = PermanentKeychainKeyPairProperties(keyType: .RSA, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")
-            keyPair = try Keychain.generateKeyPair(keyPairSpecifier)
+            keypairDescriptor = PermanentKeychainKeyPairDescriptor(keyType: .RSA, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")
+            keyPair = try Keychain.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
         } catch let error {
             XCTFail("Unexpected Exception \(error)")
         }
-        
+
     }
 
     func testExportCSR (){
@@ -132,8 +131,8 @@ class KeyPairTests: XCTestCase {
             let items = try Keychain.keyChainItems(SecurityClass.Key)
             XCTAssertEqual(items.count,0)
 
-            let keyPairSpecifier = PermanentKeychainKeyPairProperties(keyType: .RSA, keySize: 1024, keyLabel: "KeyPair1")
-            let keyPair : KeychainKeyPair? = try Keychain.generateKeyPair(keyPairSpecifier)
+            let keypairDescriptor = PermanentKeychainKeyPairDescriptor(keyType: .RSA, keySize: 1024, keyLabel: "KeyPair1")
+            let keyPair : KeychainKeyPair? = try Keychain.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
 
             let attributes = [
@@ -150,7 +149,7 @@ class KeyPairTests: XCTestCase {
         } catch let error{
             XCTFail("Unexpected Exception \(error)")
         }
-        
+
     }
 
     func testImportPEMKey() {
@@ -158,10 +157,9 @@ class KeyPairTests: XCTestCase {
             clearKeychainItems(.Key)
             let items = try Keychain.keyChainItems(.Key)
             XCTAssertEqual(items.count,0)
-            let bundle = NSBundle(forClass: self.dynamicType)
-            let keyPairPEMData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
+            
+            let keyPairPEMData  = try contentsOfBundleResource("test keypair 1", ofType: "pem")
 
-            XCTAssertNotNil(keyPairPEMData)
             let detachedKeyPair = try KeychainKeyPair.importKeyPair(pemEncodedData: keyPairPEMData, encryptedWithPassphrase: "password", keyLabel: "abcd")
 
             let keyPair = try detachedKeyPair.addToKeychain()
@@ -172,76 +170,66 @@ class KeyPairTests: XCTestCase {
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
-            
-            
-        }
-        
+
+
+    }
+
 
     func testImportIdentity() {
-
-        clearKeychainItems(.Identity)
-        clearKeychainItems(.Key)
-        clearKeychainItems(.Certificate)
-
-        let bundle = NSBundle(forClass: self.dynamicType)
-
-        let keyPairPEMData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1", ofType: "pem")!)
-
-        XCTAssertNotNil(keyPairPEMData)
-
-        let certificateData : NSData! = NSData(contentsOfFile: bundle.pathForResource("test keypair 1 certificate", ofType: "x509")!)
-
-        XCTAssertNotNil(certificateData)
-
-//        do {
-//
-//            //            let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
-//            //
-//            //            XCTAssertNotNil(openSSLKeyPair)
-//            //
-//            //            var openSSLIdentity: OpenSSLIdentity?
-//            //            openSSLIdentity = try OpenSSL.pkcs12IdentityWithKeyPair(openSSLKeyPair!, certificate: OpenSSLCertificate(certificateData: certificateData), protectedWithPassphrase: "randompassword")
-//            //            XCTAssertNotNil(openSSLIdentity)
-//            //
-//            //            let p12Identity = P12Identity(openSSLIdentity: openSSLIdentity!, importPassphrase: "randompassword")
-//            //
-//            //
-//            //            let ref = Keychain.importP12Identity(p12Identity)
-//            //            XCTAssertNotNil(ref)
-//            //
-//            //            let specifier = IdentityImportSpecifier(identityReference: ref!, itemLabel: "SomeLabel")
-//            //            Keychain.addIdentity(specifier)
-//
-//        } catch let error  {
-//            XCTFail("Unexpected Exception \(error)")
-//        }
-//        
-
-        }
-    
-    
-    
-    func clearKeychainItems(type: SecurityClass) {
         do {
-            var items = try Keychain.keyChainItems(type)
 
-            var n = items.count
-            for item in items {
-                try Keychain.deleteKeyChainItem(itemSpecifier: item.keychainMatchPropertyValues())
+            clearKeychainItems(.Identity)
+            clearKeychainItems(.Key)
+            clearKeychainItems(.Certificate)
 
-                items = try Keychain.keyChainItems(type)
+            let keyPairPEMData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
 
-                XCTAssertEqual(items.count,n-1)
-                n = items.count
-            }
-            XCTAssertEqual(items.count,0)
+            let certificateData = try contentsOfBundleResource("test keypair 1 certificate", ofType: "x509")
+
+            XCTAssertNotNil(certificateData)
+
+            let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
+
+            XCTAssertNotNil(openSSLKeyPair)
+
+            var openSSLIdentity: OpenSSLIdentity?
+            openSSLIdentity = try OpenSSL.pkcs12IdentityWithKeyPair(openSSLKeyPair, certificate: OpenSSLCertificate(certificateData: certificateData), protectedWithPassphrase: "randompassword")
+            XCTAssertNotNil(openSSLIdentity)
+
+            let p12Identity = P12Identity(openSSLIdentity: openSSLIdentity!, importPassphrase: "randompassword")
+
+            let ref = try Keychain.importP12Identity(p12Identity)
+            XCTAssertNotNil(ref)
+
+
+            let descriptor = IdentityImportDescriptor(identityReference: ref!, itemLabel: "SomeLabel")
+            //            Keychain.addIdentity(descriptor)
+            
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
         
+        
+    }
+    
+    func testImportPKCS12Identity() {
+        do {
+            let p12Data = try contentsOfBundleResource("test identity", ofType: "p12")
+            XCTAssertNotNil(p12Data)
+
+            let detachedIdentity = try KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
+            let identity = try detachedIdentity.addToKeychain()
+            XCTAssertNotNil(identity)
+
+        } catch let error  {
+            XCTFail("Unexpected Exception \(error)")
+        }
+
     }
 
 
+
+    
     
     
     

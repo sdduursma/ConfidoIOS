@@ -13,7 +13,7 @@
 		AB16CF7A1BA180CF008C9D1C /* OpenSSLIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF791BA180CF008C9D1C /* OpenSSLIdentity.swift */; };
 		AB16CF7C1BA180DF008C9D1C /* OpenSSLCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7B1BA180DF008C9D1C /* OpenSSLCertificate.swift */; };
 		AB16CF7E1BA18224008C9D1C /* OpenSSLObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */; };
-		AB16CF801BA19704008C9D1C /* Identity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7F1BA19704008C9D1C /* Identity.swift */; };
+		AB16CF801BA19704008C9D1C /* KeychainIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7F1BA19704008C9D1C /* KeychainIdentity.swift */; };
 		AB408E461BA1E3C600A37FAA /* CertificateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB408E451BA1E3C600A37FAA /* CertificateTests.swift */; };
 		AB408E571BA1E8B500A37FAA /* Curoo Product CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB408E531BA1E8B500A37FAA /* Curoo Product CA.cer */; };
 		AB408E581BA1E8B500A37FAA /* Curoo Root CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB408E541BA1E8B500A37FAA /* Curoo Root CA.cer */; };
@@ -27,7 +27,7 @@
 		AB710ECD1BA0613E003AE8B0 /* SecurityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */; };
 		AB710ECF1BA0613E003AE8B0 /* ItemSpecifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */; };
 		AB710ED01BA0613E003AE8B0 /* KeychainKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */; };
-		AB710ED11BA0613E003AE8B0 /* Certificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC91BA0613E003AE8B0 /* Certificate.swift */; };
+		AB710ED11BA0613E003AE8B0 /* KeychainCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC91BA0613E003AE8B0 /* KeychainCertificate.swift */; };
 		AB710ED21BA0613E003AE8B0 /* KeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ECA1BA0613E003AE8B0 /* KeyPair.swift */; };
 		AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */; };
 		AB710ED61BA066A3003AE8B0 /* OpenSSL.m in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED51BA066A3003AE8B0 /* OpenSSL.m */; };
@@ -38,6 +38,7 @@
 		AB710EE51BA07402003AE8B0 /* test keypair 1.pem in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE01BA07402003AE8B0 /* test keypair 1.pem */; };
 		AB710EE61BA07402003AE8B0 /* test keypair 1 certificate.x509 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */; };
 		ABB02D9E1BA33B5E004DF178 /* KeychainProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */; settings = {ASSET_TAGS = (); }; };
+		ABB02DA01BA6D03C004DF178 /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,7 +63,7 @@
 		AB16CF791BA180CF008C9D1C /* OpenSSLIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLIdentity.swift; sourceTree = "<group>"; };
 		AB16CF7B1BA180DF008C9D1C /* OpenSSLCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLCertificate.swift; sourceTree = "<group>"; };
 		AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLObject.swift; sourceTree = "<group>"; };
-		AB16CF7F1BA19704008C9D1C /* Identity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Identity.swift; sourceTree = "<group>"; };
+		AB16CF7F1BA19704008C9D1C /* KeychainIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainIdentity.swift; sourceTree = "<group>"; };
 		AB408E451BA1E3C600A37FAA /* CertificateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateTests.swift; sourceTree = "<group>"; };
 		AB408E531BA1E8B500A37FAA /* Curoo Product CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Product CA.cer"; sourceTree = "<group>"; };
 		AB408E541BA1E8B500A37FAA /* Curoo Root CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Root CA.cer"; sourceTree = "<group>"; };
@@ -78,7 +79,7 @@
 		AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityMappings.swift; sourceTree = "<group>"; };
 		AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemSpecifier.swift; sourceTree = "<group>"; };
 		AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKey.swift; sourceTree = "<group>"; };
-		AB710EC91BA0613E003AE8B0 /* Certificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Certificate.swift; sourceTree = "<group>"; };
+		AB710EC91BA0613E003AE8B0 /* KeychainCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainCertificate.swift; sourceTree = "<group>"; };
 		AB710ECA1BA0613E003AE8B0 /* KeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPair.swift; sourceTree = "<group>"; };
 		AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
 		AB710ED51BA066A3003AE8B0 /* OpenSSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenSSL.m; sourceTree = "<group>"; };
@@ -89,6 +90,7 @@
 		AB710EE01BA07402003AE8B0 /* test keypair 1.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1.pem"; sourceTree = "<group>"; };
 		AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1 certificate.x509"; sourceTree = "<group>"; };
 		ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainProtocol.swift; sourceTree = "<group>"; };
+		ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,8 +137,8 @@
 		AB710EA91BA060FB003AE8B0 /* IOSKeychain */ = {
 			isa = PBXGroup;
 			children = (
-				AB710EC91BA0613E003AE8B0 /* Certificate.swift */,
-				AB16CF7F1BA19704008C9D1C /* Identity.swift */,
+				AB710EC91BA0613E003AE8B0 /* KeychainCertificate.swift */,
+				AB16CF7F1BA19704008C9D1C /* KeychainIdentity.swift */,
 				AB710EAC1BA060FB003AE8B0 /* IOSKeychain.h */,
 				AB710EC71BA0613E003AE8B0 /* ItemSpecifier.swift */,
 				AB710EC41BA0613E003AE8B0 /* Keychain.swift */,
@@ -167,6 +169,7 @@
 		AB710EB61BA060FB003AE8B0 /* IOSKeychainTests */ = {
 			isa = PBXGroup;
 			children = (
+				ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */,
 				AB408E451BA1E3C600A37FAA /* CertificateTests.swift */,
 				AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */,
 				AB16CF771BA16F1E008C9D1C /* OpenSSLTests.swift */,
@@ -283,7 +286,7 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Curoo Limited";
 				TargetAttributes = {
 					AB710EA61BA060FB003AE8B0 = {
@@ -406,7 +409,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB710ED11BA0613E003AE8B0 /* Certificate.swift in Sources */,
+				AB710ED11BA0613E003AE8B0 /* KeychainCertificate.swift in Sources */,
 				AB16CF7A1BA180CF008C9D1C /* OpenSSLIdentity.swift in Sources */,
 				AB710ECB1BA0613E003AE8B0 /* KeyChainItem.swift in Sources */,
 				AB710ECD1BA0613E003AE8B0 /* SecurityMappings.swift in Sources */,
@@ -419,7 +422,7 @@
 				AB710ED01BA0613E003AE8B0 /* KeychainKey.swift in Sources */,
 				AB16CF7C1BA180DF008C9D1C /* OpenSSLCertificate.swift in Sources */,
 				AB710ED61BA066A3003AE8B0 /* OpenSSL.m in Sources */,
-				AB16CF801BA19704008C9D1C /* Identity.swift in Sources */,
+				AB16CF801BA19704008C9D1C /* KeychainIdentity.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -427,6 +430,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ABB02DA01BA6D03C004DF178 /* BaseTests.swift in Sources */,
 				AB408E461BA1E3C600A37FAA /* CertificateTests.swift in Sources */,
 				AB16CF781BA16F1E008C9D1C /* OpenSSLTests.swift in Sources */,
 				AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */,
@@ -467,6 +471,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -549,6 +554,7 @@
 				INFOPLIST_FILE = IOSKeychain/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -567,6 +573,7 @@
 				INFOPLIST_FILE = IOSKeychain/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -586,6 +593,7 @@
 				);
 				INFOPLIST_FILE = IOSKeychainTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -600,6 +608,7 @@
 				);
 				INFOPLIST_FILE = IOSKeychainTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

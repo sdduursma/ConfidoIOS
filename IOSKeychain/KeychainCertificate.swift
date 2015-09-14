@@ -6,7 +6,11 @@
 
 import Foundation
 
-public class Certificate : KeychainItem {
+public protocol Certificate {
+
+}
+
+public class KeychainCertificate : KeychainItem, Certificate {
     var secCertificate: SecCertificate?
     public private(set) var subject: String?
     var issuerName: String?
@@ -15,10 +19,10 @@ public class Certificate : KeychainItem {
     var expiryDate: NSDate?
 
 
-    public class func certificate(derEncodedCertificateData: NSData) -> Certificate? {
+    public class func certificate(derEncodedCertificateData: NSData) -> KeychainCertificate? {
         let secCertificate = SecCertificateCreateWithData(nil, derEncodedCertificateData)
         if secCertificate != nil {
-            return Certificate(secCertificate: secCertificate!)
+            return KeychainCertificate(secCertificate: secCertificate!)
         }
         return nil;
     }

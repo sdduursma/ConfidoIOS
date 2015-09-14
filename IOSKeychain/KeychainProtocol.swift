@@ -14,13 +14,11 @@ public protocol KeyChainAttributeStorage {
     subscript(attribute: String) -> AnyObject? { get }
 }
 
-
 extension KeyChainAttributeStorage where Self : KeyChainAttributeStorage {
     public subscript(attribute: String) -> AnyObject? {
         return attributes[attribute]
     }
 }
-
 
 // MARK: KeychainMatchable
 
@@ -34,8 +32,6 @@ public protocol KeychainMatchable {
     var securityClass: SecurityClass { get }
 }
 
-
-
 // MARK: KeychainFindable
 
 // Marks that the item provides a findInKeychain() method that returns matching keychain items
@@ -45,11 +41,11 @@ public protocol KeychainFindable {
     static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
 }
 
-public protocol InjectKeychainFind : KeychainFindable {
-
+// This is used to flag specific classes to use the generic findInKeychain() below, otherwise the method needs ot be written by hand
+public protocol GenerateKeychainFind : KeychainFindable {
 }
 
-extension KeychainFindable where Self : KeychainFindable, Self : InjectKeychainFind {
+extension KeychainFindable where Self : KeychainFindable, Self : GenerateKeychainFind {
     public static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?  {
         if let keychainItem = try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) {
             return keychainItem as? ResultType
@@ -58,29 +54,16 @@ extension KeychainFindable where Self : KeychainFindable, Self : InjectKeychainF
    }
 }
 
-//extension KeychainPrivateKey {
-//    public static func findInKeychain(matchingProperties: KeychainKeyProperties) throws -> KeychainPrivateKey? {
-//        return try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) as? KeychainPrivateKey
-//    }
-//}
-//
-//extension KeychainPublicKey {
-//    public static func findInKeychain(matchingProperties: KeychainKeyProperties) throws -> KeychainPublicKey? {
-//        return try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) as? KeychainPublicKey
-//    }
-//}
-
-
 // MARK: KeychainMatching
 
 public protocol KeychainMatching {
-    func keychainMatchPropertyValues() -> KeychainProperties
+    func keychainMatchPropertyValues() -> KeychainDescriptor
 }
 
 
 extension KeychainItem  {
-    public func keychainMatchPropertyValues() -> KeychainProperties {
-        return KeychainProperties(keychainItem: self)
+    public func keychainMatchPropertyValues() -> KeychainDescriptor {
+        return KeychainDescriptor(keychainItem: self)
     }
 }
 
@@ -97,13 +80,6 @@ public protocol KeychainAddable {
     func addToKeychain() throws -> KeychainClassType?
 }
 
-public func addItemToKeychain<A:KeychainAddable,F:KeychainFindable where
-    A.KeychainClassType == F.ResultType, A: SecItemAddable, A == F.QueryType
-    > (a: A) throws -> F.ResultType? {
-        try a.secItemAdd()
-        return try F.findInKeychain(a as F.QueryType)
-}
-//where Self : KeychainAddable, Self : SecItemAddable
 
 extension DetachedPrivateKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPrivateKey? {
@@ -111,7 +87,6 @@ extension DetachedPrivateKey : KeychainAddable  {
         return try KeychainPrivateKey.findInKeychain(self)
     }
 }
-//where Self : KeychainAddable, Self : SecItemAddable
 extension DetachedPublicKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPublicKey? {
         try self.secItemAdd()
@@ -119,7 +94,7 @@ extension DetachedPublicKey : KeychainAddable  {
     }
 }
 
-
+//TODO: The two extensions above should be replaced with a generic extension similar to this
 //extension KeychainAddable where Self : KeychainAddable, Self : SecItemAddable {
 //    public func addToKeychain<T>() throws -> T? {
 //        return addToKeychain(self)
@@ -128,10 +103,10 @@ extension DetachedPublicKey : KeychainAddable  {
 
 
 // MARK: SecItemAddable
+// Generic Protocol to mark that the item can be added to the IOS Keychain
 public protocol SecItemAddable {
     func secItemAdd() throws -> AnyObject?
 }
-
 
 extension SecItemAddable where Self : SecItemAddable, Self : KeychainMatchable {
     public func secItemAdd() throws -> AnyObject? {
@@ -156,6 +131,7 @@ Properties for Keychain Items of class kSecClassKey
 */
 public protocol KeychainCommonClassProperties : KeyChainAttributeStorage {
     var itemAccessGroup: String? { get}
+    //TODO: rename itemLabel to label
     var itemLabel: String? { get }
 }
 

@@ -21,9 +21,9 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
 
     var keySecKey: SecKey?
 
-    public init(properties: KeychainKeyProperties, keyRef: SecKey) {
+    public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
         keySecKey = keyRef
-        super.init(securityClass: .Key,  byCopyingAttributes: properties)
+        super.init(securityClass: .Key,  byCopyingAttributes: descriptor)
     }
 
     public init(SecItemAttributes attributes: SecItemAttributes) {

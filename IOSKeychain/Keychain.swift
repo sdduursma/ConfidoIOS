@@ -169,8 +169,8 @@ public class Keychain {
 
 
 
-    public class func deleteKeyChainItem(itemSpecifier specifier: KeychainMatchable) throws  {
-        try SecurityWrapper.secItemDelete(specifier.keychainMatchPropertyValues())
+    public class func deleteKeyChainItem(itemDescriptor descriptor: KeychainMatchable) throws  {
+        try SecurityWrapper.secItemDelete(descriptor.keychainMatchPropertyValues())
     }
 
     class func makeKeyChainItem(securityClass: SecurityClass, keychainItemAttributes attributes: SecItemAttributes) -> KeychainItem? {
@@ -178,10 +178,10 @@ public class Keychain {
     }
 
 
-    public class func generateKeyPair(properties: KeychainKeyPairProperties) throws -> KeychainKeyPair? {
+    public class func generateKeyPair(descriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair? {
 
-        let (publicKeyRef, privateKeyRef) = try SecurityWrapper.secKeyGeneratePair(properties.keychainMatchPropertyValues())
-        return try KeychainKeyPair.findInKeychain(properties)
+        try SecurityWrapper.secKeyGeneratePair(descriptor.keychainMatchPropertyValues())
+        return try KeychainKeyPair.findInKeychain(descriptor)
     }
 
 
@@ -199,15 +199,13 @@ public class Keychain {
 //    }
 
     public class func keyData(key: KeychainKey) throws -> NSData? {
-        var keyRef: Unmanaged<AnyObject>?
-
         var query : KeyChainPropertiesData = [ : ]
 
-        let specifier = key.keychainMatchPropertyValues()
+        let descriptor = key.keychainMatchPropertyValues()
         query[String(kSecClass)]            = SecurityClass.kSecClass(key.securityClass)
         query[String(kSecReturnData)]       = kCFBooleanTrue
         query[String(kSecMatchLimit)]       = kSecMatchLimitOne
-        query += specifier.keychainMatchPropertyValues()
+        query += descriptor.keychainMatchPropertyValues()
 
         let keyData: NSData? = try SecurityWrapper.secItemCopyMatchingItem(query)
         return keyData

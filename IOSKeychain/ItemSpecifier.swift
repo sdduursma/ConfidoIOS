@@ -1,5 +1,5 @@
 //
-//  ItemSpecifier.swift
+//  Itemdescriptor.swift
 //  ExpendSecurity
 //
 //  Created by Rudolph van Graan on 21/08/2015.
@@ -14,17 +14,15 @@ Base class for all queries to the keychain.
 */
 
 
-
-public class KeychainKeyProperties : KeychainProperties {
-
+public class KeychainKeyDescriptor : KeychainDescriptor {
     class func encodeKeyAppLabel(keyAppLabel: String?) -> NSData? {
         if keyAppLabel == nil { return nil }
         return keyAppLabel!.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: true)
     }
 
 
-    public init(keyProperties: KeychainKeyProperties) {
-        super.init(properties: keyProperties)
+    public init(keyDescriptor: KeychainKeyDescriptor) {
+        super.init(descriptor: keyDescriptor)
     }
 
     public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil,
@@ -40,7 +38,7 @@ public class KeychainKeyProperties : KeychainProperties {
                 attributes[String(kSecAttrKeyClass)]         = KeyClass.kSecAttrKeyClass(keyClass!)
             }
             if keyAppLabel != nil {
-                attributes[String(kSecAttrApplicationLabel)] = KeychainKeyProperties.encodeKeyAppLabel(keyAppLabel)
+                attributes[String(kSecAttrApplicationLabel)] = KeychainKeyDescriptor.encodeKeyAppLabel(keyAppLabel)
             }
             if keyAppTag != nil {
                 attributes[String(kSecAttrApplicationTag)]   = keyAppTag!
@@ -50,36 +48,36 @@ public class KeychainKeyProperties : KeychainProperties {
 }
 
 public protocol KeyPairQueryable {
-    func privateKeyQueryProperties() -> KeychainKeyProperties
-    func publicKeyQueryProperties() -> KeychainKeyProperties
+    func privateKeyDescriptor() -> KeychainKeyDescriptor
+    func publicKeyDescriptor() -> KeychainKeyDescriptor
 }
 
-public class KeychainKeyPairProperties : KeychainKeyProperties, KeyPairQueryable {
+public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable {
     override public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil, keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
         super.init(keyType: keyType, keySize: keySize, keyClass: keyClass, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
     }
 
-    public func privateKeyQueryProperties() -> KeychainKeyProperties {
-        let specifier = KeychainKeyProperties(keyProperties: self)
-        specifier.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
-        return specifier
+    public func privateKeyDescriptor() -> KeychainKeyDescriptor {
+        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
+        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
+        return descriptor
     }
 
-    public func publicKeyQueryProperties() -> KeychainKeyProperties {
-        let specifier = KeychainKeyProperties(keyProperties: self)
-        specifier.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
-        return specifier
+    public func publicKeyDescriptor() -> KeychainKeyDescriptor {
+        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
+        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
+        return descriptor
     }
 }
 
-public class TemporaryKeychainKeyPairProperties : KeychainKeyPairProperties {
+public class TemporaryKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     public init(keyType: KeyType, keySize: Int) {
         super.init(keyType: keyType, keySize: keySize)
         attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: false)
     }
 }
 
-public class PermanentKeychainKeyPairProperties : KeychainKeyPairProperties {
+public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     public init(keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
         super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel )
         attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
