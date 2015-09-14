@@ -89,9 +89,9 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
     public let privateKey: KeychainPrivateKey
     public let publicKey:  KeychainPublicKey
 
-    public class func importKeyPair(pemEncodedData keyData: NSData, encryptedWithPassphrase passphrase: String, keyLabel: String? = nil , keyAppTag: String? = nil, keyAppLabel: String? = nil) throws -> DetachedKeyPair {
+    public class func importKeyPair(pemEncodedData keyData: NSData, encryptedWithPassphrase passphrase: String, keyLabel: String? = nil , keyAppTag: String? = nil, keyAppLabel: String? = nil) throws -> TransportKeyPair {
         let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyData, encryptedWithPassword: passphrase)
-        return DetachedKeyPair(openSSLKeypair: openSSLKeyPair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
+        return TransportKeyPair(openSSLKeypair: openSSLKeyPair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
     }
 
     public class func findInKeychain(matchingDescriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair? {
@@ -143,7 +143,7 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
     }()
 }
 
-public class DetachedPrivateKey : KeychainKeyDescriptor, SecItemAddable {
+public class TransportPrivateKey : KeychainKeyDescriptor, SecItemAddable {
     init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
         super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PrivateKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
         attributes[String(kSecValueData)] = keypair.privateKeyData
@@ -151,24 +151,24 @@ public class DetachedPrivateKey : KeychainKeyDescriptor, SecItemAddable {
     }
 }
 
-public class DetachedPublicKey : KeychainKeyDescriptor, SecItemAddable {
+public class TransportPublicKey : KeychainKeyDescriptor, SecItemAddable {
     init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
         super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PublicKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
         attributes[String(kSecValueData)] = keypair.publicKeyData
     }
 }
 
-public class DetachedKeyPair :KeychainKeyPairDescriptor,  KeychainAddable {
+public class TransportKeyPair :KeychainKeyPairDescriptor,  KeychainAddable {
     //Marks that this class maps to KeychainKeyPair when matching
     public typealias KeychainClassType = KeychainKeyPair
 
     let openSSLKeyPair: OpenSSLKeyPair
-    let privateKey : DetachedPrivateKey
-    let publicKey  : DetachedPublicKey
+    let privateKey : TransportPrivateKey
+    let publicKey  : TransportPublicKey
     public init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String? , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
         self.openSSLKeyPair = keypair
-        self.privateKey = DetachedPrivateKey(openSSLKeypair: keypair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-        self.publicKey = DetachedPublicKey(openSSLKeypair: keypair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
+        self.privateKey = TransportPrivateKey(openSSLKeypair: keypair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
+        self.publicKey = TransportPublicKey(openSSLKeypair: keypair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
 
         super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: nil, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
     }

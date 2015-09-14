@@ -81,13 +81,13 @@ public protocol KeychainAddable {
 }
 
 
-extension DetachedPrivateKey : KeychainAddable  {
+extension TransportPrivateKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPrivateKey? {
         try self.secItemAdd()
         return try KeychainPrivateKey.findInKeychain(self)
     }
 }
-extension DetachedPublicKey : KeychainAddable  {
+extension TransportPublicKey : KeychainAddable  {
     public func addToKeychain() throws -> KeychainPublicKey? {
         try self.secItemAdd()
         return try KeychainPublicKey.findInKeychain(self)
