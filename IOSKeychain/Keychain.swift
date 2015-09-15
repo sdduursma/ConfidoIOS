@@ -18,44 +18,78 @@ func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right:
         left.updateValue(v, forKey: k)
     }
 }
+public enum KeychainError : ErrorType {
+    case
+    NoSecIdentityReference,
+    NoSecCertificateReference,
+    NoSecKeyReference,
+    UnimplementedSecurityClass,
+    MismatchedResultType(returnedType: AnyClass, declaredType: Any),
+    InvalidCertificateData
+}
 
+/**
+Wraps the raw secXYZ APIs
+*/
 public class SecurityWrapper {
-    public class func secItemCopyMatchingItem<T>(query: KeyChainPropertiesData) throws -> T? {
-        let dictionary = NSMutableDictionary()
-        dictionary[String(kSecMatchLimit)]       = kSecMatchLimitOne
-        dictionary.addEntriesFromDictionary(query)
+    /**
+    A typical query consists of:
 
+    * a kSecClass key, whose value is a constant from the Class
+    Constants section that specifies the class of item(s) to be searched
+    * one or more keys from the "Attribute Key Constants" section, whose value
+    is the attribute data to be matched
+    * one or more keys from the "Search Constants" section, whose value is
+    used to further refine the search
+    * a key from the "Return Type Key Constants" section, specifying the type of
+    results desired
 
+    Result types are specified as follows:
+
+    * To obtain the data of a matching item (CFDataRef), specify
+    kSecReturnData with a value of kCFBooleanTrue.
+    * To obtain the attributes of a matching item (CFDictionaryRef), specify
+    kSecReturnAttributes with a value of kCFBooleanTrue.
+    * To obtain a reference to a matching item (SecKeychainItemRef,
+    SecKeyRef, SecCertificateRef, or SecIdentityRef), specify kSecReturnRef
+    with a value of kCFBooleanTrue.
+    * To obtain a persistent reference to a matching item (CFDataRef),
+    specify kSecReturnPersistentRef with a value of kCFBooleanTrue. Note
+    that unlike normal references, a persistent reference may be stored
+    on disk or passed between processes.
+    * If more than one of these result types is specified, the result is
+    returned as a CFDictionaryRef containing all the requested data.
+    * If a result type is not specified, no results are returned.
+
+    By default, this function returns only the first match found. To obtain
+    more than one matching item at a time, specify kSecMatchLimit with a value
+    greater than 1. The result will be a CFArrayRef containing up to that
+    number of matching items; the items' types are described above.
+
+    To filter a provided list of items down to those matching the query,
+    specify a kSecMatchItemList whose value is a CFArray of SecKeychainItemRef,
+    SecKeyRef, SecCertificateRef, or SecIdentityRef items. The objects in the
+    provided array must be of the same type.
+
+    To convert from a persistent item reference to a normal item reference,
+    specify a kSecValuePersistentRef whose value a CFDataRef (the persistent
+    reference), and a kSecReturnRef whose value is kCFBooleanTrue.
+    */
+
+    public class func secItemCopyMatching<T>(query: KeyChainPropertiesData) throws -> T {
         var result: AnyObject?
         let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(&result) { SecItemCopyMatching(dictionary, UnsafeMutablePointer($0)) }
+            withUnsafeMutablePointer(&result) { SecItemCopyMatching(query, UnsafeMutablePointer($0)) }
             )
         if status == .OK, let returnValue = result as? T {
             return returnValue
-        } else if status == .OK || status == .ItemNotFoundError {
-            return nil
+        } else if status == .OK, let returnValue = result {
+            throw KeychainError.MismatchedResultType(returnedType: returnValue.dynamicType, declaredType: T.self)
+        } else if status == .OK {
+            throw KeychainStatus.ItemNotFoundError
         }
         throw status
     }
-
-    public class func secItemCopyMatchingItems(query: KeyChainPropertiesData) throws -> [SecItemAttributes] {
-        let attributes = NSMutableDictionary()
-        attributes[String(kSecMatchLimit)]       = kSecMatchLimitAll
-        attributes.addEntriesFromDictionary(query)
-
-        var result: AnyObject?
-
-        let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(&result) { SecItemCopyMatching(attributes, UnsafeMutablePointer($0)) }
-        )
-        if status == .OK, let items = result as? [SecItemAttributes] {
-            return items
-        } else if status == .OK || status == .ItemNotFoundError {
-            return []
-        }
-        throw status
-    }
-
 
     public class func secItemAdd(attributes: KeychainItemData) throws -> AnyObject?  {
         var persistedRef: AnyObject?
@@ -70,19 +104,8 @@ public class SecurityWrapper {
                 print(data)
             }
         }
-
-
         return []
-//        println(status)
-//        println(result)
-//        if status == .OK {
-//            return (status, nil)
-//        }
-//        return (status, [])
     }
-
-
-
 
     public class func secItemDelete(query: KeyChainPropertiesData) throws  {
         let dictionary = NSMutableDictionary()
@@ -123,58 +146,56 @@ public class SecurityWrapper {
     }
 }
 
-
-
+public enum KeychainReturnLimit {
+    case One, All
+}
 
 public class Keychain {
     public class func keyChainItems(securityClass: SecurityClass) throws -> [KeychainItem] {
-        var query : KeyChainPropertiesData = [ : ]
-        query[String(kSecClass)]               = SecurityClass.kSecClass(securityClass)
-        query[String(kSecReturnData)]          = kCFBooleanFalse
-        query[String(kSecReturnAttributes)]    = kCFBooleanTrue
-        query[String(kSecReturnRef)]           = kCFBooleanFalse
-        query[String(kSecReturnPersistentRef)] = kCFBooleanFalse
-        query[String(kSecMatchLimit)]          = kSecMatchLimitAll
-
-        let itemDicts: [SecItemAttributes]
-
-        itemDicts = try SecurityWrapper.secItemCopyMatchingItems(query)
-
-        var items : [KeychainItem] = []
-
-        for itemDict in itemDicts {
-            if let item = makeKeyChainItem(securityClass, keychainItemAttributes: itemDict) {
-                items.append(item)
-            }
-        }
-        return items
-        //TODO: Test and implement ItemNotFound
+        return try fetchItems(matchingDescriptor: KeychainDescriptor(securityClass: securityClass), returning: .All)
     }
 
-    public class func fetchMatchingItem(thatMatchesProperties properties: KeychainMatchable) throws -> KeychainItem? {
+    public class func fetchItems(matchingDescriptor attributes: KeychainMatchable, returning: KeychainReturnLimit, returnData: Bool = false, returnRef: Bool = true) throws -> [KeychainItem] {
         var query : KeyChainPropertiesData = [ : ]
 
-        query[String(kSecClass)]            = SecurityClass.kSecClass(properties.securityClass)
-        query[String(kSecReturnData)]       = kCFBooleanFalse
-        query[String(kSecReturnRef)]        = kCFBooleanTrue
+        query[String(kSecClass)]            = SecurityClass.kSecClass(attributes.securityClass)
+        // kSecReturnAttributes true to ensure we don't get a raw SecKeychainItemRef or NSData back, this function can't handle it
+        // This means we should get either a Dictionary or [Dictionary]
         query[String(kSecReturnAttributes)] = kCFBooleanTrue
-        query[String(kSecMatchLimit)]       = kSecMatchLimitOne
+        query[String(kSecReturnData)]       = returnData ? kCFBooleanTrue : kCFBooleanFalse
+        query[String(kSecReturnRef)]        = returnRef ? kCFBooleanTrue : kCFBooleanFalse
+        query[String(kSecMatchLimit)]       = returning == .One ? kSecMatchLimitOne : kSecMatchLimitAll
+        query[String(kSecReturnData)]       = kCFBooleanTrue
+        query += attributes.keychainMatchPropertyValues()
 
-        query += properties.keychainMatchPropertyValues()
+        do {
+            var keychainItemDicts : [SecItemAttributes] = []
 
-        let itemDict : SecItemAttributes? = try SecurityWrapper.secItemCopyMatchingItem(query)
-
-        return makeKeyChainItem(properties.securityClass, keychainItemAttributes:  itemDict!)
+            let itemDictOrDicts : NSObject = try SecurityWrapper.secItemCopyMatching(query)
+            if let itemDicts = itemDictOrDicts as? [SecItemAttributes] {
+                keychainItemDicts = itemDicts
+            } else if let itemDict = itemDictOrDicts as? SecItemAttributes {
+                keychainItemDicts.append(itemDict)
+            }
+            return try keychainItemDicts.flatMap { try makeKeyChainItem(attributes.securityClass, keychainItemAttributes: $0) }
+        }
+        catch KeychainStatus.ItemNotFoundError {
+            return []
+        }
     }
 
-
+    public class func fetchItem(matchingDescriptor attributes: KeychainMatchable, returnData: Bool = false, returnRef: Bool = true) throws -> KeychainItem {
+        let results = try self.fetchItems(matchingDescriptor: attributes, returning: .One, returnData: returnData, returnRef: returnRef)
+        if results.count == 1 { return results[0] }
+        throw KeychainStatus.ItemNotFoundError
+    }
 
     public class func deleteKeyChainItem(itemDescriptor descriptor: KeychainMatchable) throws  {
         try SecurityWrapper.secItemDelete(descriptor.keychainMatchPropertyValues())
     }
 
-    class func makeKeyChainItem(securityClass: SecurityClass, keychainItemAttributes attributes: SecItemAttributes) -> KeychainItem? {
-        return KeychainItem.itemFromAttributes(securityClass, SecItemAttributes: attributes)
+    class func makeKeyChainItem(securityClass: SecurityClass, keychainItemAttributes attributes: SecItemAttributes) throws -> KeychainItem? {
+        return try KeychainItem.itemFromAttributes(securityClass, SecItemAttributes: attributes)
     }
 
 
@@ -198,7 +219,7 @@ public class Keychain {
 //
 //    }
 
-    public class func keyData(key: KeychainKey) throws -> NSData? {
+    public class func keyData(key: KeychainKey) throws -> NSData {
         var query : KeyChainPropertiesData = [ : ]
 
         let descriptor = key.keychainMatchPropertyValues()
@@ -207,23 +228,11 @@ public class Keychain {
         query[String(kSecMatchLimit)]       = kSecMatchLimitOne
         query += descriptor.keychainMatchPropertyValues()
 
-        let keyData: NSData? = try SecurityWrapper.secItemCopyMatchingItem(query)
+        let keyData: NSData = try SecurityWrapper.secItemCopyMatching(query)
         return keyData
 
     }
 
-    public class func importP12Identity(identity: P12Identity) throws -> IdentityReference? {
-        var options : KeyChainPropertiesData = [ : ]
-
-        options[kSecImportExportPassphrase as String] = identity.importPassphrase
-
-        let itemRefs = try SecurityWrapper.secPKCS12Import(identity.p12EncodedIdentityData, options: options)
-        if itemRefs.count == 1 {
-            let identityRef : SecIdentityRef = itemRefs[0][kSecImportItemIdentity as String] as! SecIdentityRef
-            return IdentityReference(reference: identityRef)
-        }
-        return nil
-    }
 
     public class func deleteAllItemsOfClass(securityClass: SecurityClass) -> Int {
         return 0

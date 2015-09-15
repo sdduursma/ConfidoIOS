@@ -3,14 +3,13 @@
 //  ExpendSecurity
 //
 //  Created by Rudolph van Graan on 21/08/2015.
-//  Copyright (c) 2015 Curoo Limited. All rights reserved.
 //
 
 import Foundation
 
 
 /*
-Base class for all queries to the keychain.
+Base class for queries to the keychain. Used to derive things like specifications for generating keys, searching the IOS Keychain, etc.
 */
 
 
@@ -44,7 +43,6 @@ public class KeychainKeyDescriptor : KeychainDescriptor {
                 attributes[String(kSecAttrApplicationTag)]   = keyAppTag!
             }
     }
-
 }
 
 public protocol KeyPairQueryable {

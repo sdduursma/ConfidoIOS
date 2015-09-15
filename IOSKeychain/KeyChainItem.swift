@@ -59,10 +59,11 @@ public class AbstractItem: KeychainItemClass, KeyChainAttributeStorage {
 }
 
 public class KeychainItem: AbstractItem, KeychainCommonClassProperties {
-    public class func itemFromAttributes(securityClass: SecurityClass, SecItemAttributes attributes: SecItemAttributes) -> KeychainItem? {
+    public class func itemFromAttributes(securityClass: SecurityClass, SecItemAttributes attributes: SecItemAttributes) throws -> KeychainItem {
         switch securityClass {
-        case .Key: return KeychainKey.keychainKeyFromAttributes(SecItemAttributes: attributes)
-        default: return nil
+        case .Key: return try KeychainKey.keychainKeyFromAttributes(SecItemAttributes: attributes)
+        case .Certificate : return try KeychainCertificate.keychainCertificateFromAttributes(SecItemAttributes: attributes)
+        default: throw KeychainError.UnimplementedSecurityClass
         }
     }
 

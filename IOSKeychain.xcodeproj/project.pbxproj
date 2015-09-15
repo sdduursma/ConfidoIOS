@@ -32,13 +32,14 @@
 		AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */; };
 		AB710ED61BA066A3003AE8B0 /* OpenSSL.m in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED51BA066A3003AE8B0 /* OpenSSL.m */; };
 		AB710EDB1BA06E07003AE8B0 /* OpenSSL.h in Headers */ = {isa = PBXBuildFile; fileRef = AB710ED71BA066D2003AE8B0 /* OpenSSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AB710EE21BA07402003AE8B0 /* test keypair 1 certificate.p12 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EDD1BA07402003AE8B0 /* test keypair 1 certificate.p12 */; };
 		AB710EE31BA07402003AE8B0 /* test keypair 1 certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB710EDE1BA07402003AE8B0 /* test keypair 1 certificate.cer */; };
-		AB710EE41BA07402003AE8B0 /* test keypair 1 identity.p12 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EDF1BA07402003AE8B0 /* test keypair 1 identity.p12 */; };
 		AB710EE51BA07402003AE8B0 /* test keypair 1.pem in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE01BA07402003AE8B0 /* test keypair 1.pem */; };
 		AB710EE61BA07402003AE8B0 /* test keypair 1 certificate.x509 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */; };
 		ABB02D9E1BA33B5E004DF178 /* KeychainProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */; settings = {ASSET_TAGS = (); }; };
 		ABB02DA01BA6D03C004DF178 /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */; settings = {ASSET_TAGS = (); }; };
+		ABB02DA21BA70981004DF178 /* IdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02DA11BA70981004DF178 /* IdentityTests.swift */; settings = {ASSET_TAGS = (); }; };
+		ABB02DA41BA822F2004DF178 /* Device Identity.p12 in Resources */ = {isa = PBXBuildFile; fileRef = ABB02DA31BA822C8004DF178 /* Device Identity.p12 */; settings = {ASSET_TAGS = (); }; };
+		ABB02DA61BA84414004DF178 /* TrustPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02DA51BA84414004DF178 /* TrustPoint.swift */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,13 +85,14 @@
 		AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
 		AB710ED51BA066A3003AE8B0 /* OpenSSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenSSL.m; sourceTree = "<group>"; };
 		AB710ED71BA066D2003AE8B0 /* OpenSSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSSL.h; sourceTree = "<group>"; };
-		AB710EDD1BA07402003AE8B0 /* test keypair 1 certificate.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test keypair 1 certificate.p12"; sourceTree = "<group>"; };
 		AB710EDE1BA07402003AE8B0 /* test keypair 1 certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test keypair 1 certificate.cer"; sourceTree = "<group>"; };
-		AB710EDF1BA07402003AE8B0 /* test keypair 1 identity.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test keypair 1 identity.p12"; sourceTree = "<group>"; };
 		AB710EE01BA07402003AE8B0 /* test keypair 1.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1.pem"; sourceTree = "<group>"; };
 		AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1 certificate.x509"; sourceTree = "<group>"; };
 		ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainProtocol.swift; sourceTree = "<group>"; };
 		ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTests.swift; sourceTree = "<group>"; };
+		ABB02DA11BA70981004DF178 /* IdentityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentityTests.swift; sourceTree = "<group>"; };
+		ABB02DA31BA822C8004DF178 /* Device Identity.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Device Identity.p12"; sourceTree = "<group>"; };
+		ABB02DA51BA84414004DF178 /* TrustPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustPoint.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 				AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */,
 				AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */,
 				AB710EAA1BA060FB003AE8B0 /* Supporting Files */,
+				ABB02DA51BA84414004DF178 /* TrustPoint.swift */,
 			);
 			path = IOSKeychain;
 			sourceTree = "<group>";
@@ -171,6 +174,7 @@
 			children = (
 				ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */,
 				AB408E451BA1E3C600A37FAA /* CertificateTests.swift */,
+				ABB02DA11BA70981004DF178 /* IdentityTests.swift */,
 				AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */,
 				AB16CF771BA16F1E008C9D1C /* OpenSSLTests.swift */,
 				AB710EDC1BA073DB003AE8B0 /* resources */,
@@ -190,13 +194,12 @@
 		AB710EDC1BA073DB003AE8B0 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				ABB02DA31BA822C8004DF178 /* Device Identity.p12 */,
 				AB408E531BA1E8B500A37FAA /* Curoo Product CA.cer */,
 				AB408E541BA1E8B500A37FAA /* Curoo Root CA.cer */,
 				AB408E551BA1E8B500A37FAA /* Expend CA.cer */,
 				AB408E561BA1E8B500A37FAA /* Expend Device CA.cer */,
-				AB710EDD1BA07402003AE8B0 /* test keypair 1 certificate.p12 */,
 				AB710EDE1BA07402003AE8B0 /* test keypair 1 certificate.cer */,
-				AB710EDF1BA07402003AE8B0 /* test keypair 1 identity.p12 */,
 				AB710EE01BA07402003AE8B0 /* test keypair 1.pem */,
 				AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */,
 			);
@@ -328,13 +331,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB710EE51BA07402003AE8B0 /* test keypair 1.pem in Resources */,
-				AB710EE41BA07402003AE8B0 /* test keypair 1 identity.p12 in Resources */,
 				AB710EE31BA07402003AE8B0 /* test keypair 1 certificate.cer in Resources */,
 				AB408E571BA1E8B500A37FAA /* Curoo Product CA.cer in Resources */,
 				AB408E581BA1E8B500A37FAA /* Curoo Root CA.cer in Resources */,
 				AB408E591BA1E8B500A37FAA /* Expend CA.cer in Resources */,
-				AB710EE21BA07402003AE8B0 /* test keypair 1 certificate.p12 in Resources */,
 				AB710EE61BA07402003AE8B0 /* test keypair 1 certificate.x509 in Resources */,
+				ABB02DA41BA822F2004DF178 /* Device Identity.p12 in Resources */,
 				AB408E5A1BA1E8B500A37FAA /* Expend Device CA.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,6 +416,7 @@
 				AB710ECB1BA0613E003AE8B0 /* KeyChainItem.swift in Sources */,
 				AB710ECD1BA0613E003AE8B0 /* SecurityMappings.swift in Sources */,
 				ABB02D9E1BA33B5E004DF178 /* KeychainProtocol.swift in Sources */,
+				ABB02DA61BA84414004DF178 /* TrustPoint.swift in Sources */,
 				AB710ECF1BA0613E003AE8B0 /* KeychainDescriptor.swift in Sources */,
 				AB710ED21BA0613E003AE8B0 /* KeychainKeyPair.swift in Sources */,
 				AB16CF761BA15EB3008C9D1C /* OpenSSLKeyPair.swift in Sources */,
@@ -434,6 +437,7 @@
 				AB408E461BA1E3C600A37FAA /* CertificateTests.swift in Sources */,
 				AB16CF781BA16F1E008C9D1C /* OpenSSLTests.swift in Sources */,
 				AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */,
+				ABB02DA21BA70981004DF178 /* IdentityTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

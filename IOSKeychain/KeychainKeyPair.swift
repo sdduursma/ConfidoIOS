@@ -43,8 +43,8 @@ public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, Gener
         attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
     }
 
-    public override init(SecItemAttributes attributes: SecItemAttributes) {
-        super.init(SecItemAttributes: attributes)
+    public override init(SecItemAttributes attributes: SecItemAttributes) throws {
+        try super.init(SecItemAttributes: attributes)
         self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
     }
 }
@@ -63,8 +63,8 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
         attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
     }
 
-    public override init(SecItemAttributes attributes: SecItemAttributes) {
-        super.init(SecItemAttributes: attributes)
+    public override init(SecItemAttributes attributes: SecItemAttributes) throws {
+        try super.init(SecItemAttributes: attributes)
         self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
     }
 }
@@ -72,8 +72,8 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
 public protocol KeyPair {
     typealias PrivKeyType : PrivateKey
     typealias PubKeyType  : PublicKey
-    var privateKey: PrivKeyType { get }
-    var publicKey: PubKeyType  { get }
+    var privateKey: PrivKeyType! { get }
+    var publicKey: PubKeyType!  { get }
     init (publicKey: PubKeyType, privateKey: PrivKeyType)
 }
 
@@ -86,8 +86,8 @@ An instance of an IOS Keypair
 */
 
 public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
-    public let privateKey: KeychainPrivateKey
-    public let publicKey:  KeychainPublicKey
+    public private(set) var privateKey: KeychainPrivateKey!
+    public private(set) var publicKey:  KeychainPublicKey!
 
     public class func importKeyPair(pemEncodedData keyData: NSData, encryptedWithPassphrase passphrase: String, keyLabel: String? = nil , keyAppTag: String? = nil, keyAppLabel: String? = nil) throws -> TransportKeyPair {
         let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyData, encryptedWithPassword: passphrase)
@@ -116,10 +116,11 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
         super.init(securityClass: SecurityClass.Key)
     }
 
-    public init(SecItemAttributes attributes: SecItemAttributes) {
-        self.privateKey = KeychainPrivateKey(SecItemAttributes: attributes)
-        self.publicKey  = KeychainPublicKey(SecItemAttributes: attributes)
+    public init(SecItemAttributes attributes: SecItemAttributes) throws {
         super.init(securityClass: SecurityClass.Key, SecItemAttributes: attributes)
+
+        self.privateKey = try KeychainPrivateKey(SecItemAttributes: attributes)
+        self.publicKey  = try KeychainPublicKey(SecItemAttributes: attributes)
     }
 
     public func certificateSigningRequest(attributes: [ String : String]) -> NSData? {

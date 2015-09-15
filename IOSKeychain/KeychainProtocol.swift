@@ -47,10 +47,11 @@ public protocol GenerateKeychainFind : KeychainFindable {
 
 extension KeychainFindable where Self : KeychainFindable, Self : GenerateKeychainFind {
     public static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?  {
-        if let keychainItem = try Keychain.fetchMatchingItem(thatMatchesProperties: matchingProperties) {
-            return keychainItem as? ResultType
+        let keychainItem = try Keychain.fetchItem(matchingDescriptor: matchingProperties)
+        if let result = keychainItem as? ResultType {
+            return result
         }
-        return nil
+        throw KeychainError.MismatchedResultType(returnedType: keychainItem.dynamicType.self, declaredType: QueryType.self)
    }
 }
 
@@ -104,15 +105,15 @@ extension TransportPublicKey : KeychainAddable  {
 
 // MARK: SecItemAddable
 // Generic Protocol to mark that the item can be added to the IOS Keychain
-public protocol SecItemAddable {
+public protocol SecItemAddable : KeyChainAttributeStorage {
     func secItemAdd() throws -> AnyObject?
 }
 
 extension SecItemAddable where Self : SecItemAddable, Self : KeychainMatchable {
     public func secItemAdd() throws -> AnyObject? {
         var item : KeyChainPropertiesData = [ : ]
+        item += self.attributes
         item[String(kSecClass)] = SecurityClass.kSecClass(securityClass)
-        item += keychainMatchPropertyValues()
         let itemRef: AnyObject? = try SecurityWrapper.secItemAdd(item)
         return itemRef
     }
@@ -223,4 +224,41 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
         }
     }
 }
+
+
+
+// MARK: KeychainCertificateClassProperties
+/**
+Properties for Keychain Items of class kSecClassCertificate
+*/
+public protocol KeychainCertificateClassProperties {
+    var subjectX509Data: NSData { get }
+    var issuerX509Data: NSData { get }
+    var serialNumberX509Data: NSData { get }
+    var subjectKeyID: AnyObject { get }
+    var publicKeyHash: AnyObject { get }
+}
+
+
+/**
+Injects IOS Keychain kSecClassCertificate properties into conforming items
+*/
+extension KeychainCertificateClassProperties where Self : KeychainCertificateClassProperties, Self : KeyChainAttributeStorage {
+    public var subjectX509Data: NSData {
+        get { return attributes[kSecAttrSubject as String] as! NSData }
+    }
+    public var issuerX509Data: NSData {
+        get { return attributes[kSecAttrIssuer as String] as! NSData }
+    }
+    public var serialNumberX509Data: NSData {
+        get { return attributes[kSecAttrSerialNumber as String] as! NSData }
+    }
+    public var subjectKeyID: AnyObject {
+        get { return attributes[kSecAttrSubjectKeyID as String]! }
+    }
+    public var publicKeyHash: AnyObject {
+        get { return attributes[kSecAttrPublicKeyHash as String]!  }
+    }
+}
+
 

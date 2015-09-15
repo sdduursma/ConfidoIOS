@@ -27,7 +27,7 @@ class KeyPairTests: BaseTests {
 
             let keyDescriptor = KeychainKeyDescriptor(keyLabel: "AAA")
             var keyItem: KeychainItem?
-            keyItem = try Keychain.fetchMatchingItem(thatMatchesProperties: keyDescriptor)
+            keyItem = try Keychain.fetchItem(matchingDescriptor: keyDescriptor)
             XCTAssertNotNil(keyItem)
 
             XCTAssertEqual(keyPair!.privateKey.keyType, KeyType.RSA)
@@ -170,67 +170,5 @@ class KeyPairTests: BaseTests {
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
-
-
-    }
-
-
-    func testImportIdentity() {
-        do {
-
-            clearKeychainItems(.Identity)
-            clearKeychainItems(.Key)
-            clearKeychainItems(.Certificate)
-
-            let keyPairPEMData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
-
-            let certificateData = try contentsOfBundleResource("test keypair 1 certificate", ofType: "x509")
-
-            XCTAssertNotNil(certificateData)
-
-            let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
-
-            XCTAssertNotNil(openSSLKeyPair)
-
-            var openSSLIdentity: OpenSSLIdentity?
-            openSSLIdentity = try OpenSSL.pkcs12IdentityWithKeyPair(openSSLKeyPair, certificate: OpenSSLCertificate(certificateData: certificateData), protectedWithPassphrase: "randompassword")
-            XCTAssertNotNil(openSSLIdentity)
-
-            let p12Identity = P12Identity(openSSLIdentity: openSSLIdentity!, importPassphrase: "randompassword")
-
-            let ref = try Keychain.importP12Identity(p12Identity)
-            XCTAssertNotNil(ref)
-
-
-            let descriptor = IdentityImportDescriptor(identityReference: ref!, itemLabel: "SomeLabel")
-            //            Keychain.addIdentity(descriptor)
-            
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-        
-        
-    }
-    
-    func testImportPKCS12Identity() {
-        do {
-            let p12Data = try contentsOfBundleResource("test identity", ofType: "p12")
-            XCTAssertNotNil(p12Data)
-
-            let detachedIdentity = try KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
-            let identity = try detachedIdentity.addToKeychain()
-            XCTAssertNotNil(identity)
-
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-
-    }
-
-
-
-    
-    
-    
-    
+    }  
 }

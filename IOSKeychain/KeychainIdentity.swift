@@ -35,38 +35,11 @@ public class IdentitySpecifier : KeychainDescriptor {
     }
 }
 
-public class IdentityImportDescriptor : KeychainDescriptor {
-
-    public init(identityReference: IdentityReference, itemLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
-            super.init(securityClass: .Identity, itemLabel: nil)
-            if keyAppLabel != nil {
-                attributes[String(kSecAttrApplicationLabel)] = KeychainKeyDescriptor.encodeKeyAppLabel(keyAppLabel)
-            }
-            if keyAppTag != nil {
-                attributes[String(kSecAttrApplicationTag)]   = keyAppTag!
-            }
-        attributes[String(kSecValueRef)] = identityReference.secItemRef
-    }
-}
-
-
-
-public class P12Identity {
-    let openSSLIdentity : OpenSSLIdentity
-    public let importPassphrase : String
-    public init(openSSLIdentity identity: OpenSSLIdentity, importPassphrase: String) {
-        self.openSSLIdentity = identity
-        self.importPassphrase = importPassphrase
-    }
-
-    public var p12EncodedIdentityData: NSData {
-        get { return openSSLIdentity.p12identityData }
-    }
-}
 
 //TODO: Identify protocol
-public class KeychainIdentity //: KeychainItem, KeychainFindable 
-{
+public class KeychainIdentity: KeychainItem, KeychainFindable, GenerateKeychainFind {
+    public typealias QueryType = TransportIdentity
+    public typealias ResultType = KeychainIdentity
 //    public let keyPair : KeychainKeyPair
 //    public let certificate : KeychainCertificate
 
@@ -77,16 +50,39 @@ public class KeychainIdentity //: KeychainItem, KeychainFindable
     :param: label An optional label to be associated with the identity when added to the Keychain
     :returns: A TransportIdentity than can be added to the Keychain
 */
-    public class func importIdentity(pkcs12EncodedData: NSData, protectedWithPassphrase: String, label: String? = nil) throws -> TransportIdentity {
-        return TransportIdentity()
+    public class func importIdentity(pkcs12EncodedData: NSData, protectedWithPassphrase passPhrase: String, label: String? = nil) throws -> TransportIdentity {
+        var options : KeyChainPropertiesData = [ : ]
+
+        options[kSecImportExportPassphrase as String] = passPhrase
+
+        let items = try SecurityWrapper.secPKCS12Import(pkcs12EncodedData, options: options)
+        if items.count == 1 {
+            let secIdentity : SecIdentity          = items[0][kSecImportItemIdentity as String] as! SecIdentityRef
+            let secTrust    : SecTrust             = items[0][kSecImportItemTrust as String] as! SecTrustRef
+            let certificateChain: [SecCertificate] = items[0][kSecImportItemCertChain as String] as! [SecCertificateRef]
+            return TransportIdentity(secIdentity: secIdentity,secTrust: secTrust, certificates: certificateChain, itemLabel: label)
+        }
+        throw KeychainError.NoSecIdentityReference
     }
 }
+
 
 /**
 Container class for an identity in a transportable format
 */
-public class TransportIdentity {
+public class TransportIdentity : KeychainDescriptor, SecItemAddable {
+    public private(set) var secTrust: SecTrust!
+    public private(set) var secIdentity: SecIdentity!
+    public private(set) var certificates: [SecCertificate] = []
+    public init(secIdentity: SecIdentity, secTrust: SecTrust, certificates: [SecCertificate], itemLabel: String? = nil) {
+        super.init(securityClass: SecurityClass.Identity, itemLabel: itemLabel)
+        attributes[kSecValueRef as String] = secIdentity
+        self.secTrust = secTrust
+        self.secIdentity = secIdentity
+        self.certificates = certificates
+    }
     public func addToKeychain() throws -> KeychainIdentity {
-        return KeychainIdentity()
+        try self.secItemAdd()
+        return try KeychainIdentity.findInKeychain(self)!
     }
 }

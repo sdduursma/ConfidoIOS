@@ -28,12 +28,20 @@ public class BaseTests: XCTestCase {
         throw TestError.UnknownResourceInBundle
     }
 
+    func keychainItems(type: SecurityClass) -> [KeychainItem] {
+        do {
+            return try Keychain.keyChainItems(type)
+        } catch {
+            return []
+        }
+    }
 
     func clearKeychainItems(type: SecurityClass) {
         do {
             var items = try Keychain.keyChainItems(type)
 
             var n = items.count
+            print("Deleting \(n) \(type) items from keychain")
             for item in items {
                 try Keychain.deleteKeyChainItem(itemDescriptor: item.keychainMatchPropertyValues())
 
