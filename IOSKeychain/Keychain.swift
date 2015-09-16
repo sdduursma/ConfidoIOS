@@ -18,14 +18,27 @@ func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right:
         left.updateValue(v, forKey: k)
     }
 }
-public enum KeychainError : ErrorType {
+public enum KeychainError : ErrorType, CustomStringConvertible {
     case
     NoSecIdentityReference,
     NoSecCertificateReference,
     NoSecKeyReference,
     UnimplementedSecurityClass,
     MismatchedResultType(returnedType: AnyClass, declaredType: Any),
-    InvalidCertificateData
+    InvalidCertificateData,
+    TrustError(trustResult: TrustResult, reason: String?)
+
+    public var description : String {
+        switch self {
+        case NoSecIdentityReference: return "NoSecIdentityReference"
+        case NoSecCertificateReference: return "NoSecCertificateReference"
+        case NoSecKeyReference: return "NoSecKeyReference"
+        case UnimplementedSecurityClass: return "UnimplementedSecurityClass"
+        case MismatchedResultType(let returnedType, let declaredType) : return "MismatchedResultType (returned \(returnedType)) declared \(declaredType)"
+        case InvalidCertificateData: return "InvalidCertificateData"
+        case TrustError(_, let reason) : return "TrustError \(reason)"
+        }
+    }
 }
 
 /**

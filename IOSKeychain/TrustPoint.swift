@@ -8,8 +8,6 @@
 import Foundation
 import Security
 
-public class TrustPoint {
-}
 
 public enum TrustResult: RawRepresentable, CustomStringConvertible, ErrorType {
     case Invalid, Proceed,
@@ -58,12 +56,14 @@ public enum TrustResult: RawRepresentable, CustomStringConvertible, ErrorType {
     }
 }
 
-public struct CertificateTrustEvaluationPoint {
+public struct TrustPoint {
     var secTrust : SecTrust
-    let trustChain : CertificateTrustChain
-    public init(secTrust: SecTrust, trustChain: CertificateTrustChain) throws {
+    let trustAnchor : TrustAnchorPoint?
+    let certificate: Certificate?
+    public init(secTrust: SecTrust, certificate: Certificate?, trustAnchor: TrustAnchorPoint? = nil) throws {
         self.secTrust = secTrust
-        self.trustChain = trustChain
+        self.certificate = certificate
+        self.trustAnchor = trustAnchor
     }
 
     public func evaluateTrust() throws -> TrustResult {
@@ -71,24 +71,36 @@ public struct CertificateTrustEvaluationPoint {
     }
     func evaluateTrust(depth: Int) throws -> TrustResult {
         var secTrustResultType : SecTrustResultType = 0
+//        try setTrustAnchorCertificatesOnly(false)
 
-        let status = KeychainStatus.statusFromOSStatus(SecTrustEvaluate(secTrust, &secTrustResultType))
+        if trustAnchor != nil {
+            try setTrustAnchorCertificates()
+            try setTrustAnchorCertificatesOnly(true)
+        }
+        let status = KeychainStatus.statusFromOSStatus(
+            SecTrustEvaluate(secTrust, &secTrustResultType)
+        )
         if status == .OK {
             let trustResult = TrustResult(rawValue: Int(secTrustResultType))!
-            if (trustResult == .RecoverableTrustFailure) && (depth == 1) {
-                return try self.evaluateTrustWithAnchorCertificates(depth)
+            if trustResult == .Proceed || trustResult == .Unspecified {
+                return trustResult
+            } else if trustResult == TrustResult.RecoverableTrustFailure {
+                return TrustResult.Deny
             }
-            return trustResult
+            throw KeychainError.TrustError(trustResult: trustResult, reason: getLastTrustError())
         }
         throw status
     }
 
-    func evaluateTrustWithAnchorCertificates(depth: Int) throws -> TrustResult {
-        let exceptions = getTrustExceptions()
-        try setTrustAnchorCertificates()
-        SecTrustSetExceptions(secTrust, exceptions)
-        try setTrustAnchorCertificatesOnly(true)
-        return try evaluateTrust(depth + 1)
+    func getTopAnchorCertificate() -> Certificate? {
+        if trustAnchor != nil && trustAnchor!.certificates.count > 0 {
+            return trustAnchor!.certificates[0]
+        }
+        return nil
+    }
+
+    static func evaluateSSLCertificateTrust(certificate: Certificate, trustAnchorPoint: TrustAnchorPoint?) -> TrustResult {
+        return TrustResult.Proceed
     }
 
     func getTrustExceptions() -> NSData  {
@@ -97,8 +109,18 @@ public struct CertificateTrustEvaluationPoint {
 
     func setTrustAnchorCertificates() throws {
         var status : OSStatus
-        status = SecTrustSetAnchorCertificates(secTrust, self.trustChain.certificates.reverse())
+
+        status = SecTrustSetAnchorCertificates(secTrust, getAnchorTrustRefs())
         if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
+    }
+
+    func getAnchorTrustRefs() -> [SecCertificate] {
+        //TODO: Reverse results so that the root as at the end
+        if trustAnchor != nil {
+            return trustAnchor!.certificates.map{ $0.secCertificate }
+        } else {
+            return []
+        }
     }
 
     func setTrustAnchorCertificatesOnly(only: Bool) throws {
@@ -106,6 +128,19 @@ public struct CertificateTrustEvaluationPoint {
         status = SecTrustSetAnchorCertificatesOnly(secTrust, only)
         if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
     }
+
+    func getLastTrustError() -> String? {
+        let properties : NSArray! = SecTrustCopyProperties(secTrust)
+        for validatedCertificate in properties {
+            let propDict = validatedCertificate as! [ String : String]
+            if let errorMessage = propDict["value"] {
+            // There is no constant in the APIs for this, only kSecPropertyTypeTitle and kSecPropertyTypeError defined
+                return errorMessage
+            }
+        }
+        return nil
+    }
+
 
 
     public func getTrustProperties() {
@@ -124,34 +159,37 @@ public struct CertificateTrustEvaluationPoint {
     }
 }
 
-public class CertificateTrustChain {
+public class TrustAnchorPoint {
     let baseX509policy : SecPolicy
-    public private (set) var certificates : [ SecCertificate ] = []
-    public init(anchorCertificate: Certificate) {
+    var anchorCertificate: Certificate! = nil
+    public private (set) var certificates : [ Certificate ] = []
+    public init() {
         baseX509policy = SecPolicyCreateBasicX509()
-        certificates.append(anchorCertificate.secCertificate)
+    }
+    public init(anchorCertificate: Certificate) {
+        self.anchorCertificate = anchorCertificate
+        baseX509policy = SecPolicyCreateBasicX509()
+        certificates.append(anchorCertificate)
     }
 
     public func addCertificate(certificate: Certificate, evaluateTrust: Bool = false) throws {
         if evaluateTrust {
-            let trust = try getCertificateTrust(certificate)
+            let trust = try trustPoint(certificate)
             let trustResult = try trust.evaluateTrust()
             if trustResult != TrustResult.Unspecified {
                 throw trustResult
             }
         }
-        certificates.append(certificate.secCertificate)
+        certificates.append(certificate)
     }
 
-    public func trustEvaluationPoint(secTrust: SecTrust) throws -> CertificateTrustEvaluationPoint {
-        return try CertificateTrustEvaluationPoint(secTrust: secTrust, trustChain: self)
+    public func trustPoint(secTrust: SecTrust) throws -> TrustPoint {
+        return try TrustPoint(secTrust: secTrust, certificate: nil, trustAnchor: self)
     }
 
-    func getCertificateTrust(certificate: Certificate) throws -> CertificateTrustEvaluationPoint {
-        var secTrustResult : SecTrust? = nil
-        let osStatus = SecTrustCreateWithCertificates([certificate.secCertificate], trustPolicies(), &secTrustResult)
-        if osStatus != 0 { throw KeychainStatus.statusFromOSStatus(osStatus)}
-        return try CertificateTrustEvaluationPoint(secTrust: secTrustResult!, trustChain: self)
+    public func trustPoint(certificate: Certificate, additionalCertificates: [Certificate] = []) throws -> TrustPoint {
+        let secTrust = try certificate.trust(additionalCertificates, policies: trustPolicies())
+        return try TrustPoint(secTrust: secTrust, certificate: certificate, trustAnchor: self)
     }
 
 
