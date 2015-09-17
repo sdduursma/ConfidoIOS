@@ -12,17 +12,70 @@ import UIKit
 import XCTest
 import IOSKeychain
 
-let customCACertName = "Curoo Limited Certification Authority RSA Root Certificate"
-let levelOneCAName   = "Curoo Limited Product Development Authority RSA Root Certificate"
-let levelTwoCAName   = "Expend Product Development Authority RSA Root Certificate"
-let finalPinnedCAName    = "Expend Development Device Identity Authority RSA Certificate"
+let customCACertName  = "Curoo Limited Certification Authority RSA Root Certificate"
+let levelOneCAName    = "Curoo Limited Product Development Authority RSA Root Certificate"
+let levelTwoCAName    = "Expend Product Development Authority RSA Root Certificate"
+let finalPinnedCAName = "Expend Development Device Identity Authority RSA Certificate"
+
+//TODO: Lock the evaluation date to... today to prevent future failures
+//TODO: TrustEvaluationPoints (TrustManager)
 
 class CertificateTests: BaseTests {
+
+    func rootAnchor() throws -> TrustAnchor  {
+        let rootCertificate = try bundledCertificate(customCACertName)
+        return TrustAnchor(anchorCertificate: rootCertificate, name: "RootCA")
+    }
+
+    func level1CustomCA() throws -> TrustAnchor {
+        let certificate = try bundledCertificate(levelOneCAName)
+        let parentAnchor = try rootAnchor()
+        return try parentAnchor.extendAnchor(certificate, name: "Level 1 CA")
+    }
+
+    func level2CustomCA() throws -> TrustAnchor {
+        let certificate = try bundledCertificate(levelTwoCAName)
+        let parentAnchor = try level1CustomCA()
+
+        return try parentAnchor.extendAnchor(certificate, name: "Level 2 CA")
+    }
+
+    func level3IssuerCA() throws -> TrustAnchor {
+        return try level2CustomCA().extendAnchor(
+            try bundledCertificate(finalPinnedCAName),
+            name: "Issuing CA")
+    }
+
+    func appleCert() throws -> Certificate {
+        return try bundledCertificate("www.apple.com")
+    }
+
+    func symantecRealCert() throws -> Certificate {
+        return try bundledCertificate("Symantec Class 3 EV SSL CA - G3")
+    }
+
+    func googleRealCACert() throws -> Certificate {
+        return try bundledCertificate("Google Internet Authority G2")
+    }
+
+    func googleCAAnchor() throws -> TrustAnchor {
+        return try TrustAnchor(anchorCertificate: googleRealCACert(), name: "Google CA")
+    }
+
+    func googleCert() throws -> Certificate {
+        return try bundledCertificate("www.google.co.uk")
+    }
+
+    func customPinnedAnchorOnly() throws -> TrustAnchor {
+        return TrustAnchor(anchorCertificate: try bundledCertificate(finalPinnedCAName))
+    }
+
+
     func testCertificateFromCERFile() {
         do {
             self.clearKeychainItems(.Certificate)
             let certificateDERData = try contentsOfBundleResource(finalPinnedCAName, ofType: "cer")
-            let transportCertificate = try KeychainCertificate.certificate(certificateDERData, certificateType: .RootCACertificate)
+            let transportCertificate = try KeychainCertificate.certificate(certificateDERData)
             XCTAssertEqual(transportCertificate.subject, finalPinnedCAName)
 
             let certificate = try transportCertificate.addToKeychain()
@@ -35,66 +88,72 @@ class CertificateTests: BaseTests {
         }
     }
 
-    func bundledCertificate(filename: String, certificateType: CertificateType) throws -> TransportCertificate {
+    func bundledCertificate(filename: String) throws -> TransportCertificate {
         let certificateDERData = try contentsOfBundleResource(filename, ofType: "cer")
-        return try KeychainCertificate.certificate(certificateDERData, certificateType: certificateType)
+        return try KeychainCertificate.certificate(certificateDERData)
     }
 
-    func testTrustedCertificateChain() {
+    func testCertificateTrustAnchorChain()  {
         do {
-            self.clearKeychainItems(.Certificate)
-            let rootCertificate = try bundledCertificate(customCACertName, certificateType: .RootCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: rootCertificate)
-            try trustAnchor.addCertificate(try bundledCertificate(levelOneCAName, certificateType: .IntermediateCACertificate), evaluateTrust : true)
-            try trustAnchor.addCertificate(try bundledCertificate(levelTwoCAName, certificateType: .IntermediateCACertificate), evaluateTrust : true)
-            try trustAnchor.addCertificate(try bundledCertificate(finalPinnedCAName, certificateType: .IntermediateCACertificate), evaluateTrust : true)
-            XCTAssertEqual(trustAnchor.certificates.count, 4)
+
+            let rootCAAnchor   = try rootAnchor()
+            XCTAssertEqual(rootCAAnchor.certificateChain.count, 1)
+
+            let level1CAAnchor = try level1CustomCA()
+            XCTAssertEqual(level1CAAnchor.certificateChain.count, 2)
+
+            let level2CAAnchor = try level2CustomCA()
+            XCTAssertEqual(level2CAAnchor.certificateChain.count, 3)
+
+            let level3CAAnchor = try level3IssuerCA()
+            XCTAssertEqual(level3CAAnchor.certificateChain.count, 4)
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
+
     }
-    func testEvaluateTrustForClientCertificate() {
+
+    func testEvaluateTrustForClientCertificate()  {
         do {
             self.clearKeychainItems(.Certificate)
-            let rootCertificate = try bundledCertificate(finalPinnedCAName, certificateType: .RootCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: rootCertificate)
-            try trustAnchor.addCertificate(try bundledCertificate(levelOneCAName, certificateType: .IntermediateCACertificate))
-            try trustAnchor.addCertificate(try bundledCertificate(levelTwoCAName, certificateType: .IntermediateCACertificate))
-            try trustAnchor.addCertificate(try bundledCertificate(finalPinnedCAName, certificateType: .IntermediateCACertificate))
 
             let p12Data = try contentsOfBundleResource("Device Identity", ofType: "p12")
-
             let transportIdentity = try KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
+            let trustPoint = try CertificateTrustPoint(secTrust: transportIdentity.secTrust)
 
-            let trustPoint = try trustAnchor.trustPoint(transportIdentity.secTrust)
+            //Evaluate against the Root CA, with missing intermediaries
+            var result = try trustPoint.evaluateTrust(rootAnchor())
+            XCTAssertEqual(result, TrustResult.Deny)
 
-            let trustResult = try trustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Unspecified)
-
-
-            XCTAssertEqual(trustAnchor.certificates.count, 4)
+            //Evaluate against the Issuer
+            result = try trustPoint.evaluateTrust(level3IssuerCA())
+            XCTAssertEqual(result, TrustResult.Unspecified)
+            
+            
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
     }
 
-    func testEvaluateTrustForClientCertificateRootAnchor() {
+    func testEvaluateTrustForClientCertificatePinnedAtRoot() {
         do {
-            self.clearKeychainItems(.Certificate)
-            let rootCertificate = try bundledCertificate(finalPinnedCAName, certificateType: .RootCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: rootCertificate)
+            let deviceCert = try bundledCertificate("test keypair 1 certificate")
 
-            let CPCA = try bundledCertificate(levelOneCAName, certificateType: .IntermediateCACertificate)
-            let ECA  = try bundledCertificate(levelTwoCAName, certificateType: .IntermediateCACertificate)
-            let EDCA = try bundledCertificate(finalPinnedCAName, certificateType: .IntermediateCACertificate)
-            let deviceCert = try bundledCertificate("test keypair 1 certificate", certificateType: .Unknown)
+            let trustNoAdditionalCerts = try deviceCert.trustPoint(.SSLClient(name: nil), additionalCertificates:[] )
+            let trustAllCerts          = try deviceCert.trustPoint(.SSLClient(name: nil),
+                additionalCertificates:[
+                    level3IssuerCA().anchorCertificate,
+                    level2CustomCA().anchorCertificate,
+                    level1CustomCA().anchorCertificate
+                ] )
 
-            let trust = try deviceCert.trust([EDCA,ECA,CPCA,rootCertificate], policies: nil)
-            let trustPoint = try trustAnchor.trustPoint(trust)
+            var result = try trustNoAdditionalCerts.evaluateTrust(rootAnchor())
+            XCTAssertEqual(result, TrustResult.Deny)
 
-            let trustResult = try trustPoint.evaluateTrust()
-            trustPoint.getTrustProperties()
-            XCTAssertEqual(trustResult, TrustResult.Unspecified)
+            result = try trustAllCerts.evaluateTrust(rootAnchor())
+            XCTAssertEqual(result, TrustResult.Unspecified)
+
+
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
@@ -105,17 +164,14 @@ class CertificateTests: BaseTests {
             /*
             Tests that the policies reject a real certificate (valid under ordinary circumstances) against a pinned anchor
             */
+            let trust = try appleCert().trustPoint(TrustPolicy.SSLServer(hostname: nil),
+                additionalCertificates: [symantecRealCert()])
 
-            self.clearKeychainItems(.Certificate)
-            let rootCertificate = try bundledCertificate(finalPinnedCAName, certificateType: .IntermediateCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: rootCertificate)
-            let appleCert = try bundledCertificate("www.apple.com", certificateType: .ServerSSLCertificate)
-            let intermediary = try bundledCertificate("Symantec Class 3 EV SSL CA - G3", certificateType: .IntermediateCACertificate)
-            // It seems as if you need to pass all the intermediary certificates as well...
-            let trust = try appleCert.trust([intermediary], policies: [SecPolicyCreateSSL(false, "www.apple.com")])
-            let trustPoint = try trustAnchor.trustPoint(trust)
-            let trustResult = try trustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Deny)
+            var result = try trust.evaluateTrust() // This should be allowed because we are checking a real certificate
+            XCTAssertEqual(result, TrustResult.Unspecified)
+
+            result = try trust.evaluateTrust(rootAnchor())
+            XCTAssertEqual(result, TrustResult.Deny)
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
@@ -125,133 +181,29 @@ class CertificateTests: BaseTests {
     func testRealCertificateAgainstDifferentRootCAAnchor() {
         do {
             /*
-            Tests that the policies reject a real certificate (valid under ordinary circumstances) against a pinned anchor
+            Tests that the policies reject a real certificate (valid under ordinary circumstances) against a pinned anchor (also real)
             */
-
-            self.clearKeychainItems(.Certificate)
-            let rootCertificate = try bundledCertificate("Google Internet Authority G2", certificateType: .IntermediateCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: rootCertificate)
-            let appleCert = try bundledCertificate("www.apple.com", certificateType: .ServerSSLCertificate)
-            let intermediary = try bundledCertificate("Symantec Class 3 EV SSL CA - G3", certificateType: .IntermediateCACertificate)
-            // It seems as if you need to pass all the intermediary certificates as well...
-            let trust = try appleCert.trust([intermediary], policies: [SecPolicyCreateSSL(false, "www.apple.com")])
-            let trustPoint = try trustAnchor.trustPoint(trust)
-            let trustResult = try trustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Deny)
+            let trust = try appleCert().trustPoint(TrustPolicy.SSLServer(hostname: nil),
+                additionalCertificates: [symantecRealCert()])
+            let result = try trust.evaluateTrust(googleCAAnchor())
+            XCTAssertEqual(result, TrustResult.Deny)
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
     }
-
 
 
     func testRealCertificateChainAnchored() {
         do {
-            self.clearKeychainItems(.Certificate)
-            let anchorCertificate = try bundledCertificate("Google Internet Authority G2", certificateType: .IntermediateCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: anchorCertificate)
-            let googleCert = try bundledCertificate("www.google.co.uk", certificateType: .ServerSSLCertificate)
-            let googleTrust = try trustAnchor.trustPoint(googleCert)
-            let trustResult = try googleTrust.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Unspecified)
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-    }
+            let trust = try googleCert().trustPoint(TrustPolicy.SSLServer(hostname: nil),
+                additionalCertificates: [])
 
-    func testRealCertificateChainDifferentChainAnchor() {
-        do {
-            self.clearKeychainItems(.Certificate)
-            let anchorCertificate = try bundledCertificate("Google Internet Authority G2", certificateType: .IntermediateCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: anchorCertificate)
-
-            let appleCert = try bundledCertificate("www.apple.com", certificateType: .ServerSSLCertificate)
-            let intermediary = try bundledCertificate("Symantec Class 3 EV SSL CA - G3", certificateType: .IntermediateCACertificate)
-            // It seems as if you need to pass all the intermediary certificates as well...
-            let trust = try appleCert.trust([intermediary], policies: nil)
-            let trustPoint = try trustAnchor.trustPoint(trust)
-            let trustResult = try trustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Deny)
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-    }
-
-
-    func testRealCertificateChainUntrustuedRoot() {
-        do {
-            /*
-            This test simulates a TrustError by using an empty TrustPoint
-            This way, we can simulate the "Root certificate is not trusted" error and that is correct
-            */
-            self.clearKeychainItems(.Certificate)
-            let trustAnchor = TrustAnchorPoint()
-            let intermediaryCert = try bundledCertificate("Google Internet Authority G2", certificateType: .IntermediateCACertificate)
-            let googleCert = try bundledCertificate("www.google.co.uk", certificateType: .ServerSSLCertificate)
-            let trust = try googleCert.trust([intermediaryCert], policies: nil)
-            let googleTrustPoint = try trustAnchor.trustPoint(trust)
-            let trustResult = try googleTrustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Deny)
-
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-
-    }
-
-    func testRealCertificateChainUntrustuedAnchoredRoot() {
-        do {
-            /*
-            This test simulates a TrustError by using an empty TrustPoint
-            This way, we can simulate the "Root certificate is not trusted" error and that is correct
-            */
-            self.clearKeychainItems(.Certificate)
-            let intermediaryCert = try bundledCertificate("Google Internet Authority G2", certificateType: .IntermediateCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: intermediaryCert)
-            let googleCert = try bundledCertificate("www.google.co.uk", certificateType: .ServerSSLCertificate)
-            let trust = try googleCert.trust([], policies: nil)
-            let googleTrustPoint = try trustAnchor.trustPoint(trust)
-            let trustResult = try googleTrustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Unspecified)
-
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-        
-    }
-
-    func testRealCertificateUnanchored() {
-        do {
-            // We are setting the anchor to the Google CA, so the Apple certificate cannot be validated
-            self.clearKeychainItems(.Certificate)
-            let appleCert = try bundledCertificate("www.apple.com", certificateType: .ServerSSLCertificate)
-            let intermediary = try bundledCertificate("Symantec Class 3 EV SSL CA - G3", certificateType: .IntermediateCACertificate)
-            // It seems as if you need to pass all the intermediary certificates as well...
-            let trust = try appleCert.trust([intermediary], policies: nil)
-            let appleTrust = try TrustPoint(secTrust: trust, certificate: appleCert)
-            let trustResult = try appleTrust.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Unspecified)
+            let result = try trust.evaluateTrust(googleCAAnchor())
+            XCTAssertEqual(result, TrustResult.Unspecified)
 
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }
     }
 
-    func testRealCertificateNotMatchingAnchor() {
-        do {
-            // We are setting the anchor to the Google CA, so the Apple certificate cannot be validated
-            self.clearKeychainItems(.Certificate)
-            let rootCertificate = try bundledCertificate("Google Internet Authority G2", certificateType: .IntermediateCACertificate)
-            let trustAnchor = TrustAnchorPoint(anchorCertificate: rootCertificate)
-            let appleCert = try bundledCertificate("www.apple.com", certificateType: .ServerSSLCertificate)
-            let trustPoint = try trustAnchor.trustPoint(appleCert)
-            let trustResult = try trustPoint.evaluateTrust()
-            XCTAssertEqual(trustResult, TrustResult.Deny)
-
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-    }
-    
-    
 }
