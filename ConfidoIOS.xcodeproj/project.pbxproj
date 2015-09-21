@@ -17,7 +17,6 @@
 		AB3D20EB1BB0565400BB2899 /* KeychainKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D91BB0565400BB2899 /* KeychainKey.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20EC1BB0565400BB2899 /* KeychainKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20ED1BB0565400BB2899 /* KeychainProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D20EF1BB0565400BB2899 /* OpenSSL.m in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DD1BB0565400BB2899 /* OpenSSL.m */; settings = {ASSET_TAGS = (); }; };
 		AB3D20F01BB0565400BB2899 /* OpenSSLCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DE1BB0565400BB2899 /* OpenSSLCertificate.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20F11BB0565400BB2899 /* OpenSSLIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DF1BB0565400BB2899 /* OpenSSLIdentity.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20F21BB0565400BB2899 /* OpenSSLKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20E01BB0565400BB2899 /* OpenSSLKeyPair.swift */; settings = {ASSET_TAGS = (); }; };
@@ -28,7 +27,6 @@
 		AB3D210D1BB0568100BB2899 /* CertificateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20F81BB0568100BB2899 /* CertificateTests.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D210E1BB0568100BB2899 /* IdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20F91BB0568100BB2899 /* IdentityTests.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D21101BB0568100BB2899 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20FB1BB0568100BB2899 /* KeyPairTests.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D21111BB0568100BB2899 /* OpenSSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20FC1BB0568100BB2899 /* OpenSSLTests.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D21121BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D20FE1BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21131BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D20FF1BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21141BB0568100BB2899 /* Device Identity.p12 in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21001BB0568100BB2899 /* Device Identity.p12 */; settings = {ASSET_TAGS = (); }; };
@@ -43,7 +41,6 @@
 		AB3D211D1BB0568100BB2899 /* test keypair 1.pem in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21091BB0568100BB2899 /* test keypair 1.pem */; settings = {ASSET_TAGS = (); }; };
 		AB3D211E1BB0568100BB2899 /* www.apple.com.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D210A1BB0568100BB2899 /* www.apple.com.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D211F1BB0568100BB2899 /* www.google.co.uk.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D210B1BB0568100BB2899 /* www.google.co.uk.cer */; settings = {ASSET_TAGS = (); }; };
-		AB3D21201BB0574200BB2899 /* OpenSSL.h in Headers */ = {isa = PBXBuildFile; fileRef = AB3D20DC1BB0565400BB2899 /* OpenSSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB3D21211BB0578500BB2899 /* ConfidoIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = AB3D20D21BB0565400BB2899 /* ConfidoIOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB3D21471BB05B3500BB2899 /* ConfidoIOS.podspec in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21461BB05B3500BB2899 /* ConfidoIOS.podspec */; settings = {ASSET_TAGS = (); }; };
 		AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */; };
@@ -75,8 +72,6 @@
 		AB3D20D91BB0565400BB2899 /* KeychainKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKey.swift; sourceTree = "<group>"; };
 		AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKeyPair.swift; sourceTree = "<group>"; };
 		AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainProtocol.swift; sourceTree = "<group>"; };
-		AB3D20DC1BB0565400BB2899 /* OpenSSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSSL.h; sourceTree = "<group>"; };
-		AB3D20DD1BB0565400BB2899 /* OpenSSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenSSL.m; sourceTree = "<group>"; };
 		AB3D20DE1BB0565400BB2899 /* OpenSSLCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLCertificate.swift; sourceTree = "<group>"; };
 		AB3D20DF1BB0565400BB2899 /* OpenSSLIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLIdentity.swift; sourceTree = "<group>"; };
 		AB3D20E01BB0565400BB2899 /* OpenSSLKeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLKeyPair.swift; sourceTree = "<group>"; };
@@ -88,7 +83,6 @@
 		AB3D20F91BB0568100BB2899 /* IdentityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentityTests.swift; sourceTree = "<group>"; };
 		AB3D20FA1BB0568100BB2899 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3D20FB1BB0568100BB2899 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
-		AB3D20FC1BB0568100BB2899 /* OpenSSLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLTests.swift; sourceTree = "<group>"; };
 		AB3D20FE1BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Limited Certification Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
 		AB3D20FF1BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Limited Product Development Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
 		AB3D21001BB0568100BB2899 /* Device Identity.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Device Identity.p12"; sourceTree = "<group>"; };
@@ -144,8 +138,6 @@
 				AB3D20D91BB0565400BB2899 /* KeychainKey.swift */,
 				AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */,
 				AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */,
-				AB3D20DC1BB0565400BB2899 /* OpenSSL.h */,
-				AB3D20DD1BB0565400BB2899 /* OpenSSL.m */,
 				AB3D20DE1BB0565400BB2899 /* OpenSSLCertificate.swift */,
 				AB3D20DF1BB0565400BB2899 /* OpenSSLIdentity.swift */,
 				AB3D20E01BB0565400BB2899 /* OpenSSLKeyPair.swift */,
@@ -164,7 +156,6 @@
 				AB3D20F91BB0568100BB2899 /* IdentityTests.swift */,
 				AB3D20FA1BB0568100BB2899 /* Info.plist */,
 				AB3D20FB1BB0568100BB2899 /* KeyPairTests.swift */,
-				AB3D20FC1BB0568100BB2899 /* OpenSSLTests.swift */,
 				AB3D20FD1BB0568100BB2899 /* resources */,
 			);
 			path = ConfidoIOSTests;
@@ -240,7 +231,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB3D21201BB0574200BB2899 /* OpenSSL.h in Headers */,
 				AB3D21211BB0578500BB2899 /* ConfidoIOS.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,7 +426,6 @@
 				AB3D20E71BB0565400BB2899 /* KeychainCertificate.swift in Sources */,
 				AB3D20E91BB0565400BB2899 /* KeychainIdentity.swift in Sources */,
 				AB3D20F31BB0565400BB2899 /* OpenSSLObject.swift in Sources */,
-				AB3D20EF1BB0565400BB2899 /* OpenSSL.m in Sources */,
 				AB3D20EB1BB0565400BB2899 /* KeychainKey.swift in Sources */,
 				AB3D20EC1BB0565400BB2899 /* KeychainKeyPair.swift in Sources */,
 				AB3D20ED1BB0565400BB2899 /* KeychainProtocol.swift in Sources */,
@@ -451,7 +440,6 @@
 				AB3D21101BB0568100BB2899 /* KeyPairTests.swift in Sources */,
 				AB3D210E1BB0568100BB2899 /* IdentityTests.swift in Sources */,
 				AB3D210D1BB0568100BB2899 /* CertificateTests.swift in Sources */,
-				AB3D21111BB0568100BB2899 /* OpenSSLTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

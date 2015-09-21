@@ -109,11 +109,6 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
         
     }
 
-    public class func importKeyPair(pemEncodedData keyData: NSData, encryptedWithPassphrase passphrase: String, keyLabel: String? = nil , keyAppTag: String? = nil, keyAppLabel: String? = nil) throws -> TransportKeyPair {
-        let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyData, encryptedWithPassword: passphrase)
-        return TransportKeyPair(openSSLKeypair: openSSLKeyPair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-    }
-
     public class func findInKeychain(matchingDescriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair? {
         let privateKey = try KeychainPrivateKey.findInKeychain(matchingDescriptor.privateKeyDescriptor()  as KeychainPrivateKey.QueryType)
         let publicKey = try KeychainPublicKey.findInKeychain(matchingDescriptor.publicKeyDescriptor())
@@ -143,16 +138,6 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
         self.publicKey  = try KeychainPublicKey(SecItemAttributes: attributes)
     }
 
-    public func certificateSigningRequest(attributes: [ String : String]) -> NSData? {
-        if let openSSLKeyPair = self.openSSLKeyPair {
-            do {
-                return try OpenSSL.generateCSRWithKeyPair(openSSLKeyPair, csrData: attributes)
-            } catch _ {
-                return nil
-            }
-        }
-        return nil
-    }
 
     public lazy var openSSLKeyPair : OpenSSLKeyPair? = {
         

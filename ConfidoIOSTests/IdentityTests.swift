@@ -17,39 +17,6 @@ class IdentityTests: BaseTests {
         return try transportCertificate.addToKeychain()
     }
 
-    func testCreateAndImportIdentity() {
-        do {
-
-            clearKeychainItems(.Identity)
-            clearKeychainItems(.Key)
-            clearKeychainItems(.Certificate)
-
-            let keyPairPEMData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
-
-            let certificateData = try contentsOfBundleResource("test keypair 1 certificate", ofType: "x509")
-
-            XCTAssertNotNil(certificateData)
-
-            let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
-
-            XCTAssertNotNil(openSSLKeyPair)
-
-            let openSSLIdentity = try OpenSSL.pkcs12IdentityWithKeyPair(openSSLKeyPair, certificate: OpenSSLCertificate(certificateData: certificateData), protectedWithPassphrase: "randompassword")
-
-            XCTAssertNotNil(openSSLIdentity)
-
-            let transportIdentity = try KeychainIdentity.importIdentity(openSSLIdentity.p12identityData, protectedWithPassphrase: "randompassword", label: "Identity Label")
-
-            XCTAssertNotNil(transportIdentity[kSecValueRef as String])
-            let identity = try transportIdentity.addToKeychain()
-
-            
-        } catch let error  {
-            XCTFail("Unexpected Exception \(error)")
-        }
-
-
-    }
 
     func testImportPKCS12Identity() {
         do {

@@ -69,6 +69,4 @@ Pod::Spec.new do |s|
   s.source_files  = "ConfidoIOS/*.swift"
 
 
-  s.dependency "OpenSSL-Static", "~> 1.0.2.c1"
-
 end
