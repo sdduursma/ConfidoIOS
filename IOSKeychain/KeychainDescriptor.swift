@@ -68,19 +68,6 @@ public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable
     }
 }
 
-public class TemporaryKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
-    public init(keyType: KeyType, keySize: Int) {
-        super.init(keyType: keyType, keySize: keySize)
-        attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: false)
-    }
-}
-
-public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
-    public init(keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
-        super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel )
-        attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
-    }
-}
 
 
 

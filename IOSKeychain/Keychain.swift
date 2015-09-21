@@ -131,18 +131,6 @@ public class SecurityWrapper {
         throw status
     }
 
-    public class func secKeyGeneratePair(query: KeyChainPropertiesData) throws -> (SecKey?, SecKey?) {
-        var publicKeyRef  : SecKey?
-        var privateKeyRef : SecKey?
-
-        let status = KeychainStatus.statusFromOSStatus(
-            SecKeyGeneratePair(query, &publicKeyRef, &privateKeyRef))
-        if status == .OK {
-            return (publicKeyRef, privateKeyRef)
-        }
-        throw status
-    }
-
     public class func secPKCS12Import(pkcs12Data: NSData, options: KeyChainPropertiesData) throws -> [SecItemAttributes] {
         var result: NSArray?
         let status = KeychainStatus.statusFromOSStatus(
@@ -211,12 +199,6 @@ public class Keychain {
         return try KeychainItem.itemFromAttributes(securityClass, SecItemAttributes: attributes)
     }
 
-
-    public class func generateKeyPair(descriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair? {
-
-        try SecurityWrapper.secKeyGeneratePair(descriptor.keychainMatchPropertyValues())
-        return try KeychainKeyPair.findInKeychain(descriptor)
-    }
 
 
 //    public class func addIdentity(identity: IdentityImportSpecifier) throws -> (KeychainStatus, Identity?) {

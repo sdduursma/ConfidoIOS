@@ -262,20 +262,56 @@ public enum KeyType: RawRepresentable {
 }
 
 
-public enum Accessible {
-    case WhenUnlock, AfterFirstUnlock, Always, WhenPasscodeSetThisDeviceOnly,
-    WhenUnlockedThisDeviceOnly, AfterFirstUnlockThisDeviceOnly, AlwaysThisDeviceOnly
-    static func kSecAttrAccessible(accessible: Accessible) -> CFStringRef {
-        return mapping[accessible]!
+
+public enum Accessible : RawRepresentable {
+    case WhenUnlocked, AfterFirstUnlock, Always,
+    WhenPasscodeSetThisDeviceOnly, WhenUnlockedThisDeviceOnly,
+    AfterFirstUnlockThisDeviceOnly, AlwaysThisDeviceOnly
+
+    public init?(rawValue: String) {
+        if rawValue == String(kSecAttrAccessibleWhenUnlocked) {
+            self = WhenUnlocked
+        }
+        else if rawValue == String(kSecAttrAccessibleAfterFirstUnlock) {
+            self = AfterFirstUnlock
+        }
+        else if rawValue == String(kSecAttrAccessibleAlways) {
+            self = Always
+        }
+        else if rawValue == String(kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly) {
+            self = WhenPasscodeSetThisDeviceOnly
+        }
+        else if rawValue == String(kSecAttrAccessibleWhenUnlockedThisDeviceOnly) {
+            self = WhenUnlockedThisDeviceOnly
+        }
+        else if rawValue == String(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly) {
+            self = AfterFirstUnlockThisDeviceOnly
+        }
+        else if rawValue == String(kSecAttrAccessibleAlwaysThisDeviceOnly) {
+            self = AlwaysThisDeviceOnly
+        }
+        else {
+            return nil
+        }
     }
 
-    static let mapping: [Accessible: CFStringRef] = [
-        WhenUnlock:                     kSecAttrAccessibleWhenUnlocked,
-        AfterFirstUnlock:               kSecAttrAccessibleAfterFirstUnlock,
-        Always:                         kSecAttrAccessibleAlways,
-        WhenPasscodeSetThisDeviceOnly:  kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
-        WhenUnlockedThisDeviceOnly:     kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
-        AfterFirstUnlockThisDeviceOnly: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
-        AlwaysThisDeviceOnly:           kSecAttrAccessibleAlwaysThisDeviceOnly
-    ]
+    public var rawValue: String {
+        switch self {
+        case WhenUnlocked:
+            return String(kSecAttrAccessibleWhenUnlocked)
+        case AfterFirstUnlock:
+            return String(kSecAttrAccessibleAfterFirstUnlock)
+        case Always:
+            return String(kSecAttrAccessibleAlways)
+        case WhenPasscodeSetThisDeviceOnly:
+            return String(kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly)
+        case WhenUnlockedThisDeviceOnly:
+            return String(kSecAttrAccessibleWhenUnlockedThisDeviceOnly)
+        case AfterFirstUnlockThisDeviceOnly: 
+            return String(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
+        case AlwaysThisDeviceOnly: 
+            return String(kSecAttrAccessibleAlwaysThisDeviceOnly)
+        }
+    }	
 }
+

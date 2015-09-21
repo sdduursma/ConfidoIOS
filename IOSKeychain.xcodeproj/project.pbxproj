@@ -70,6 +70,7 @@
 		AB16CF7B1BA180DF008C9D1C /* OpenSSLCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLCertificate.swift; sourceTree = "<group>"; };
 		AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLObject.swift; sourceTree = "<group>"; };
 		AB16CF7F1BA19704008C9D1C /* KeychainIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainIdentity.swift; sourceTree = "<group>"; };
+		AB3D20781BB033FC00BB2899 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AB408E451BA1E3C600A37FAA /* CertificateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateTests.swift; sourceTree = "<group>"; };
 		AB710EA71BA060FB003AE8B0 /* IOSKeychain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IOSKeychain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB710EAB1BA060FB003AE8B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -129,6 +130,7 @@
 		AB710E9D1BA060FB003AE8B0 = {
 			isa = PBXGroup;
 			children = (
+				AB3D20781BB033FC00BB2899 /* README.md */,
 				AB710EA91BA060FB003AE8B0 /* IOSKeychain */,
 				AB710EB61BA060FB003AE8B0 /* IOSKeychainTests */,
 				AB710EA81BA060FB003AE8B0 /* Products */,
@@ -511,7 +513,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -555,7 +557,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "";

@@ -18,6 +18,7 @@
 #import "pkcs12.h"
 #import <openssl/err.h>
 
+#import <CommonCrypto/CommonCryptor.h>
 
 ExCryptoKeyType map_EVP_PKEY_Type(EVP_PKEY *aEVPKey);
 

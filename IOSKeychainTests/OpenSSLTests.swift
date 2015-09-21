@@ -109,7 +109,8 @@ class OpenSSLKeyPairTests: BaseTests {
     func testKeyPairCorruptData() {
 
         do {
-            let corruptPEMFileData = try contentsOfBundleResource("test keypair 1 identity", ofType: "p12")
+            //Load a P12 file, this is not a PEM, so it will be corrupt.
+            let corruptPEMFileData = try contentsOfBundleResource("Device Identity", ofType: "p12")
             XCTAssertNotNil(corruptPEMFileData)
             _ = try OpenSSL.keyPairFromPEMData(corruptPEMFileData, encryptedWithPassword: "wrongpassword")
             XCTAssert(false, "Exception should have been raised")

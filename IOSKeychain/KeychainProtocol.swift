@@ -134,7 +134,30 @@ public protocol KeychainCommonClassProperties : KeyChainAttributeStorage {
     var itemAccessGroup: String? { get}
     //TODO: rename itemLabel to label
     var itemLabel: String? { get }
+    var itemAccessible: Accessible? { get }
+
+    /**
+    @constant kSecAttrAccessControl Specifies a dictionary key whose value
+    is SecAccessControl instance which contains access control conditions
+    for item.
+    */
+    var itemAccessControl: SecAccessControl? { get }
+
+    /**
+    @constant kSecAttrTokenID Specifies a dictionary key whose presence
+    indicates that item is backed by external token. Value of this attribute
+    is CFStringRef uniquely identifying containing token. When this attribute
+    is not present, item is stored in internal keychain database.
+    Note that once item is created, this attribute cannot be changed - in other
+    words it is not possible to migrate existing items to, from or between tokens.
+    Currently the only available value for this attribute is
+    kSecAttrTokenIDSecureEnclave, which indicates that item (private key) is
+    backed by device's Secure Enclave.
+    */
+
+    var itemTokenID: String? { get }
 }
+
 
 extension KeychainCommonClassProperties where Self : KeychainCommonClassProperties {
     public var itemLabel: String? {
@@ -142,6 +165,28 @@ extension KeychainCommonClassProperties where Self : KeychainCommonClassProperti
     }
     public var itemAccessGroup: String? {
         get { return attributes[String(kSecAttrAccessGroup)] as? String }
+    }
+    public var itemAccessible: Accessible? {
+        get {
+            let accessible = attributes[String(kSecAttrAccessible)] as? String
+            if accessible != nil {
+                return Accessible.init(rawValue: accessible!)
+            }
+            return nil
+        }
+    }
+    public var itemAccessControl: SecAccessControl? {
+        get {
+            if let valueRef: AnyObject = attributes[String(kSecAttrAccessControl)] {
+                if CFGetTypeID(valueRef) == SecAccessControlGetTypeID() {
+                    return (valueRef as! SecAccessControl)
+                }
+            }
+            return nil
+        }
+    }
+    public var itemTokenID: String? {
+        get { return attributes[String(kSecAttrTokenID)] as? String }
     }
 }
 
@@ -181,7 +226,7 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
         get { return attributes[String(kSecAttrApplicationTag)] as? String }
     }
 
-    public var keyAppLabel: String? {
+    public var keyAppLabelString: String? {
         get {
             if let data = attributes[String(kSecAttrApplicationLabel)] as? NSData {
                 return NSString(data: data, encoding: NSUTF8StringEncoding) as? String
@@ -190,6 +235,16 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
             }
         }
     }
+    public var keyAppLabelData: NSData? {
+        get {
+            if let data = attributes[String(kSecAttrApplicationLabel)] as? NSData {
+                return data
+            } else {
+                return nil
+            }
+        }
+    }
+
 
     public var keyClass: KeyClass {
         get {

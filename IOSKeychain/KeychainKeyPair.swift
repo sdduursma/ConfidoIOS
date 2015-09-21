@@ -72,14 +72,24 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
 public protocol KeyPair {
     typealias PrivKeyType : PrivateKey
     typealias PubKeyType  : PublicKey
+    typealias KeyPairTransportClass
+    typealias GeneratorDescriptorClass
     var privateKey: PrivKeyType! { get }
     var publicKey: PubKeyType!  { get }
     init (publicKey: PubKeyType, privateKey: PrivKeyType)
+    static func generateKeyPair(descriptor: GeneratorDescriptorClass) throws -> KeyPairTransportClass
 }
 
 
-extension KeyPair {
+extension KeyPair where Self : KeyPair {
 }
+
+
+public func secEnsureOK(status: OSStatus) throws {
+    if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
+}
+
+
 
 /**
 An instance of an IOS Keypair
@@ -88,6 +98,16 @@ An instance of an IOS Keypair
 public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
     public private(set) var privateKey: KeychainPrivateKey!
     public private(set) var publicKey:  KeychainPublicKey!
+
+    public class func generateKeyPair(descriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair {
+        var publicKeyRef  : SecKey?
+        var privateKeyRef : SecKey?
+
+        try secEnsureOK(SecKeyGeneratePair(descriptor.keychainMatchPropertyValues(), &publicKeyRef, &privateKeyRef))
+
+        return try findInKeychain(descriptor)!
+        
+    }
 
     public class func importKeyPair(pemEncodedData keyData: NSData, encryptedWithPassphrase passphrase: String, keyLabel: String? = nil , keyAppTag: String? = nil, keyAppLabel: String? = nil) throws -> TransportKeyPair {
         let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyData, encryptedWithPassword: passphrase)
@@ -144,6 +164,8 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
     }()
 }
 
+//MARK: Transport Key
+
 public class TransportPrivateKey : KeychainKeyDescriptor, SecItemAddable {
     init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
         super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PrivateKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
@@ -158,6 +180,7 @@ public class TransportPublicKey : KeychainKeyDescriptor, SecItemAddable {
         attributes[String(kSecValueData)] = keypair.publicKeyData
     }
 }
+
 
 public class TransportKeyPair :KeychainKeyPairDescriptor,  KeychainAddable {
     //Marks that this class maps to KeychainKeyPair when matching
@@ -182,6 +205,31 @@ public class TransportKeyPair :KeychainKeyPairDescriptor,  KeychainAddable {
     }
 }
 
+//MARK: Key Pair Descriptors
+public class TemporaryKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
+    public init(keyType: KeyType, keySize: Int) {
+        super.init(keyType: keyType, keySize: keySize)
+        attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: false)
+    }
+}
+
+public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
+    /**
+    :param:   keyType     Type of key pair to generate (RSA or EC)
+    :param:   keySize     Size of the key to generate
+    :param:   keyLabel    A searchable label for the key pair
+    :param:   keyAppTag
+    :returns: keyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nit
+    */
+    public init(accessible: Accessible, accessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
+        super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel )
+        attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
+        attributes[String(kSecAttrAccessible)] = accessible.rawValue
+        if (accessControl != nil) {
+            attributes[String(kSecAttrAccessControl)] = accessControl
+        }
+    }
+}
 
 
 
