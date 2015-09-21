@@ -45,6 +45,7 @@
 		AB3D211F1BB0568100BB2899 /* www.google.co.uk.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D210B1BB0568100BB2899 /* www.google.co.uk.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21201BB0574200BB2899 /* OpenSSL.h in Headers */ = {isa = PBXBuildFile; fileRef = AB3D20DC1BB0565400BB2899 /* OpenSSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB3D21211BB0578500BB2899 /* ConfidoIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = AB3D20D21BB0565400BB2899 /* ConfidoIOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AB3D21471BB05B3500BB2899 /* ConfidoIOS.podspec in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21461BB05B3500BB2899 /* ConfidoIOS.podspec */; settings = {ASSET_TAGS = (); }; };
 		AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -102,6 +103,7 @@
 		AB3D21091BB0568100BB2899 /* test keypair 1.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1.pem"; sourceTree = "<group>"; };
 		AB3D210A1BB0568100BB2899 /* www.apple.com.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = www.apple.com.cer; sourceTree = "<group>"; };
 		AB3D210B1BB0568100BB2899 /* www.google.co.uk.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = www.google.co.uk.cer; sourceTree = "<group>"; };
+		AB3D21461BB05B3500BB2899 /* ConfidoIOS.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfidoIOS.podspec; sourceTree = "<group>"; };
 		AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ConfidoIOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConfidoIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -192,6 +194,7 @@
 		AB710E9D1BA060FB003AE8B0 = {
 			isa = PBXGroup;
 			children = (
+				AB3D21461BB05B3500BB2899 /* ConfidoIOS.podspec */,
 				AB3D20781BB033FC00BB2899 /* README.md */,
 				AB3D20D11BB0565400BB2899 /* ConfidoIOS */,
 				AB3D20F61BB0568000BB2899 /* ConfidoIOSTests */,
@@ -336,6 +339,7 @@
 			files = (
 				AB3D21181BB0568100BB2899 /* GeoTrust Global CA.cer in Resources */,
 				AB3D21121BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer in Resources */,
+				AB3D21471BB05B3500BB2899 /* ConfidoIOS.podspec in Resources */,
 				AB3D211A1BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer in Resources */,
 				AB3D21151BB0568100BB2899 /* Expend Development Device Identity Authority RSA Certificate.cer in Resources */,
 				AB3D211F1BB0568100BB2899 /* www.google.co.uk.cer in Resources */,
