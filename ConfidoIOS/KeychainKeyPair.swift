@@ -47,6 +47,17 @@ public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, Gener
         try super.init(SecItemAttributes: attributes)
         self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
     }
+    public lazy var keyData: NSData? = {
+        // It is possible that a key is not permanent, then there isn't any data to return
+        do {
+            return try Keychain.keyData(self)
+        }
+        catch let error {
+            //TODO: Fix
+            print("error \(error)")
+            return nil
+        }
+        }()
 }
 
 
@@ -137,58 +148,8 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
         self.privateKey = try KeychainPrivateKey(SecItemAttributes: attributes)
         self.publicKey  = try KeychainPublicKey(SecItemAttributes: attributes)
     }
-
-
-    public lazy var openSSLKeyPair : OpenSSLKeyPair? = {
-        
-        if self.privateKey.keyType == .RSA,
-            let privateKeyData = self.privateKey.keyData, let publicKeyData = self.publicKey.keyData {
-            return OpenSSLRSAKeyPair(keyLength: self.publicKey.keySize, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
-        }
-        return nil;
-    }()
 }
 
-//MARK: Transport Key
-
-public class TransportPrivateKey : KeychainKeyDescriptor, SecItemAddable {
-    init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
-        super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PrivateKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-        attributes[String(kSecValueData)] = keypair.privateKeyData
-
-    }
-}
-
-public class TransportPublicKey : KeychainKeyDescriptor, SecItemAddable {
-    init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String?, keyAppTag: String?, keyAppLabel: String?) {
-        super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: .PublicKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-        attributes[String(kSecValueData)] = keypair.publicKeyData
-    }
-}
-
-
-public class TransportKeyPair :KeychainKeyPairDescriptor,  KeychainAddable {
-    //Marks that this class maps to KeychainKeyPair when matching
-    public typealias KeychainClassType = KeychainKeyPair
-
-    let openSSLKeyPair: OpenSSLKeyPair
-    let privateKey : TransportPrivateKey
-    let publicKey  : TransportPublicKey
-    public init(openSSLKeypair keypair: OpenSSLKeyPair, keyLabel: String? , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
-        self.openSSLKeyPair = keypair
-        self.privateKey = TransportPrivateKey(openSSLKeypair: keypair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-        self.publicKey = TransportPublicKey(openSSLKeypair: keypair, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-
-        super.init(keyType: keypair.keyType, keySize: keypair.keyLength, keyClass: nil, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-    }
-
-    public func addToKeychain() throws -> KeychainKeyPair? {
-        try privateKey.addToKeychain()
-        try publicKey.addToKeychain()
-
-        return try KeychainKeyPair.findInKeychain(self)
-    }
-}
 
 //MARK: Key Pair Descriptors
 public class TemporaryKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {

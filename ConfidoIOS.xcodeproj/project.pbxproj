@@ -15,10 +15,6 @@
 		AB3D20EB1BB0565400BB2899 /* KeychainKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D91BB0565400BB2899 /* KeychainKey.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20EC1BB0565400BB2899 /* KeychainKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20ED1BB0565400BB2899 /* KeychainProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D20F01BB0565400BB2899 /* OpenSSLCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DE1BB0565400BB2899 /* OpenSSLCertificate.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D20F11BB0565400BB2899 /* OpenSSLIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20DF1BB0565400BB2899 /* OpenSSLIdentity.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D20F21BB0565400BB2899 /* OpenSSLKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20E01BB0565400BB2899 /* OpenSSLKeyPair.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D20F31BB0565400BB2899 /* OpenSSLObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20E11BB0565400BB2899 /* OpenSSLObject.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20F41BB0565400BB2899 /* SecurityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20E21BB0565400BB2899 /* SecurityMappings.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20F51BB0565400BB2899 /* TrustPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20E31BB0565400BB2899 /* TrustPoint.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D210C1BB0568100BB2899 /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20F71BB0568100BB2899 /* BaseTests.swift */; settings = {ASSET_TAGS = (); }; };
@@ -67,10 +63,6 @@
 		AB3D20D91BB0565400BB2899 /* KeychainKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKey.swift; sourceTree = "<group>"; };
 		AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKeyPair.swift; sourceTree = "<group>"; };
 		AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainProtocol.swift; sourceTree = "<group>"; };
-		AB3D20DE1BB0565400BB2899 /* OpenSSLCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLCertificate.swift; sourceTree = "<group>"; };
-		AB3D20DF1BB0565400BB2899 /* OpenSSLIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLIdentity.swift; sourceTree = "<group>"; };
-		AB3D20E01BB0565400BB2899 /* OpenSSLKeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLKeyPair.swift; sourceTree = "<group>"; };
-		AB3D20E11BB0565400BB2899 /* OpenSSLObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLObject.swift; sourceTree = "<group>"; };
 		AB3D20E21BB0565400BB2899 /* SecurityMappings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecurityMappings.swift; sourceTree = "<group>"; };
 		AB3D20E31BB0565400BB2899 /* TrustPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustPoint.swift; sourceTree = "<group>"; };
 		AB3D20F71BB0568100BB2899 /* BaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTests.swift; sourceTree = "<group>"; };
@@ -130,10 +122,6 @@
 				AB3D20D91BB0565400BB2899 /* KeychainKey.swift */,
 				AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */,
 				AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */,
-				AB3D20DE1BB0565400BB2899 /* OpenSSLCertificate.swift */,
-				AB3D20DF1BB0565400BB2899 /* OpenSSLIdentity.swift */,
-				AB3D20E01BB0565400BB2899 /* OpenSSLKeyPair.swift */,
-				AB3D20E11BB0565400BB2899 /* OpenSSLObject.swift */,
 				AB3D20E21BB0565400BB2899 /* SecurityMappings.swift */,
 				AB3D20E31BB0565400BB2899 /* TrustPoint.swift */,
 			);
@@ -337,16 +325,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB3D20E61BB0565400BB2899 /* Keychain.swift in Sources */,
-				AB3D20F11BB0565400BB2899 /* OpenSSLIdentity.swift in Sources */,
 				AB3D20EA1BB0565400BB2899 /* KeyChainItem.swift in Sources */,
-				AB3D20F01BB0565400BB2899 /* OpenSSLCertificate.swift in Sources */,
 				AB3D20F41BB0565400BB2899 /* SecurityMappings.swift in Sources */,
 				AB3D20F51BB0565400BB2899 /* TrustPoint.swift in Sources */,
-				AB3D20F21BB0565400BB2899 /* OpenSSLKeyPair.swift in Sources */,
 				AB3D20E81BB0565400BB2899 /* KeychainDescriptor.swift in Sources */,
 				AB3D20E71BB0565400BB2899 /* KeychainCertificate.swift in Sources */,
 				AB3D20E91BB0565400BB2899 /* KeychainIdentity.swift in Sources */,
-				AB3D20F31BB0565400BB2899 /* OpenSSLObject.swift in Sources */,
 				AB3D20EB1BB0565400BB2899 /* KeychainKey.swift in Sources */,
 				AB3D20EC1BB0565400BB2899 /* KeychainKeyPair.swift in Sources */,
 				AB3D20ED1BB0565400BB2899 /* KeychainProtocol.swift in Sources */,

@@ -53,11 +53,7 @@ class KeyPairTests: BaseTests {
             let publicKeyData = keyPair!.publicKey.keyData
             XCTAssertNotNil(publicKeyData)
 
-            let privateKeyData = keyPair!.privateKey.keyData
-            XCTAssertNotNil(privateKeyData)
-
             XCTAssertEqual(publicKeyData!.length,140)
-            XCTAssert(privateKeyData!.length > 0)
 
         } catch let error as NSError {
             XCTFail("Unexpected Exception \(error)")
@@ -104,12 +100,9 @@ class KeyPairTests: BaseTests {
             let publicKeyData = keyPair!.publicKey.keyData
             XCTAssertNotNil(publicKeyData)
 
-            let privateKeyData = keyPair!.privateKey.keyData
-            XCTAssertNotNil(privateKeyData)
 
             XCTAssertEqual(publicKeyData!.length,140)
-            XCTAssert(privateKeyData!.length > 0)
-            
+
         } catch let error as NSError {
             XCTFail("Unexpected Exception \(error)")
         }
@@ -140,8 +133,6 @@ class KeyPairTests: BaseTests {
             let publicKeyData = keyPair.publicKey.keyData
             XCTAssertNil(publicKeyData)
 
-            let privateKeyData = keyPair.privateKey.keyData
-            XCTAssertNil(privateKeyData)
         } catch let error as NSError {
             XCTFail("Unexpected Exception \(error)")
         }

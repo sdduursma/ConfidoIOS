@@ -214,7 +214,7 @@ public class Keychain {
 //
 //    }
 
-    public class func keyData(key: KeychainKey) throws -> NSData {
+    public class func keyData(key: KeychainPublicKey) throws -> NSData {
         var query : KeyChainPropertiesData = [ : ]
 
         let descriptor = key.keychainMatchPropertyValues()

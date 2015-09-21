@@ -82,18 +82,6 @@ public protocol KeychainAddable {
 }
 
 
-extension TransportPrivateKey : KeychainAddable  {
-    public func addToKeychain() throws -> KeychainPrivateKey? {
-        try self.secItemAdd()
-        return try KeychainPrivateKey.findInKeychain(self)
-    }
-}
-extension TransportPublicKey : KeychainAddable  {
-    public func addToKeychain() throws -> KeychainPublicKey? {
-        try self.secItemAdd()
-        return try KeychainPublicKey.findInKeychain(self)
-    }
-}
 
 //TODO: The two extensions above should be replaced with a generic extension similar to this
 //extension KeychainAddable where Self : KeychainAddable, Self : SecItemAddable {
