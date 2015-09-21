@@ -7,11 +7,9 @@
 //
 
 
-#import <IOSKeychain/IOSKeychain-Swift.h>
+#import <ConfidoIOS/ConfidoIOS-Swift.h>
 
 #import "OpenSSL.h"
-//#import "ExKCCertificate.h"
-//#import "ExKCKeyPair.h"
 #import <openssl/x509.h>
 #import <openssl/pem.h>
 

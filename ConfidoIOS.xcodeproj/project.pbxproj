@@ -7,17 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2A0A2EC0BC360F17BAAC52D8 /* libPods-IOSKeychain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A779C65CEF01B8C1FB64397 /* libPods-IOSKeychain.a */; };
+		82F63648F15D56E49118AEBA /* libPods-ConfidoIOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */; };
+		98E723345246C034FC048E5D /* libPods-ConfidoIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */; };
 		AB16CF761BA15EB3008C9D1C /* OpenSSLKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF751BA15EB3008C9D1C /* OpenSSLKeyPair.swift */; };
-		AB16CF781BA16F1E008C9D1C /* OpenSSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF771BA16F1E008C9D1C /* OpenSSLTests.swift */; };
 		AB16CF7A1BA180CF008C9D1C /* OpenSSLIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF791BA180CF008C9D1C /* OpenSSLIdentity.swift */; };
 		AB16CF7C1BA180DF008C9D1C /* OpenSSLCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7B1BA180DF008C9D1C /* OpenSSLCertificate.swift */; };
 		AB16CF7E1BA18224008C9D1C /* OpenSSLObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */; };
 		AB16CF801BA19704008C9D1C /* KeychainIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB16CF7F1BA19704008C9D1C /* KeychainIdentity.swift */; };
-		AB408E461BA1E3C600A37FAA /* CertificateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB408E451BA1E3C600A37FAA /* CertificateTests.swift */; };
-		AB435C0DC0E028BC5F49D4AF /* libPods-IOSKeychainTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A38D41E7A19F5D9F86CE228 /* libPods-IOSKeychainTests.a */; };
-		AB710EAD1BA060FB003AE8B0 /* IOSKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = AB710EAC1BA060FB003AE8B0 /* IOSKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AB710EB31BA060FB003AE8B0 /* IOSKeychain.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB710EA71BA060FB003AE8B0 /* IOSKeychain.framework */; };
+		AB3D20851BB0552D00BB2899 /* CertificateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20811BB0552D00BB2899 /* CertificateTests.swift */; settings = {ASSET_TAGS = (); }; };
+		AB3D20861BB0552D00BB2899 /* IdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20821BB0552D00BB2899 /* IdentityTests.swift */; settings = {ASSET_TAGS = (); }; };
+		AB3D20871BB0552D00BB2899 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20831BB0552D00BB2899 /* KeyPairTests.swift */; settings = {ASSET_TAGS = (); }; };
+		AB3D20881BB0552D00BB2899 /* OpenSSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20841BB0552D00BB2899 /* OpenSSLTests.swift */; settings = {ASSET_TAGS = (); }; };
+		AB710EAD1BA060FB003AE8B0 /* ConfidoIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = AB710EAC1BA060FB003AE8B0 /* ConfidoIOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */; };
 		AB710ECB1BA0613E003AE8B0 /* KeyChainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC31BA0613E003AE8B0 /* KeyChainItem.swift */; };
 		AB710ECC1BA0613E003AE8B0 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC41BA0613E003AE8B0 /* Keychain.swift */; };
 		AB710ECD1BA0613E003AE8B0 /* SecurityMappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC51BA0613E003AE8B0 /* SecurityMappings.swift */; };
@@ -25,7 +27,6 @@
 		AB710ED01BA0613E003AE8B0 /* KeychainKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */; };
 		AB710ED11BA0613E003AE8B0 /* KeychainCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710EC91BA0613E003AE8B0 /* KeychainCertificate.swift */; };
 		AB710ED21BA0613E003AE8B0 /* KeychainKeyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ECA1BA0613E003AE8B0 /* KeychainKeyPair.swift */; };
-		AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */; };
 		AB710ED61BA066A3003AE8B0 /* OpenSSL.m in Sources */ = {isa = PBXBuildFile; fileRef = AB710ED51BA066A3003AE8B0 /* OpenSSL.m */; };
 		AB710EDB1BA06E07003AE8B0 /* OpenSSL.h in Headers */ = {isa = PBXBuildFile; fileRef = AB710ED71BA066D2003AE8B0 /* OpenSSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB710EE31BA07402003AE8B0 /* test keypair 1 certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB710EDE1BA07402003AE8B0 /* test keypair 1 certificate.cer */; };
@@ -33,7 +34,6 @@
 		AB710EE61BA07402003AE8B0 /* test keypair 1 certificate.x509 in Resources */ = {isa = PBXBuildFile; fileRef = AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */; };
 		ABB02D9E1BA33B5E004DF178 /* KeychainProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */; settings = {ASSET_TAGS = (); }; };
 		ABB02DA01BA6D03C004DF178 /* BaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */; settings = {ASSET_TAGS = (); }; };
-		ABB02DA21BA70981004DF178 /* IdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02DA11BA70981004DF178 /* IdentityTests.swift */; settings = {ASSET_TAGS = (); }; };
 		ABB02DA41BA822F2004DF178 /* Device Identity.p12 in Resources */ = {isa = PBXBuildFile; fileRef = ABB02DA31BA822C8004DF178 /* Device Identity.p12 */; settings = {ASSET_TAGS = (); }; };
 		ABB02DA61BA84414004DF178 /* TrustPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB02DA51BA84414004DF178 /* TrustPoint.swift */; settings = {ASSET_TAGS = (); }; };
 		ABB02DAA1BA9DBF9004DF178 /* www.google.co.uk.cer in Resources */ = {isa = PBXBuildFile; fileRef = ABB02DA71BA9DBF8004DF178 /* www.google.co.uk.cer */; settings = {ASSET_TAGS = (); }; };
@@ -53,29 +53,29 @@
 			containerPortal = AB710E9E1BA060FB003AE8B0 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AB710EA61BA060FB003AE8B0;
-			remoteInfo = IOSKeychain;
+			remoteInfo = ConfidoIOS;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2F8D28B0CE0DD6E992DCDC9C /* Pods-IOSKeychain.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSKeychain.release.xcconfig"; path = "Pods/Target Support Files/Pods-IOSKeychain/Pods-IOSKeychain.release.xcconfig"; sourceTree = "<group>"; };
-		4A779C65CEF01B8C1FB64397 /* libPods-IOSKeychain.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IOSKeychain.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A38D41E7A19F5D9F86CE228 /* libPods-IOSKeychainTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IOSKeychainTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		79CA2FC5042567A45EFAA032 /* Pods-IOSKeychainTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSKeychainTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-IOSKeychainTests/Pods-IOSKeychainTests.release.xcconfig"; sourceTree = "<group>"; };
-		7EB1ABD9B3D4A174670CE71B /* Pods-IOSKeychain.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSKeychain.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IOSKeychain/Pods-IOSKeychain.debug.xcconfig"; sourceTree = "<group>"; };
-		8476EDCF38FA57B8CC6124A9 /* Pods-IOSKeychainTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IOSKeychainTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IOSKeychainTests/Pods-IOSKeychainTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5719F29C58165D0382BAEF78 /* Pods-ConfidoIOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		6A0986B4D5CACBC6D406FFF5 /* Pods-ConfidoIOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOS/Pods-ConfidoIOS.release.xcconfig"; sourceTree = "<group>"; };
+		785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A6E4CD11C88DD0871C4E8E8 /* Pods-ConfidoIOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AB16CF751BA15EB3008C9D1C /* OpenSSLKeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLKeyPair.swift; sourceTree = "<group>"; };
-		AB16CF771BA16F1E008C9D1C /* OpenSSLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLTests.swift; sourceTree = "<group>"; };
 		AB16CF791BA180CF008C9D1C /* OpenSSLIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLIdentity.swift; sourceTree = "<group>"; };
 		AB16CF7B1BA180DF008C9D1C /* OpenSSLCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLCertificate.swift; sourceTree = "<group>"; };
 		AB16CF7D1BA18224008C9D1C /* OpenSSLObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLObject.swift; sourceTree = "<group>"; };
 		AB16CF7F1BA19704008C9D1C /* KeychainIdentity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainIdentity.swift; sourceTree = "<group>"; };
 		AB3D20781BB033FC00BB2899 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		AB408E451BA1E3C600A37FAA /* CertificateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateTests.swift; sourceTree = "<group>"; };
-		AB710EA71BA060FB003AE8B0 /* IOSKeychain.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IOSKeychain.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB3D20811BB0552D00BB2899 /* CertificateTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CertificateTests.swift; sourceTree = "<group>"; };
+		AB3D20821BB0552D00BB2899 /* IdentityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentityTests.swift; sourceTree = "<group>"; };
+		AB3D20831BB0552D00BB2899 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
+		AB3D20841BB0552D00BB2899 /* OpenSSLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLTests.swift; sourceTree = "<group>"; };
+		AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ConfidoIOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB710EAB1BA060FB003AE8B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		AB710EAC1BA060FB003AE8B0 /* IOSKeychain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSKeychain.h; sourceTree = "<group>"; };
-		AB710EB21BA060FB003AE8B0 /* IOSKeychainTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IOSKeychainTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB710EAC1BA060FB003AE8B0 /* ConfidoIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfidoIOS.h; sourceTree = "<group>"; };
+		AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConfidoIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB710EB81BA060FB003AE8B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB710EC31BA0613E003AE8B0 /* KeyChainItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyChainItem.swift; sourceTree = "<group>"; };
 		AB710EC41BA0613E003AE8B0 /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
@@ -84,7 +84,6 @@
 		AB710EC81BA0613E003AE8B0 /* KeychainKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKey.swift; sourceTree = "<group>"; };
 		AB710EC91BA0613E003AE8B0 /* KeychainCertificate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainCertificate.swift; sourceTree = "<group>"; };
 		AB710ECA1BA0613E003AE8B0 /* KeychainKeyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainKeyPair.swift; sourceTree = "<group>"; };
-		AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
 		AB710ED51BA066A3003AE8B0 /* OpenSSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenSSL.m; sourceTree = "<group>"; };
 		AB710ED71BA066D2003AE8B0 /* OpenSSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenSSL.h; sourceTree = "<group>"; };
 		AB710EDE1BA07402003AE8B0 /* test keypair 1 certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "test keypair 1 certificate.cer"; sourceTree = "<group>"; };
@@ -92,7 +91,6 @@
 		AB710EE11BA07402003AE8B0 /* test keypair 1 certificate.x509 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "test keypair 1 certificate.x509"; sourceTree = "<group>"; };
 		ABB02D9D1BA33B5E004DF178 /* KeychainProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainProtocol.swift; sourceTree = "<group>"; };
 		ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseTests.swift; sourceTree = "<group>"; };
-		ABB02DA11BA70981004DF178 /* IdentityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentityTests.swift; sourceTree = "<group>"; };
 		ABB02DA31BA822C8004DF178 /* Device Identity.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Device Identity.p12"; sourceTree = "<group>"; };
 		ABB02DA51BA84414004DF178 /* TrustPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrustPoint.swift; sourceTree = "<group>"; };
 		ABB02DA71BA9DBF8004DF178 /* www.google.co.uk.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = www.google.co.uk.cer; sourceTree = "<group>"; };
@@ -104,6 +102,8 @@
 		ABCB84E11BAA013200628CFC /* Expend Product Development Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Expend Product Development Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
 		ABCB84E31BAA01AB00628CFC /* Curoo Limited Product Development Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Limited Product Development Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
 		ABCB84E51BAA02AA00628CFC /* Curoo Limited Certification Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Limited Certification Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
+		B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E81E07027A5B8161B67AF3BB /* Pods-ConfidoIOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOS/Pods-ConfidoIOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,7 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A0A2EC0BC360F17BAAC52D8 /* libPods-IOSKeychain.a in Frameworks */,
+				98E723345246C034FC048E5D /* libPods-ConfidoIOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,8 +119,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB710EB31BA060FB003AE8B0 /* IOSKeychain.framework in Frameworks */,
-				AB435C0DC0E028BC5F49D4AF /* libPods-IOSKeychainTests.a in Frameworks */,
+				AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */,
+				82F63648F15D56E49118AEBA /* libPods-ConfidoIOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -131,8 +131,8 @@
 			isa = PBXGroup;
 			children = (
 				AB3D20781BB033FC00BB2899 /* README.md */,
-				AB710EA91BA060FB003AE8B0 /* IOSKeychain */,
-				AB710EB61BA060FB003AE8B0 /* IOSKeychainTests */,
+				AB710EA91BA060FB003AE8B0 /* ConfidoIOS */,
+				AB710EB61BA060FB003AE8B0 /* ConfidoIOSTests */,
 				AB710EA81BA060FB003AE8B0 /* Products */,
 				E6894CAD0757032772D87BD8 /* Pods */,
 				C6BC2230DEDAE7CF9BE590A5 /* Frameworks */,
@@ -142,16 +142,16 @@
 		AB710EA81BA060FB003AE8B0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AB710EA71BA060FB003AE8B0 /* IOSKeychain.framework */,
-				AB710EB21BA060FB003AE8B0 /* IOSKeychainTests.xctest */,
+				AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */,
+				AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AB710EA91BA060FB003AE8B0 /* IOSKeychain */ = {
+		AB710EA91BA060FB003AE8B0 /* ConfidoIOS */ = {
 			isa = PBXGroup;
 			children = (
-				AB710EAC1BA060FB003AE8B0 /* IOSKeychain.h */,
+				AB710EAC1BA060FB003AE8B0 /* ConfidoIOS.h */,
 				AB710EC41BA0613E003AE8B0 /* Keychain.swift */,
 				AB710EC91BA0613E003AE8B0 /* KeychainCertificate.swift */,
 				AB710EC71BA0613E003AE8B0 /* KeychainDescriptor.swift */,
@@ -170,6 +170,7 @@
 				AB710EAA1BA060FB003AE8B0 /* Supporting Files */,
 				ABB02DA51BA84414004DF178 /* TrustPoint.swift */,
 			);
+			name = ConfidoIOS;
 			path = IOSKeychain;
 			sourceTree = "<group>";
 		};
@@ -181,17 +182,18 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		AB710EB61BA060FB003AE8B0 /* IOSKeychainTests */ = {
+		AB710EB61BA060FB003AE8B0 /* ConfidoIOSTests */ = {
 			isa = PBXGroup;
 			children = (
+				AB3D20811BB0552D00BB2899 /* CertificateTests.swift */,
+				AB3D20821BB0552D00BB2899 /* IdentityTests.swift */,
+				AB3D20831BB0552D00BB2899 /* KeyPairTests.swift */,
+				AB3D20841BB0552D00BB2899 /* OpenSSLTests.swift */,
 				ABB02D9F1BA6D03C004DF178 /* BaseTests.swift */,
-				AB408E451BA1E3C600A37FAA /* CertificateTests.swift */,
-				ABB02DA11BA70981004DF178 /* IdentityTests.swift */,
-				AB710ED31BA0614F003AE8B0 /* KeyPairTests.swift */,
-				AB16CF771BA16F1E008C9D1C /* OpenSSLTests.swift */,
 				AB710EDC1BA073DB003AE8B0 /* resources */,
 				AB710EB71BA060FB003AE8B0 /* Supporting Files */,
 			);
+			name = ConfidoIOSTests;
 			path = IOSKeychainTests;
 			sourceTree = "<group>";
 		};
@@ -226,8 +228,8 @@
 		C6BC2230DEDAE7CF9BE590A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				4A779C65CEF01B8C1FB64397 /* libPods-IOSKeychain.a */,
-				5A38D41E7A19F5D9F86CE228 /* libPods-IOSKeychainTests.a */,
+				B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */,
+				785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -235,10 +237,10 @@
 		E6894CAD0757032772D87BD8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7EB1ABD9B3D4A174670CE71B /* Pods-IOSKeychain.debug.xcconfig */,
-				2F8D28B0CE0DD6E992DCDC9C /* Pods-IOSKeychain.release.xcconfig */,
-				8476EDCF38FA57B8CC6124A9 /* Pods-IOSKeychainTests.debug.xcconfig */,
-				79CA2FC5042567A45EFAA032 /* Pods-IOSKeychainTests.release.xcconfig */,
+				6A0986B4D5CACBC6D406FFF5 /* Pods-ConfidoIOS.release.xcconfig */,
+				5719F29C58165D0382BAEF78 /* Pods-ConfidoIOSTests.release.xcconfig */,
+				E81E07027A5B8161B67AF3BB /* Pods-ConfidoIOS.debug.xcconfig */,
+				8A6E4CD11C88DD0871C4E8E8 /* Pods-ConfidoIOSTests.debug.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -250,7 +252,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB710EAD1BA060FB003AE8B0 /* IOSKeychain.h in Headers */,
+				AB710EAD1BA060FB003AE8B0 /* ConfidoIOS.h in Headers */,
 				AB710EDB1BA06E07003AE8B0 /* OpenSSL.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -258,9 +260,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		AB710EA61BA060FB003AE8B0 /* IOSKeychain */ = {
+		AB710EA61BA060FB003AE8B0 /* ConfidoIOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AB710EBD1BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "IOSKeychain" */;
+			buildConfigurationList = AB710EBD1BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOS" */;
 			buildPhases = (
 				BA303A8890514A202E034DDE /* Check Pods Manifest.lock */,
 				AB710EA21BA060FB003AE8B0 /* Sources */,
@@ -273,14 +275,14 @@
 			);
 			dependencies = (
 			);
-			name = IOSKeychain;
-			productName = IOSKeychain;
-			productReference = AB710EA71BA060FB003AE8B0 /* IOSKeychain.framework */;
+			name = ConfidoIOS;
+			productName = ConfidoIOS;
+			productReference = AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		AB710EB11BA060FB003AE8B0 /* IOSKeychainTests */ = {
+		AB710EB11BA060FB003AE8B0 /* ConfidoIOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AB710EC01BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "IOSKeychainTests" */;
+			buildConfigurationList = AB710EC01BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOSTests" */;
 			buildPhases = (
 				041E688BA353A8D9BB74EBC7 /* Check Pods Manifest.lock */,
 				AB710EAE1BA060FB003AE8B0 /* Sources */,
@@ -293,9 +295,9 @@
 			dependencies = (
 				AB710EB51BA060FB003AE8B0 /* PBXTargetDependency */,
 			);
-			name = IOSKeychainTests;
-			productName = IOSKeychainTests;
-			productReference = AB710EB21BA060FB003AE8B0 /* IOSKeychainTests.xctest */;
+			name = ConfidoIOSTests;
+			productName = ConfidoIOSTests;
+			productReference = AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -317,7 +319,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AB710EA11BA060FB003AE8B0 /* Build configuration list for PBXProject "IOSKeychain" */;
+			buildConfigurationList = AB710EA11BA060FB003AE8B0 /* Build configuration list for PBXProject "ConfidoIOS" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -329,8 +331,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AB710EA61BA060FB003AE8B0 /* IOSKeychain */,
-				AB710EB11BA060FB003AE8B0 /* IOSKeychainTests */,
+				AB710EA61BA060FB003AE8B0 /* ConfidoIOS */,
+				AB710EB11BA060FB003AE8B0 /* ConfidoIOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -393,7 +395,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IOSKeychainTests/Pods-IOSKeychainTests-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BA303A8890514A202E034DDE /* Check Pods Manifest.lock */ = {
@@ -423,7 +425,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-IOSKeychain/Pods-IOSKeychain-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ConfidoIOS/Pods-ConfidoIOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -455,11 +457,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB3D20851BB0552D00BB2899 /* CertificateTests.swift in Sources */,
 				ABB02DA01BA6D03C004DF178 /* BaseTests.swift in Sources */,
-				AB408E461BA1E3C600A37FAA /* CertificateTests.swift in Sources */,
-				AB16CF781BA16F1E008C9D1C /* OpenSSLTests.swift in Sources */,
-				AB710ED41BA0614F003AE8B0 /* KeyPairTests.swift in Sources */,
-				ABB02DA21BA70981004DF178 /* IdentityTests.swift in Sources */,
+				AB3D20861BB0552D00BB2899 /* IdentityTests.swift in Sources */,
+				AB3D20881BB0552D00BB2899 /* OpenSSLTests.swift in Sources */,
+				AB3D20871BB0552D00BB2899 /* KeyPairTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,13 +470,13 @@
 /* Begin PBXTargetDependency section */
 		AB710EB51BA060FB003AE8B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AB710EA61BA060FB003AE8B0 /* IOSKeychain */;
+			target = AB710EA61BA060FB003AE8B0 /* ConfidoIOS */;
 			targetProxy = AB710EB41BA060FB003AE8B0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		AB710EBB1BA060FB003AE8B0 /* Debug */ = {
+		AB3D207C1BB04B2900BB2899 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -496,17 +498,10 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -514,14 +509,47 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MTL_ENABLE_DEBUG_INFO = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		AB3D207D1BB04B2900BB2899 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E81E07027A5B8161B67AF3BB /* Pods-ConfidoIOS.debug.xcconfig */;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = IOSKeychain/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = ConfidoIOS;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		AB3D207E1BB04B2900BB2899 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8A6E4CD11C88DD0871C4E8E8 /* Pods-ConfidoIOSTests.debug.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = IOSKeychainTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = ConfidoIOSTests;
 			};
 			name = Debug;
 		};
@@ -559,6 +587,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -568,28 +597,9 @@
 			};
 			name = Release;
 		};
-		AB710EBE1BA060FB003AE8B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7EB1ABD9B3D4A174670CE71B /* Pods-IOSKeychain.debug.xcconfig */;
-			buildSettings = {
-				CLANG_ENABLE_MODULES = YES;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = IOSKeychain/Info.plist;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-			};
-			name = Debug;
-		};
 		AB710EBF1BA060FB003AE8B0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2F8D28B0CE0DD6E992DCDC9C /* Pods-IOSKeychain.release.xcconfig */;
+			baseConfigurationReference = 6A0986B4D5CACBC6D406FFF5 /* Pods-ConfidoIOS.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -600,33 +610,14 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ConfidoIOS;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
-		AB710EC11BA060FB003AE8B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8476EDCF38FA57B8CC6124A9 /* Pods-IOSKeychainTests.debug.xcconfig */;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = IOSKeychainTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
 		AB710EC21BA060FB003AE8B0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 79CA2FC5042567A45EFAA032 /* Pods-IOSKeychainTests.release.xcconfig */;
+			baseConfigurationReference = 5719F29C58165D0382BAEF78 /* Pods-ConfidoIOSTests.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -635,36 +626,36 @@
 				INFOPLIST_FILE = IOSKeychainTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = ConfidoIOSTests;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AB710EA11BA060FB003AE8B0 /* Build configuration list for PBXProject "IOSKeychain" */ = {
+		AB710EA11BA060FB003AE8B0 /* Build configuration list for PBXProject "ConfidoIOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB710EBB1BA060FB003AE8B0 /* Debug */,
 				AB710EBC1BA060FB003AE8B0 /* Release */,
+				AB3D207C1BB04B2900BB2899 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB710EBD1BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "IOSKeychain" */ = {
+		AB710EBD1BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB710EBE1BA060FB003AE8B0 /* Debug */,
 				AB710EBF1BA060FB003AE8B0 /* Release */,
+				AB3D207D1BB04B2900BB2899 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AB710EC01BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "IOSKeychainTests" */ = {
+		AB710EC01BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AB710EC11BA060FB003AE8B0 /* Debug */,
 				AB710EC21BA060FB003AE8B0 /* Release */,
+				AB3D207E1BB04B2900BB2899 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -8,7 +8,7 @@ import Foundation
 
 import UIKit
 import XCTest
-import IOSKeychain
+import ConfidoIOS
 
 class IdentityTests: BaseTests {
     func addCertificateToKeychain(certificateName: String) throws -> KeychainCertificate {

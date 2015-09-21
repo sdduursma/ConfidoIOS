@@ -10,7 +10,7 @@ import Foundation
 
 import UIKit
 import XCTest
-import IOSKeychain
+import ConfidoIOS
 
 let customCACertName  = "Curoo Limited Certification Authority RSA Root Certificate"
 let levelOneCAName    = "Curoo Limited Product Development Authority RSA Root Certificate"

@@ -7,7 +7,7 @@
 
 import UIKit
 import XCTest
-import IOSKeychain
+import ConfidoIOS
 
 class KeyPairTests: BaseTests {
 

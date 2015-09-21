@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import XCTest
-import IOSKeychain
+import ConfidoIOS
 
 class OpenSSLCSRTests: BaseTests {
     // Check that generateCSRWithPublicKeyData correctly returns an error

@@ -7,7 +7,7 @@
 
 import Foundation
 import XCTest
-import IOSKeychain
+import ConfidoIOS
 
 
 enum TestError : ErrorType {

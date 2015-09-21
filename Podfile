@@ -5,11 +5,11 @@ def common
    pod 'OpenSSL-Static', '1.0.2.c1'
 end
 
-target 'IOSKeychain' do
+target 'ConfidoIOS' do
   common
 end
 
-target 'IOSKeychainTests' do
+target 'ConfidoIOSTests' do
   common
 end
 
