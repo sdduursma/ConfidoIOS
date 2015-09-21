@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		82F63648F15D56E49118AEBA /* libPods-ConfidoIOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */; };
-		98E723345246C034FC048E5D /* libPods-ConfidoIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */; };
 		AB3D20E61BB0565400BB2899 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D41BB0565400BB2899 /* Keychain.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E71BB0565400BB2899 /* KeychainCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D51BB0565400BB2899 /* KeychainCertificate.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E81BB0565400BB2899 /* KeychainDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D61BB0565400BB2899 /* KeychainDescriptor.swift */; settings = {ASSET_TAGS = (); }; };
@@ -57,10 +55,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		5719F29C58165D0382BAEF78 /* Pods-ConfidoIOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		6A0986B4D5CACBC6D406FFF5 /* Pods-ConfidoIOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOS/Pods-ConfidoIOS.release.xcconfig"; sourceTree = "<group>"; };
 		785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8A6E4CD11C88DD0871C4E8E8 /* Pods-ConfidoIOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AB3D20781BB033FC00BB2899 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AB3D20D21BB0565400BB2899 /* ConfidoIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfidoIOS.h; sourceTree = "<group>"; };
 		AB3D20D31BB0565400BB2899 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -101,7 +96,6 @@
 		AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ConfidoIOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConfidoIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E81E07027A5B8161B67AF3BB /* Pods-ConfidoIOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOS/Pods-ConfidoIOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,7 +103,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98E723345246C034FC048E5D /* libPods-ConfidoIOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,7 +111,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */,
-				82F63648F15D56E49118AEBA /* libPods-ConfidoIOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,10 +208,6 @@
 		E6894CAD0757032772D87BD8 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6A0986B4D5CACBC6D406FFF5 /* Pods-ConfidoIOS.release.xcconfig */,
-				5719F29C58165D0382BAEF78 /* Pods-ConfidoIOSTests.release.xcconfig */,
-				E81E07027A5B8161B67AF3BB /* Pods-ConfidoIOS.debug.xcconfig */,
-				8A6E4CD11C88DD0871C4E8E8 /* Pods-ConfidoIOSTests.debug.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -242,12 +230,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB710EBD1BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOS" */;
 			buildPhases = (
-				BA303A8890514A202E034DDE /* Check Pods Manifest.lock */,
 				AB710EA21BA060FB003AE8B0 /* Sources */,
 				AB710EA31BA060FB003AE8B0 /* Frameworks */,
 				AB710EA41BA060FB003AE8B0 /* Headers */,
 				AB710EA51BA060FB003AE8B0 /* Resources */,
-				F59C2D90687D99C39B73842D /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,11 +248,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB710EC01BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOSTests" */;
 			buildPhases = (
-				041E688BA353A8D9BB74EBC7 /* Check Pods Manifest.lock */,
 				AB710EAE1BA060FB003AE8B0 /* Sources */,
 				AB710EAF1BA060FB003AE8B0 /* Frameworks */,
 				AB710EB01BA060FB003AE8B0 /* Resources */,
-				2C5EB23AFE888FE3C449B854 /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -346,69 +330,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		041E688BA353A8D9BB74EBC7 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		2C5EB23AFE888FE3C449B854 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BA303A8890514A202E034DDE /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		F59C2D90687D99C39B73842D /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ConfidoIOS/Pods-ConfidoIOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AB710EA21BA060FB003AE8B0 /* Sources */ = {
@@ -500,7 +421,6 @@
 		};
 		AB3D207D1BB04B2900BB2899 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E81E07027A5B8161B67AF3BB /* Pods-ConfidoIOS.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -518,7 +438,6 @@
 		};
 		AB3D207E1BB04B2900BB2899 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8A6E4CD11C88DD0871C4E8E8 /* Pods-ConfidoIOSTests.debug.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -577,7 +496,6 @@
 		};
 		AB710EBF1BA060FB003AE8B0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6A0986B4D5CACBC6D406FFF5 /* Pods-ConfidoIOS.release.xcconfig */;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				DEFINES_MODULE = YES;
@@ -595,7 +513,6 @@
 		};
 		AB710EC21BA060FB003AE8B0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5719F29C58165D0382BAEF78 /* Pods-ConfidoIOSTests.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
