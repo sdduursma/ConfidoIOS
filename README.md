@@ -1,3 +1,5 @@
+# ConfidoIOS [![Build Status](https://www.bitrise.io/app/e6ce6063a5c21539.svg?token=rE2YCzi0GQ9GqP5lDsMlkg&branch=master)](https://www.bitrise.io/app/e6ce6063a5c21539)
+
 TODO
 - [ ] Add skeletons for other Keychain classes that might be needed in future (Passwords)
 - [ ] Get rid of Keychain.swift
@@ -9,20 +11,18 @@ TODO
 - [ ] Test on an actual phone
 - [ ] Remove old commented code that currently serve as documentation
 
-This is a major rewrite because the previous attempts didn't work. I used Swift 2, protocol extensions and exceptions (throws) throughout which made the implementation much saner. 
-
-This PR is in a state where I think it can be reviewed.
+This is a major rewrite because the previous attempts didn't work. I used Swift 2, protocol extensions and exceptions (throws) throughout which made the implementation much saner.
 
 # General Design
-The purpose of this Library is to add the infrastructure for Client Side authentication into IOS Apps. This means that you need to deal with the IOS Keychain. Apple's APIs are severely limited and do not provide support for generating certificate signing requests (CSRs) at all. To do this, the library uses OpenSSL. 
+The purpose of this Library is to add the infrastructure for Client Side authentication into IOS Apps. This means that you need to deal with the IOS Keychain. Apple's APIs are severely limited and do not provide support for generating certificate signing requests (CSRs) at all. To do this, the library uses OpenSSL.
 
 The library provides Object Oriented wrappers for the IOS Keychain Objects and hide the complexities of dealing with the Keychain API in IOS.
 
-The classes have been designed so that it should be relatively straightforward to extend the Library to also provide OO wrappers for OpenSSL objects that implement the same protocols as the Keychain Objects in this library. 
+The classes have been designed so that it should be relatively straightforward to extend the Library to also provide OO wrappers for OpenSSL objects that implement the same protocols as the Keychain Objects in this library.
 
-For security purposes, we decided not to use OpenSSL's functions for generating Key Pairs, because it uses a software Pseudo Random Generator, whereas Apple's APIs uses hardware security. For this reason `KeychainKeyPair` provides mechanism to export raw keys from the Keychain so that they can be used in OpenSSL. This is potentially something that should be improved, because the actual cryptographic data is in the clear in memory in these objects. The correct way to do it is to generate a storage key when the Library is instantiated (using `SecKeyGenerate`) and then immediately encrypt the output of `SecItemCopyMatching(...)` under this key and then store the Key Data encrypted in Memory. The encrypted keys should be passed to the OpenSSL wrapper and only be decrypted right before they are needed. This will prevent anyone from inspecting the memory and extracting the sensitive data. (The Storage Key will be in the IOS Keychain, which is a secure container on the iPhone and iPad). 
+For security purposes, we decided not to use OpenSSL's functions for generating Key Pairs, because it uses a software Pseudo Random Generator, whereas Apple's APIs uses hardware security. For this reason `KeychainKeyPair` provides mechanism to export raw keys from the Keychain so that they can be used in OpenSSL. This is potentially something that should be improved, because the actual cryptographic data is in the clear in memory in these objects. The correct way to do it is to generate a storage key when the Library is instantiated (using `SecKeyGenerate`) and then immediately encrypt the output of `SecItemCopyMatching(...)` under this key and then store the Key Data encrypted in Memory. The encrypted keys should be passed to the OpenSSL wrapper and only be decrypted right before they are needed. This will prevent anyone from inspecting the memory and extracting the sensitive data. (The Storage Key will be in the IOS Keychain, which is a secure container on the iPhone and iPad).
 
-# KeychainItem 
+# KeychainItem
 The basic design is this. The Apple keychain uses Dictionaries for the input and output of the four SecXYZ functions. It can store 5 types of items (Keys, two kinds of Passwords, Identities and Certificates).
 
 Apple's `secItemCopyMatching(...)` [API](https://developer.apple.com/library/ios/documentation/Security/Reference/keychainservices/index.html#//apple_ref/c/func/SecItemCopyMatching) returns the details of things in the IOS keychain. These things are instances of `KeychainItem`:
@@ -45,10 +45,10 @@ These classes represent actual items in the IOS Keychain.
 * `TransportIdentity`
 
 # Importing an Identity
-In order to add something (like a PKCS12 Identity from a .p12 file), you first have to import it. This you do with a call to `SecPKCS12Import(...)`. This returns a temporary reference to an Identity, but it is not stored in the keychain yet. In order to add it, the code uses objects named `TransportXYZ` to store these temporary values. In the case of an identity, this class is called `TransportKeyPair`. `TransportKeyPair` supports the `KeychainAddable` protocol, which means it has a method `addToKeychain() -> KeychainIdentity`. The Transport classes derive from `KeychainDescriptor`. 
+In order to add something (like a PKCS12 Identity from a .p12 file), you first have to import it. This you do with a call to `SecPKCS12Import(...)`. This returns a temporary reference to an Identity, but it is not stored in the keychain yet. In order to add it, the code uses objects named `TransportXYZ` to store these temporary values. In the case of an identity, this class is called `TransportKeyPair`. `TransportKeyPair` supports the `KeychainAddable` protocol, which means it has a method `addToKeychain() -> KeychainIdentity`. The Transport classes derive from `KeychainDescriptor`.
 
 # OpenSSL
-This Library uses a precompiled OpenSSL library to speed up compile time. This is not a good thing, because someone can replace the library with hacked code and we will not have any way to know that the code has been compromised. 
+This Library uses a precompiled OpenSSL library to speed up compile time. This is not a good thing, because someone can replace the library with hacked code and we will not have any way to know that the code has been compromised.
 
 The code uses OpenSSL to do the following:
 * Generating a Certificate Signing Request (CSR) with a Key Pair stored in the IOS Keychain:
