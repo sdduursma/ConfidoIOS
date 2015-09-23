@@ -21,12 +21,7 @@
 		AB3D210D1BB0568100BB2899 /* CertificateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20F81BB0568100BB2899 /* CertificateTests.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D210E1BB0568100BB2899 /* IdentityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20F91BB0568100BB2899 /* IdentityTests.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D21101BB0568100BB2899 /* KeyPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20FB1BB0568100BB2899 /* KeyPairTests.swift */; settings = {ASSET_TAGS = (); }; };
-		AB3D21121BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D20FE1BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer */; settings = {ASSET_TAGS = (); }; };
-		AB3D21131BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D20FF1BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21141BB0568100BB2899 /* Device Identity.p12 in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21001BB0568100BB2899 /* Device Identity.p12 */; settings = {ASSET_TAGS = (); }; };
-		AB3D21151BB0568100BB2899 /* Expend Development Device Identity Authority RSA Certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21011BB0568100BB2899 /* Expend Development Device Identity Authority RSA Certificate.cer */; settings = {ASSET_TAGS = (); }; };
-		AB3D21161BB0568100BB2899 /* Expend Device CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21021BB0568100BB2899 /* Expend Device CA.cer */; settings = {ASSET_TAGS = (); }; };
-		AB3D21171BB0568100BB2899 /* Expend Product Development Authority RSA Root Certificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21031BB0568100BB2899 /* Expend Product Development Authority RSA Root Certificate.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21181BB0568100BB2899 /* GeoTrust Global CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21041BB0568100BB2899 /* GeoTrust Global CA.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21191BB0568100BB2899 /* Google Internet Authority G2.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21051BB0568100BB2899 /* Google Internet Authority G2.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D211A1BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21061BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer */; settings = {ASSET_TAGS = (); }; };
@@ -37,6 +32,10 @@
 		AB3D211F1BB0568100BB2899 /* www.google.co.uk.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D210B1BB0568100BB2899 /* www.google.co.uk.cer */; settings = {ASSET_TAGS = (); }; };
 		AB3D21211BB0578500BB2899 /* ConfidoIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = AB3D20D21BB0565400BB2899 /* ConfidoIOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AB3D21471BB05B3500BB2899 /* ConfidoIOS.podspec in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21461BB05B3500BB2899 /* ConfidoIOS.podspec */; settings = {ASSET_TAGS = (); }; };
+		AB3D21541BB2B9FB00BB2899 /* Custom Level 2 CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21501BB2B9FB00BB2899 /* Custom Level 2 CA.cer */; settings = {ASSET_TAGS = (); }; };
+		AB3D21551BB2B9FB00BB2899 /* Custom Level 3 CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21511BB2B9FB00BB2899 /* Custom Level 3 CA.cer */; settings = {ASSET_TAGS = (); }; };
+		AB3D21561BB2B9FB00BB2899 /* Custom Root CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21521BB2B9FB00BB2899 /* Custom Root CA.cer */; settings = {ASSET_TAGS = (); }; };
+		AB3D21571BB2B9FB00BB2899 /* Final Level 4 Issuing CA.cer in Resources */ = {isa = PBXBuildFile; fileRef = AB3D21531BB2B9FB00BB2899 /* Final Level 4 Issuing CA.cer */; settings = {ASSET_TAGS = (); }; };
 		AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */; };
 /* End PBXBuildFile section */
 
@@ -70,12 +69,7 @@
 		AB3D20F91BB0568100BB2899 /* IdentityTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IdentityTests.swift; sourceTree = "<group>"; };
 		AB3D20FA1BB0568100BB2899 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AB3D20FB1BB0568100BB2899 /* KeyPairTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyPairTests.swift; sourceTree = "<group>"; };
-		AB3D20FE1BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Limited Certification Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
-		AB3D20FF1BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Curoo Limited Product Development Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
 		AB3D21001BB0568100BB2899 /* Device Identity.p12 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Device Identity.p12"; sourceTree = "<group>"; };
-		AB3D21011BB0568100BB2899 /* Expend Development Device Identity Authority RSA Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Expend Development Device Identity Authority RSA Certificate.cer"; sourceTree = "<group>"; };
-		AB3D21021BB0568100BB2899 /* Expend Device CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Expend Device CA.cer"; sourceTree = "<group>"; };
-		AB3D21031BB0568100BB2899 /* Expend Product Development Authority RSA Root Certificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Expend Product Development Authority RSA Root Certificate.cer"; sourceTree = "<group>"; };
 		AB3D21041BB0568100BB2899 /* GeoTrust Global CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "GeoTrust Global CA.cer"; sourceTree = "<group>"; };
 		AB3D21051BB0568100BB2899 /* Google Internet Authority G2.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Google Internet Authority G2.cer"; sourceTree = "<group>"; };
 		AB3D21061BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Symantec Class 3 EV SSL CA - G3.cer"; sourceTree = "<group>"; };
@@ -85,6 +79,10 @@
 		AB3D210A1BB0568100BB2899 /* www.apple.com.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = www.apple.com.cer; sourceTree = "<group>"; };
 		AB3D210B1BB0568100BB2899 /* www.google.co.uk.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = www.google.co.uk.cer; sourceTree = "<group>"; };
 		AB3D21461BB05B3500BB2899 /* ConfidoIOS.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ConfidoIOS.podspec; sourceTree = "<group>"; };
+		AB3D21501BB2B9FB00BB2899 /* Custom Level 2 CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Custom Level 2 CA.cer"; sourceTree = "<group>"; };
+		AB3D21511BB2B9FB00BB2899 /* Custom Level 3 CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Custom Level 3 CA.cer"; sourceTree = "<group>"; };
+		AB3D21521BB2B9FB00BB2899 /* Custom Root CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Custom Root CA.cer"; sourceTree = "<group>"; };
+		AB3D21531BB2B9FB00BB2899 /* Final Level 4 Issuing CA.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Final Level 4 Issuing CA.cer"; sourceTree = "<group>"; };
 		AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ConfidoIOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConfidoIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,12 +142,11 @@
 		AB3D20FD1BB0568100BB2899 /* resources */ = {
 			isa = PBXGroup;
 			children = (
-				AB3D20FE1BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer */,
-				AB3D20FF1BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer */,
+				AB3D21501BB2B9FB00BB2899 /* Custom Level 2 CA.cer */,
+				AB3D21511BB2B9FB00BB2899 /* Custom Level 3 CA.cer */,
+				AB3D21521BB2B9FB00BB2899 /* Custom Root CA.cer */,
+				AB3D21531BB2B9FB00BB2899 /* Final Level 4 Issuing CA.cer */,
 				AB3D21001BB0568100BB2899 /* Device Identity.p12 */,
-				AB3D21011BB0568100BB2899 /* Expend Development Device Identity Authority RSA Certificate.cer */,
-				AB3D21021BB0568100BB2899 /* Expend Device CA.cer */,
-				AB3D21031BB0568100BB2899 /* Expend Product Development Authority RSA Root Certificate.cer */,
 				AB3D21041BB0568100BB2899 /* GeoTrust Global CA.cer */,
 				AB3D21051BB0568100BB2899 /* Google Internet Authority G2.cer */,
 				AB3D21061BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer */,
@@ -300,20 +297,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB3D21181BB0568100BB2899 /* GeoTrust Global CA.cer in Resources */,
-				AB3D21121BB0568100BB2899 /* Curoo Limited Certification Authority RSA Root Certificate.cer in Resources */,
 				AB3D21471BB05B3500BB2899 /* ConfidoIOS.podspec in Resources */,
+				AB3D21561BB2B9FB00BB2899 /* Custom Root CA.cer in Resources */,
 				AB3D211A1BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer in Resources */,
-				AB3D21151BB0568100BB2899 /* Expend Development Device Identity Authority RSA Certificate.cer in Resources */,
+				AB3D21541BB2B9FB00BB2899 /* Custom Level 2 CA.cer in Resources */,
 				AB3D211F1BB0568100BB2899 /* www.google.co.uk.cer in Resources */,
-				AB3D21161BB0568100BB2899 /* Expend Device CA.cer in Resources */,
-				AB3D21131BB0568100BB2899 /* Curoo Limited Product Development Authority RSA Root Certificate.cer in Resources */,
 				AB3D211D1BB0568100BB2899 /* test keypair 1.pem in Resources */,
 				AB3D21141BB0568100BB2899 /* Device Identity.p12 in Resources */,
 				AB3D211C1BB0568100BB2899 /* test keypair 1 certificate.x509 in Resources */,
-				AB3D21171BB0568100BB2899 /* Expend Product Development Authority RSA Root Certificate.cer in Resources */,
 				AB3D211E1BB0568100BB2899 /* www.apple.com.cer in Resources */,
+				AB3D21571BB2B9FB00BB2899 /* Final Level 4 Issuing CA.cer in Resources */,
 				AB3D21191BB0568100BB2899 /* Google Internet Authority G2.cer in Resources */,
 				AB3D211B1BB0568100BB2899 /* test keypair 1 certificate.cer in Resources */,
+				AB3D21551BB2B9FB00BB2899 /* Custom Level 3 CA.cer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
