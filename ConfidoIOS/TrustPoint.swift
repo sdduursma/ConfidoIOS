@@ -103,8 +103,9 @@ public struct CertificateTrustPoint: TrustPoint {
         self.secTrust = secTrust
     }
 
-
-
+    /**
+    Ensures that the TrustPoint is trusted, otherwise throws a TrustResult Exception
+    */
     public func ensureTrusted() throws {
         let result = try self.evaluateTrust()
         if result == TrustResult.Proceed || result == TrustResult.Unspecified {
@@ -113,6 +114,9 @@ public struct CertificateTrustPoint: TrustPoint {
         throw result
     }
 
+    /**
+    Ensures that the TrustPoint is trusted against trustAnchor, otherwise throws a TrustResult Exception
+    */
     public func ensureTrusted(trustAnchor: TrustAnchor) throws {
         let result = try self.evaluateTrust(trustAnchor)
         if result == TrustResult.Proceed || result == TrustResult.Unspecified {
@@ -121,34 +125,28 @@ public struct CertificateTrustPoint: TrustPoint {
         throw result
     }
 
+    /**
+    Evaluations the trust of the TrustPoint against the built-in anchors
+    */
     public func evaluateTrust() throws -> TrustResult {
-        var secTrustResultType : SecTrustResultType = 0
         try setTrustAnchorCertificates([])
         try setTrustAnchorCertificatesOnly(false)
-
-        try trustEnsureOK(SecTrustEvaluate(secTrust, &secTrustResultType))
-        let trustResult = TrustResult(rawValue: Int(secTrustResultType))!
-        if trustResult == .Proceed || trustResult == .Unspecified {
-            return trustResult
-        } else if trustResult == TrustResult.RecoverableTrustFailure {
-            return TrustResult.Deny
-        }
-        throw KeychainError.TrustError(trustResult: trustResult, reason: getLastTrustError())
+        return try evaluateSecTrust()
     }
 
     /**
     Evaluates the trust of the TrustPoint against a TrustAnchor
     */
-
     public func evaluateTrust(trustAnchor: TrustAnchor) throws -> TrustResult {
-        var secTrustResultType : SecTrustResultType = 0
-        //        try setTrustAnchorCertificatesOnly(false)
-
         if trustAnchor.anchorCertificate != nil {
             try setTrustAnchorCertificates([trustAnchor.anchorCertificate])
         }
         try setTrustAnchorCertificatesOnly(true)
+        return try evaluateSecTrust()
+    }
 
+    func evaluateSecTrust() throws -> TrustResult {
+        var secTrustResultType : SecTrustResultType = 0
         try trustEnsureOK(SecTrustEvaluate(secTrust, &secTrustResultType))
         let trustResult = TrustResult(rawValue: Int(secTrustResultType))!
         if trustResult == .Proceed || trustResult == .Unspecified {

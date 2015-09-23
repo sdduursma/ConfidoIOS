@@ -38,19 +38,13 @@ public class BaseTests: XCTestCase {
 
     func clearKeychainItems(type: SecurityClass) {
         do {
-            var items = try Keychain.keyChainItems(type)
+            let items = try Keychain.keyChainItems(type)
 
-            var n = items.count
+            let n = items.count
             print("Deleting \(n) \(type) items from keychain")
-            for item in items {
-                try Keychain.deleteKeyChainItem(itemDescriptor: item.keychainMatchPropertyValues())
-
-                items = try Keychain.keyChainItems(type)
-
-                XCTAssertEqual(items.count,n-1)
-                n = items.count
-            }
-            XCTAssertEqual(items.count,0)
+            let (successCount, failureCount) = Keychain.deleteAllItemsOfClass(type)
+            XCTAssertEqual(items.count,successCount)
+            XCTAssertEqual(failureCount,0)
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")
         }

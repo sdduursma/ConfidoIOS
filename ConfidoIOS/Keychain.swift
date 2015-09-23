@@ -228,9 +228,29 @@ public class Keychain {
 
     }
 
+/**
+    Attempts to delete all items of a specific security class
+    :param: securityClass the class of item to delete
+    :returns: (successCount:Int, failureCount:Int)
+*/
+    public class func deleteAllItemsOfClass(securityClass: SecurityClass) -> (Int,Int) {
+        do {
+            let items = try Keychain.keyChainItems(securityClass)
 
-    public class func deleteAllItemsOfClass(securityClass: SecurityClass) -> Int {
-        return 0
+            var successCount = 0
+            var failCount    = 0
+            for item in items {
+                do {
+                    try Keychain.deleteKeyChainItem(itemDescriptor: item.keychainMatchPropertyValues())
+                    successCount++
+                } catch {
+                    failCount++
+                }
+            }
+            return (successCount, failCount)
+        } catch {
+            return (0,0)
+        }
     }
 }
 
