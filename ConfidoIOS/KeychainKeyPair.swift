@@ -152,6 +152,31 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
 
 
 //MARK: Key Pair Descriptors
+
+public protocol KeyPairQueryable {
+    func privateKeyDescriptor() -> KeychainKeyDescriptor
+    func publicKeyDescriptor() -> KeychainKeyDescriptor
+}
+
+public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable {
+    override public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil, keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
+        super.init(keyType: keyType, keySize: keySize, keyClass: keyClass, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
+    }
+
+    public func privateKeyDescriptor() -> KeychainKeyDescriptor {
+        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
+        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
+        return descriptor
+    }
+
+    public func publicKeyDescriptor() -> KeychainKeyDescriptor {
+        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
+        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
+        return descriptor
+    }
+}
+
+
 public class TemporaryKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     public init(keyType: KeyType, keySize: Int) {
         super.init(keyType: keyType, keySize: keySize)
@@ -167,12 +192,15 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     :param:   keyAppTag
     :returns: keyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nit
     */
-    public init(accessible: Accessible, accessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
+    public init(accessible: Accessible, privateKeyAccessControl: SecAccessControl?,publicKeyAccessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
         super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel )
         attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
         attributes[String(kSecAttrAccessible)] = accessible.rawValue
-        if (accessControl != nil) {
-            attributes[String(kSecAttrAccessControl)] = accessControl
+        if (privateKeyAccessControl != nil) {
+            attributes[String(kSecPrivateKeyAttrs)] = [ String(kSecAttrAccessControl): privateKeyAccessControl! ]
+        }
+        if (publicKeyAccessControl != nil) {
+            attributes[String(kSecPublicKeyAttrs)] = [ String(kSecAttrAccessControl): publicKeyAccessControl! ]
         }
     }
 }

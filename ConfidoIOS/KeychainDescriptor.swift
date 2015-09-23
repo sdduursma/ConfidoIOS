@@ -45,28 +45,6 @@ public class KeychainKeyDescriptor : KeychainDescriptor {
     }
 }
 
-public protocol KeyPairQueryable {
-    func privateKeyDescriptor() -> KeychainKeyDescriptor
-    func publicKeyDescriptor() -> KeychainKeyDescriptor
-}
-
-public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable {
-    override public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil, keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
-        super.init(keyType: keyType, keySize: keySize, keyClass: keyClass, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel)
-    }
-
-    public func privateKeyDescriptor() -> KeychainKeyDescriptor {
-        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
-        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
-        return descriptor
-    }
-
-    public func publicKeyDescriptor() -> KeychainKeyDescriptor {
-        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
-        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
-        return descriptor
-    }
-}
 
 
 
