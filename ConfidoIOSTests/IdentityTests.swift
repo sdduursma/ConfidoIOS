@@ -33,7 +33,7 @@ class IdentityTests: BaseTests {
             let p12Data = try contentsOfBundleResource("Device Identity", ofType: "p12")
 
             let transportIdentity = try KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
-            let identity = try transportIdentity.addToKeychain()
+            _ = try transportIdentity.addToKeychain()
 
         } catch let error  {
             XCTFail("Unexpected Exception \(error)")

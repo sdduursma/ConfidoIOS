@@ -184,6 +184,37 @@ class KeyPairTests: BaseTests {
     }
 
 
+    func testExportCSR (){
+        do {
+            clearKeychainItems(.Key)
+            let items = try Keychain.keyChainItems(SecurityClass.Key)
+            XCTAssertEqual(items.count,0)
+
+            let keypairDescriptor = PermanentKeychainKeyPairDescriptor(
+                accessible: Accessible.AlwaysThisDeviceOnly,
+                privateKeyAccessControl: nil, publicKeyAccessControl: nil,
+                keyType: .RSA, keySize: 1024, keyLabel: "KeyPair for CSR")
+            let keyPair : KeychainKeyPair! = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
+            XCTAssertNotNil(keyPair)
+
+            let attributes = [
+                "UID" : "Test Device",
+                "CN" : "Expend Device ABCD" ]
+
+            let csr = try OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKey.keyData(), csrData: attributes)
+            XCTAssertNotNil(csr)
+            let csrString : NSString! = NSString(data: csr, encoding: NSUTF8StringEncoding)
+            XCTAssert(csrString.hasPrefix("-----BEGIN CERTIFICATE REQUEST-----\n"))
+            XCTAssert(csrString.hasSuffix("-----END CERTIFICATE REQUEST-----\n"))
+            print("CSR:")
+            print(csrString)
+        } catch let error{
+            XCTFail("Unexpected Exception \(error)")
+        }
+        
+    }
+
+
 
 
 }
