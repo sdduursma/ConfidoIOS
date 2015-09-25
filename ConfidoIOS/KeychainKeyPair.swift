@@ -12,22 +12,73 @@
 import Foundation
 import Security
 
+public typealias Signature = ByteBuffer
+public typealias Digest    = ByteBuffer
+
 
 public protocol Key {
 }
 
 public protocol PublicKey : Key {
+    func verify(digest: Digest, signature: Signature) throws ->  Bool
+    func encrypt(plaintext: ByteBuffer, padding: SecPadding) throws -> ByteBuffer
 }
 
 
-extension PublicKey where Self : PublicKey {
-}
+extension Key where Self : Key, Self : KeychainKey {
 
+}
+extension PublicKey where Self : PublicKey, Self: KeychainKey {
+    public func encrypt(plainText: ByteBuffer, padding: SecPadding) throws -> ByteBuffer {
+        try ensureRSAKey()
+        let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
+        if plainText.size > maxBlockSize {
+            throw KeychainError.DataExceedsBlockSize(size: maxBlockSize)
+        }
+        var cipherText = ByteBuffer(size: maxBlockSize)
+        var returnSize = maxBlockSize
+
+        try ensureOK(SecKeyEncrypt(self.keySecKey!, padding, plainText.bytes, plainText.size, cipherText.pointer, &returnSize))
+        cipherText.size = returnSize
+        return cipherText
+    }
+
+    public func verify(digest: Digest, signature: Signature) throws -> Bool {
+        try ensureRSAKey()
+        let status = SecKeyRawVerify(self.keySecKey!, SecPadding.PKCS1, digest.bytes, digest.size, signature.bytes, signature.size)
+        if status == 0 { return true }
+        return false
+    }
+}
 
 public protocol PrivateKey : Key {
+    func sign(digest: Digest) throws -> Signature
+    func decrypt(cipherBlock: ByteBuffer, padding: SecPadding) throws -> ByteBuffer
 }
 
-extension PublicKey where Self : PublicKey {
+extension KeychainPrivateKey {
+    public func decrypt(cipherText: ByteBuffer, padding: SecPadding) throws -> ByteBuffer {
+        try ensureRSAKey()
+        let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
+        if cipherText.size > maxBlockSize {
+            throw KeychainError.DataExceedsBlockSize(size: maxBlockSize)
+        }
+        var plainText = ByteBuffer(size: maxBlockSize)
+        var returnSize = maxBlockSize
+
+        try ensureOK(SecKeyDecrypt(self.keySecKey!, padding, cipherText.bytes, cipherText.size, plainText.pointer, &returnSize))
+        plainText.size = returnSize
+        return plainText
+    }
+
+    public func sign(digest: Digest) throws -> Signature {
+        try ensureRSAKey()
+        var signatureLength : Int = self.keySize / 8
+        var signature = ByteBuffer(size: signatureLength)
+        try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.bytes,digest.size, signature.pointer, &signatureLength))
+        signature.size = signatureLength
+        return signature
+    }
 }
 
 /**
@@ -64,6 +115,13 @@ public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, Gener
 /**
 An instance of an IOS Keychain Private Key
 */
+
+
+func ensureOK(status: OSStatus) throws {
+    if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
+}
+
+
 public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  GenerateKeychainFind {
     //This specifies the argument type and return value for the generated functions
     public typealias QueryType = KeychainKeyDescriptor
@@ -78,6 +136,8 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
         try super.init(SecItemAttributes: attributes)
         self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
     }
+
+
 }
 
 public protocol KeyPair {
@@ -95,12 +155,9 @@ public protocol KeyPair {
 extension KeyPair where Self : KeyPair {
 }
 
-
 public func secEnsureOK(status: OSStatus) throws {
     if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
 }
-
-
 
 /**
 An instance of an IOS Keypair
@@ -136,7 +193,7 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
         super.init(securityClass: SecurityClass.Key)
     }
 
-    public required init (publicKey: KeychainPublicKey, privateKey: KeychainPrivateKey) {
+    public required init(publicKey: KeychainPublicKey, privateKey: KeychainPrivateKey) {
         self.privateKey = privateKey
         self.publicKey  = publicKey
         super.init(securityClass: SecurityClass.Key)

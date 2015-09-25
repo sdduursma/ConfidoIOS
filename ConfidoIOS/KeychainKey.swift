@@ -44,7 +44,11 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
        return kKeyItemMatchingProperties
     }
 
-
+    func ensureRSAKey() throws {
+        if self.keyType != KeyType.RSA {
+            throw KeychainError.UnimplementedKeyType(reason: "Not implemented for key types other than RSA")
+        }
+    }
 }
 
 

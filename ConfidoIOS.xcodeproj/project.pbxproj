@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1F467556BB36C5C9EE216F0A /* libPods-ConfidoIOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */; };
+		AB06D7B81BB595EF007127C6 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7B71BB595EF007127C6 /* Buffer.swift */; settings = {ASSET_TAGS = (); }; };
+		AB06D7BA1BB59DBF007127C6 /* ByteBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7B91BB59DBF007127C6 /* ByteBufferTests.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E61BB0565400BB2899 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D41BB0565400BB2899 /* Keychain.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E71BB0565400BB2899 /* KeychainCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D51BB0565400BB2899 /* KeychainCertificate.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E81BB0565400BB2899 /* KeychainDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D61BB0565400BB2899 /* KeychainDescriptor.swift */; settings = {ASSET_TAGS = (); }; };
@@ -59,6 +61,8 @@
 		6C426162AC782C25E81A641B /* Pods-ConfidoIOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CA1B07F0E41DF0C4D526EBE /* Pods-ConfidoIOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		AB06D7B71BB595EF007127C6 /* Buffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		AB06D7B91BB59DBF007127C6 /* ByteBufferTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteBufferTests.swift; sourceTree = "<group>"; };
 		AB3D20781BB033FC00BB2899 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AB3D20D21BB0565400BB2899 /* ConfidoIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfidoIOS.h; sourceTree = "<group>"; };
 		AB3D20D31BB0565400BB2899 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -138,6 +142,7 @@
 				AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */,
 				AB3D20E21BB0565400BB2899 /* SecurityMappings.swift */,
 				AB3D20E31BB0565400BB2899 /* TrustPoint.swift */,
+				AB06D7B71BB595EF007127C6 /* Buffer.swift */,
 			);
 			path = ConfidoIOS;
 			sourceTree = "<group>";
@@ -158,6 +163,7 @@
 				AB3D215C1BB3066F00BB2899 /* OpenSSLObject.swift */,
 				AB3D20FD1BB0568100BB2899 /* resources */,
 				AB3D21581BB3066E00BB2899 /* ConfidoIOSTests-Bridging-Header.h */,
+				AB06D7B91BB59DBF007127C6 /* ByteBufferTests.swift */,
 			);
 			path = ConfidoIOSTests;
 			sourceTree = "<group>";
@@ -387,6 +393,7 @@
 				AB3D20E81BB0565400BB2899 /* KeychainDescriptor.swift in Sources */,
 				AB3D20E71BB0565400BB2899 /* KeychainCertificate.swift in Sources */,
 				AB3D20E91BB0565400BB2899 /* KeychainIdentity.swift in Sources */,
+				AB06D7B81BB595EF007127C6 /* Buffer.swift in Sources */,
 				AB3D20EB1BB0565400BB2899 /* KeychainKey.swift in Sources */,
 				AB3D20EC1BB0565400BB2899 /* KeychainKeyPair.swift in Sources */,
 				AB3D20ED1BB0565400BB2899 /* KeychainProtocol.swift in Sources */,
@@ -406,6 +413,7 @@
 				AB3D215F1BB3066F00BB2899 /* OpenSSLObject.swift in Sources */,
 				AB3D21611BB3097D00BB2899 /* OpenSSLIdentity.swift in Sources */,
 				AB3D210D1BB0568100BB2899 /* CertificateTests.swift in Sources */,
+				AB06D7BA1BB59DBF007127C6 /* ByteBufferTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

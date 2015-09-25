@@ -20,7 +20,7 @@ class KeyPairTests: BaseTests {
             let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
                 privateKeyAccessControl: nil, publicKeyAccessControl: nil,
                 keyType: .RSA, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
-            var keyPair : KeychainKeyPair?
+            var keyPair : KeychainKeyPair!
             keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
 
@@ -33,29 +33,46 @@ class KeyPairTests: BaseTests {
             keyItem = try Keychain.fetchItem(matchingDescriptor: keyDescriptor)
             XCTAssertNotNil(keyItem)
 
-            XCTAssertEqual(keyPair!.privateKey.keyType, KeyType.RSA)
-            XCTAssertEqual(keyPair!.publicKey.keyType, KeyType.RSA)
+            XCTAssertEqual(keyPair.privateKey.keyType, KeyType.RSA)
+            XCTAssertEqual(keyPair.publicKey.keyType, KeyType.RSA)
 
 
-            XCTAssertEqual(keyPair!.privateKey.keySize, 1024)
-            XCTAssertEqual(keyPair!.publicKey.keySize, 1024)
+            XCTAssertEqual(keyPair.privateKey.keySize, 1024)
+            XCTAssertEqual(keyPair.publicKey.keySize, 1024)
 
-            XCTAssertNotNil(keyPair!.privateKey.itemLabel)
-            XCTAssertEqual(keyPair!.privateKey.itemLabel!, "AAA")
+            XCTAssertNotNil(keyPair.privateKey.itemLabel)
+            XCTAssertEqual(keyPair.privateKey.itemLabel!, "AAA")
 
-            XCTAssertNotNil(keyPair!.privateKey.keyAppTag)
-            XCTAssertEqual(keyPair!.privateKey.keyAppTag!, "BBB")
+            XCTAssertNotNil(keyPair.privateKey.keyAppTag)
+            XCTAssertEqual(keyPair.privateKey.keyAppTag!, "BBB")
 
-            XCTAssertNotNil(keyPair!.privateKey.keyAppLabelString)
-            XCTAssertEqual(keyPair!.privateKey.keyAppLabelString!, "CCC")
+            XCTAssertNotNil(keyPair.privateKey.keyAppLabelString)
+            XCTAssertEqual(keyPair.privateKey.keyAppLabelString!, "CCC")
 
-            XCTAssertEqual(keyPair!.publicKey.itemAccessGroup, "")
-            XCTAssertEqual(keyPair!.publicKey.itemAccessible, Accessible.WhenUnlockedThisDeviceOnly)
+            XCTAssertEqual(keyPair.publicKey.itemAccessGroup, "")
+            XCTAssertEqual(keyPair.publicKey.itemAccessible, Accessible.WhenUnlockedThisDeviceOnly)
 
-            let publicKeyData = keyPair!.publicKey.keyData
+            let publicKeyData = keyPair.publicKey.keyData
             XCTAssertNotNil(publicKeyData)
 
             XCTAssertEqual(publicKeyData!.length,140)
+
+            let signature = try keyPair.privateKey.sign(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]))
+            print(signature)
+
+            var verified = try keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+            XCTAssertTrue(verified)
+
+            verified = try keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+            XCTAssertFalse(verified)
+
+            let cipherTextUnderPublicKey = try keyPair.publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+            print("Cipher under public key: \(cipherTextUnderPublicKey)")
+
+            let decryptedText = try keyPair.privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
+            XCTAssertEqual([1,2,3,4], decryptedText.bytes)
+
+
 
         } catch let error as NSError {
             XCTFail("Unexpected Exception \(error)")
