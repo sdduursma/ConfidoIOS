@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CommonCrypto
 
 
 public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
@@ -52,3 +53,46 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
 }
 
 
+
+/**
+An instance of an IOS Keychain Public Key
+*/
+public class KeychainSymmetricKey : KeychainKey, KeychainFindable, GenerateKeychainFind {
+    //This specifies the argument type and return value for the generated functions
+    public typealias QueryType = KeychainKeyDescriptor
+    public typealias ResultType = KeychainSymmetricKey
+
+    override public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
+        super.init(descriptor: descriptor, keyRef: keyRef)
+        attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.SymmetricKey)
+    }
+
+    public override init(SecItemAttributes attributes: SecItemAttributes) throws {
+        try super.init(SecItemAttributes: attributes)
+        self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.SymmetricKey)
+    }
+    public func withKeyDataDo(closure : (NSData)-> Void ) throws {
+        // this key's keyData is cryptographic key material and should not be passed around or stored.
+        // Use this very carefully
+        let keyData = try fetchKeyData(self)
+        closure(keyData)
+    }
+}
+
+func fetchKeyData(key: KeychainKey) throws -> NSData {
+    var query : KeyChainPropertiesData = [ : ]
+
+    let descriptor = key.keychainMatchPropertyValues()
+    query[String(kSecClass)]            = SecurityClass.kSecClass(key.securityClass)
+    query[String(kSecReturnData)]       = kCFBooleanTrue
+    query[String(kSecMatchLimit)]       = kSecMatchLimitOne
+    query += descriptor.keychainMatchPropertyValues()
+
+    let keyData: NSData = try SecurityWrapper.secItemCopyMatching(query)
+    return keyData
+
+}
+
+
+extension KeychainSymmetricKey {
+}

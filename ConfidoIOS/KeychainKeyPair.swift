@@ -12,8 +12,8 @@
 import Foundation
 import Security
 
-public typealias Signature = ByteBuffer
-public typealias Digest    = ByteBuffer
+public typealias Signature = Buffer<Byte>
+public typealias Digest    = Buffer<Byte>
 
 
 public protocol Key {
@@ -21,7 +21,7 @@ public protocol Key {
 
 public protocol PublicKey : Key {
     func verify(digest: Digest, signature: Signature) throws ->  Bool
-    func encrypt(plaintext: ByteBuffer, padding: SecPadding) throws -> ByteBuffer
+    func encrypt(plaintext: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte>
 }
 
 
@@ -29,23 +29,23 @@ extension Key where Self : Key, Self : KeychainKey {
 
 }
 extension PublicKey where Self : PublicKey, Self: KeychainKey {
-    public func encrypt(plainText: ByteBuffer, padding: SecPadding) throws -> ByteBuffer {
+    public func encrypt(plainText: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte> {
         try ensureRSAKey()
         let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
         if plainText.size > maxBlockSize {
             throw KeychainError.DataExceedsBlockSize(size: maxBlockSize)
         }
-        var cipherText = ByteBuffer(size: maxBlockSize)
+        var cipherText = Buffer<Byte>(size: maxBlockSize)
         var returnSize = maxBlockSize
 
-        try ensureOK(SecKeyEncrypt(self.keySecKey!, padding, plainText.bytes, plainText.size, cipherText.pointer, &returnSize))
+        try ensureOK(SecKeyEncrypt(self.keySecKey!, padding, plainText.values, plainText.size, cipherText.pointer, &returnSize))
         cipherText.size = returnSize
         return cipherText
     }
 
     public func verify(digest: Digest, signature: Signature) throws -> Bool {
         try ensureRSAKey()
-        let status = SecKeyRawVerify(self.keySecKey!, SecPadding.PKCS1, digest.bytes, digest.size, signature.bytes, signature.size)
+        let status = SecKeyRawVerify(self.keySecKey!, SecPadding.PKCS1, digest.values, digest.size, signature.values, signature.size)
         if status == 0 { return true }
         return false
     }
@@ -53,20 +53,20 @@ extension PublicKey where Self : PublicKey, Self: KeychainKey {
 
 public protocol PrivateKey : Key {
     func sign(digest: Digest) throws -> Signature
-    func decrypt(cipherBlock: ByteBuffer, padding: SecPadding) throws -> ByteBuffer
+    func decrypt(cipherBlock: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte>
 }
 
 extension KeychainPrivateKey {
-    public func decrypt(cipherText: ByteBuffer, padding: SecPadding) throws -> ByteBuffer {
+    public func decrypt(cipherText: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte> {
         try ensureRSAKey()
         let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
         if cipherText.size > maxBlockSize {
             throw KeychainError.DataExceedsBlockSize(size: maxBlockSize)
         }
-        var plainText = ByteBuffer(size: maxBlockSize)
+        var plainText = Buffer<Byte>(size: maxBlockSize)
         var returnSize = maxBlockSize
 
-        try ensureOK(SecKeyDecrypt(self.keySecKey!, padding, cipherText.bytes, cipherText.size, plainText.pointer, &returnSize))
+        try ensureOK(SecKeyDecrypt(self.keySecKey!, padding, cipherText.values, cipherText.size, plainText.pointer, &returnSize))
         plainText.size = returnSize
         return plainText
     }
@@ -74,8 +74,8 @@ extension KeychainPrivateKey {
     public func sign(digest: Digest) throws -> Signature {
         try ensureRSAKey()
         var signatureLength : Int = self.keySize / 8
-        var signature = ByteBuffer(size: signatureLength)
-        try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.bytes,digest.size, signature.pointer, &signatureLength))
+        var signature = Buffer<Byte>(size: signatureLength)
+        try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.values,digest.size, signature.pointer, &signatureLength))
         signature.size = signatureLength
         return signature
     }

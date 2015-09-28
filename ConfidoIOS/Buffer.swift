@@ -10,44 +10,129 @@ import Foundation
 
 public typealias Byte = UInt8
 
-public struct ByteBuffer {
-    public private(set) var bytes: [Byte]
-    public var pointer: UnsafeMutablePointer<Byte> {
-        get {
-            return UnsafeMutablePointer<Byte>(bytes)
+public enum BufferError : ErrorType, CustomStringConvertible {
+    case WordLengthMismatch
+
+    public var description: String {
+        switch self {
+        case .WordLengthMismatch: return "WordLengthMismatch"
         }
     }
+}
+
+
+
+public struct Buffer<T:UnsignedIntegerType> {
+    public private(set) var values: [T]
+    public var pointer: UnsafeMutablePointer<T> {
+        get {
+            return UnsafeMutablePointer<T>(values)
+        }
+    }
+    public var bufferPointer: UnsafeBufferPointer<Byte> {
+        get {
+            return UnsafeBufferPointer<Byte>(start: UnsafeMutablePointer(values), count: self.byteCount)
+        }
+    }
+    public var voidPointer: UnsafePointer<Void> {
+        get {
+            return UnsafePointer<Void>(values)
+        }
+    }
+
+
+    public init() {
+        values = []
+    }
     public init(size: Int) {
-        bytes = [Byte](count:size, repeatedValue: 0)
+        values = [T](count:size, repeatedValue: 0)
     }
-    public init(bytes: [Byte]) {
-        self.bytes = bytes
+    public init(bytes: [T]) {
+        self.values = bytes
     }
-    public init(data: NSData) {
-        self.init(size: data.length)
-        data.getBytes(&bytes, length:data.length)
+    public init(buffer: Buffer<T>) {
+        self.values = buffer.values
+    }
+    public init(data: NSData) throws {
+        let numberOfWords = data.length / sizeof(T)
+        if data.length % sizeof(T) != 0 {
+            throw BufferError.WordLengthMismatch
+        }
+        self.init(size: numberOfWords)
+        data.getBytes(&values, length:data.length)
+    }
+    public init(hexData: String) throws {
+            let data = NSMutableData()
+            var temp = ""
+            for char in hexData.characters {
+                temp+=String(char)
+                if(temp.characters.count == 2) {
+                    let scanner = NSScanner(string: temp)
+                    var value: CUnsignedInt = 0
+                    scanner.scanHexInt(&value)
+                    data.appendBytes(&value, length: 1)
+                    temp = ""
+                }
+
+            }
+        try self.init(data: data)
     }
     public var data: NSData {
-        get { return NSData(bytes: bytes, length: bytes.count) }
+        get { return NSData(bytes: values, length: byteCount) }
     }
     public var base64String: String {
         get { return data.base64EncodedStringWithOptions([]) }
     }
+    public var hexString: String {
+        get {
+            var hexString = ""
+            let pointer = self.bufferPointer
+            pointer.forEach { (byte) -> () in
+                hexString.appendContentsOf(String(format:"%02x", byte))
+            }
+            return hexString
+        }
+    }
     public var size: Int {
         get {
-            return bytes.count
+            return values.count
         }
         set {
-            if newValue < bytes.count {
+            if newValue < values.count {
                 //truncate the buffer to the new size
-                bytes = Array(bytes[0..<newValue])
-            } else if newValue > bytes.count {
-                let newBuffer = [Byte](count:newValue, repeatedValue: 0)
-                let existingData = UnsafeMutablePointer<Byte>(bytes)
-                let newBufferP = UnsafeMutablePointer<Byte>(newBuffer)
-                newBufferP.moveInitializeFrom(existingData, count: bytes.count)
-                bytes = newBuffer
+                values = Array(values[0..<newValue])
+            } else if newValue > values.count {
+                let newBuffer = [T](count:newValue, repeatedValue: 0)
+                let newBufferPointer = UnsafeMutablePointer<T>(newBuffer)
+                newBufferPointer.moveInitializeFrom(self.pointer, count: values.count)
+                values = newBuffer
             }
         }
     }
+    public var byteCount: Int {
+        get {
+            return values.count * elementSize
+        }
+    }
+
+    public mutating func append(bytes: [T])  {
+        let currentSize = self.size
+        let newSize = self.size + bytes.count
+        self.size = newSize
+        let appendLocation = self.pointer.advancedBy(currentSize)
+        appendLocation.moveAssignFrom(UnsafeMutablePointer(bytes), count: bytes.count)
+
+    }
+    public var elementSize: Int {
+        get {
+            return sizeof(T)
+        }
+    }
+}
+
+extension Array  where Element : UnsignedIntegerType {
+    var buffer: Buffer<Element> {
+        get { return Buffer(size: 0) }
+    }
+
 }

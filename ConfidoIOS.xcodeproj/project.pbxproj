@@ -10,6 +10,10 @@
 		1F467556BB36C5C9EE216F0A /* libPods-ConfidoIOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */; };
 		AB06D7B81BB595EF007127C6 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7B71BB595EF007127C6 /* Buffer.swift */; settings = {ASSET_TAGS = (); }; };
 		AB06D7BA1BB59DBF007127C6 /* ByteBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7B91BB59DBF007127C6 /* ByteBufferTests.swift */; settings = {ASSET_TAGS = (); }; };
+		AB06D7BC1BB5C669007127C6 /* Cryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7BB1BB5C669007127C6 /* Cryptor.swift */; settings = {ASSET_TAGS = (); }; };
+		AB06D7E11BB5C958007127C6 /* CommonCrypto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB06D7C81BB5C880007127C6 /* CommonCrypto.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		AB06D7E31BB7FF38007127C6 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7E21BB7FF37007127C6 /* CryptoTests.swift */; settings = {ASSET_TAGS = (); }; };
+		AB06D7E51BB80D6E007127C6 /* CryptoKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB06D7E41BB80D6E007127C6 /* CryptoKey.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E61BB0565400BB2899 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D41BB0565400BB2899 /* Keychain.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E71BB0565400BB2899 /* KeychainCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D51BB0565400BB2899 /* KeychainCertificate.swift */; settings = {ASSET_TAGS = (); }; };
 		AB3D20E81BB0565400BB2899 /* KeychainDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB3D20D61BB0565400BB2899 /* KeychainDescriptor.swift */; settings = {ASSET_TAGS = (); }; };
@@ -48,6 +52,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		AB06D7DF1BB5C910007127C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AB710E9E1BA060FB003AE8B0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AB06D7C71BB5C880007127C6;
+			remoteInfo = CommonCrypto;
+		};
 		AB710EB41BA060FB003AE8B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AB710E9E1BA060FB003AE8B0 /* Project object */;
@@ -63,6 +74,17 @@
 		8CA1B07F0E41DF0C4D526EBE /* Pods-ConfidoIOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ConfidoIOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		AB06D7B71BB595EF007127C6 /* Buffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
 		AB06D7B91BB59DBF007127C6 /* ByteBufferTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ByteBufferTests.swift; sourceTree = "<group>"; };
+		AB06D7BB1BB5C669007127C6 /* Cryptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cryptor.swift; sourceTree = "<group>"; };
+		AB06D7BD1BB5C743007127C6 /* CommonCrypto.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommonCrypto.xcconfig; sourceTree = SOURCE_ROOT; };
+		AB06D7BE1BB5C79F007127C6 /* iphoneos.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = iphoneos.modulemap; sourceTree = "<group>"; };
+		AB06D7BF1BB5C7C8007127C6 /* iphonesimulator.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = iphonesimulator.modulemap; sourceTree = "<group>"; };
+		AB06D7C11BB5C84B007127C6 /* libcommonCrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcommonCrypto.tbd; path = usr/lib/system/libcommonCrypto.tbd; sourceTree = SDKROOT; };
+		AB06D7C81BB5C880007127C6 /* CommonCrypto.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommonCrypto.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB06D7CC1BB5C880007127C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB06D7D61BB5C880007127C6 /* CommonCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonCryptoTests.swift; sourceTree = "<group>"; };
+		AB06D7D81BB5C880007127C6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB06D7E21BB7FF37007127C6 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
+		AB06D7E41BB80D6E007127C6 /* CryptoKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoKey.swift; sourceTree = "<group>"; };
 		AB3D20781BB033FC00BB2899 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AB3D20D21BB0565400BB2899 /* ConfidoIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfidoIOS.h; sourceTree = "<group>"; };
 		AB3D20D31BB0565400BB2899 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -108,10 +130,18 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		AB06D7C41BB5C880007127C6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB710EA31BA060FB003AE8B0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB06D7E11BB5C958007127C6 /* CommonCrypto.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +157,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AB06D7C91BB5C880007127C6 /* CommonCrypto */ = {
+			isa = PBXGroup;
+			children = (
+				AB06D7BE1BB5C79F007127C6 /* iphoneos.modulemap */,
+				AB06D7BF1BB5C7C8007127C6 /* iphonesimulator.modulemap */,
+				AB06D7BD1BB5C743007127C6 /* CommonCrypto.xcconfig */,
+				AB06D7CC1BB5C880007127C6 /* Info.plist */,
+			);
+			path = CommonCrypto;
+			sourceTree = "<group>";
+		};
+		AB06D7D51BB5C880007127C6 /* CommonCryptoTests */ = {
+			isa = PBXGroup;
+			children = (
+				AB06D7D61BB5C880007127C6 /* CommonCryptoTests.swift */,
+				AB06D7D81BB5C880007127C6 /* Info.plist */,
+			);
+			path = CommonCryptoTests;
+			sourceTree = "<group>";
+		};
 		AB3D20D11BB0565400BB2899 /* ConfidoIOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -138,11 +188,13 @@
 				AB3D20D71BB0565400BB2899 /* KeychainIdentity.swift */,
 				AB3D20D81BB0565400BB2899 /* KeyChainItem.swift */,
 				AB3D20D91BB0565400BB2899 /* KeychainKey.swift */,
+				AB06D7BB1BB5C669007127C6 /* Cryptor.swift */,
 				AB3D20DA1BB0565400BB2899 /* KeychainKeyPair.swift */,
 				AB3D20DB1BB0565400BB2899 /* KeychainProtocol.swift */,
 				AB3D20E21BB0565400BB2899 /* SecurityMappings.swift */,
 				AB3D20E31BB0565400BB2899 /* TrustPoint.swift */,
 				AB06D7B71BB595EF007127C6 /* Buffer.swift */,
+				AB06D7E41BB80D6E007127C6 /* CryptoKey.swift */,
 			);
 			path = ConfidoIOS;
 			sourceTree = "<group>";
@@ -164,6 +216,7 @@
 				AB3D20FD1BB0568100BB2899 /* resources */,
 				AB3D21581BB3066E00BB2899 /* ConfidoIOSTests-Bridging-Header.h */,
 				AB06D7B91BB59DBF007127C6 /* ByteBufferTests.swift */,
+				AB06D7E21BB7FF37007127C6 /* CryptoTests.swift */,
 			);
 			path = ConfidoIOSTests;
 			sourceTree = "<group>";
@@ -195,6 +248,8 @@
 				AB3D20781BB033FC00BB2899 /* README.md */,
 				AB3D20D11BB0565400BB2899 /* ConfidoIOS */,
 				AB3D20F61BB0568000BB2899 /* ConfidoIOSTests */,
+				AB06D7C91BB5C880007127C6 /* CommonCrypto */,
+				AB06D7D51BB5C880007127C6 /* CommonCryptoTests */,
 				AB710EA81BA060FB003AE8B0 /* Products */,
 				E6894CAD0757032772D87BD8 /* Pods */,
 				C6BC2230DEDAE7CF9BE590A5 /* Frameworks */,
@@ -206,6 +261,7 @@
 			children = (
 				AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */,
 				AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */,
+				AB06D7C81BB5C880007127C6 /* CommonCrypto.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -213,6 +269,7 @@
 		C6BC2230DEDAE7CF9BE590A5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AB06D7C11BB5C84B007127C6 /* libcommonCrypto.tbd */,
 				B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */,
 				785CE4C5661968E9A5C857E7 /* libPods-ConfidoIOSTests.a */,
 			);
@@ -231,6 +288,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		AB06D7C51BB5C880007127C6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB710EA41BA060FB003AE8B0 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -242,6 +306,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		AB06D7C71BB5C880007127C6 /* CommonCrypto */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AB06D7D91BB5C880007127C6 /* Build configuration list for PBXNativeTarget "CommonCrypto" */;
+			buildPhases = (
+				AB06D7C31BB5C880007127C6 /* Sources */,
+				AB06D7C41BB5C880007127C6 /* Frameworks */,
+				AB06D7C51BB5C880007127C6 /* Headers */,
+				AB06D7C61BB5C880007127C6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CommonCrypto;
+			productName = CommonCrypto;
+			productReference = AB06D7C81BB5C880007127C6 /* CommonCrypto.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		AB710EA61BA060FB003AE8B0 /* ConfidoIOS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AB710EBD1BA060FB003AE8B0 /* Build configuration list for PBXNativeTarget "ConfidoIOS" */;
@@ -254,6 +336,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				AB06D7E01BB5C910007127C6 /* PBXTargetDependency */,
 			);
 			name = ConfidoIOS;
 			productName = ConfidoIOS;
@@ -291,6 +374,9 @@
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Curoo Limited";
 				TargetAttributes = {
+					AB06D7C71BB5C880007127C6 = {
+						CreatedOnToolsVersion = 7.0;
+					};
 					AB710EA61BA060FB003AE8B0 = {
 						CreatedOnToolsVersion = 6.4;
 					};
@@ -313,11 +399,19 @@
 			targets = (
 				AB710EA61BA060FB003AE8B0 /* ConfidoIOS */,
 				AB710EB11BA060FB003AE8B0 /* ConfidoIOSTests */,
+				AB06D7C71BB5C880007127C6 /* CommonCrypto */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		AB06D7C61BB5C880007127C6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB710EA51BA060FB003AE8B0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -382,12 +476,20 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		AB06D7C31BB5C880007127C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AB710EA21BA060FB003AE8B0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AB3D20E61BB0565400BB2899 /* Keychain.swift in Sources */,
 				AB3D20EA1BB0565400BB2899 /* KeyChainItem.swift in Sources */,
+				AB06D7E51BB80D6E007127C6 /* CryptoKey.swift in Sources */,
 				AB3D20F41BB0565400BB2899 /* SecurityMappings.swift in Sources */,
 				AB3D20F51BB0565400BB2899 /* TrustPoint.swift in Sources */,
 				AB3D20E81BB0565400BB2899 /* KeychainDescriptor.swift in Sources */,
@@ -397,6 +499,7 @@
 				AB3D20EB1BB0565400BB2899 /* KeychainKey.swift in Sources */,
 				AB3D20EC1BB0565400BB2899 /* KeychainKeyPair.swift in Sources */,
 				AB3D20ED1BB0565400BB2899 /* KeychainProtocol.swift in Sources */,
+				AB06D7BC1BB5C669007127C6 /* Cryptor.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,6 +509,7 @@
 			files = (
 				AB3D210C1BB0568100BB2899 /* BaseTests.swift in Sources */,
 				AB3D21631BB309D000BB2899 /* OpenSSLKeyPair.swift in Sources */,
+				AB06D7E31BB7FF38007127C6 /* CryptoTests.swift in Sources */,
 				AB3D21101BB0568100BB2899 /* KeyPairTests.swift in Sources */,
 				AB3D210E1BB0568100BB2899 /* IdentityTests.swift in Sources */,
 				AB3D215D1BB3066F00BB2899 /* OpenSSL.m in Sources */,
@@ -420,6 +524,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		AB06D7E01BB5C910007127C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AB06D7C71BB5C880007127C6 /* CommonCrypto */;
+			targetProxy = AB06D7DF1BB5C910007127C6 /* PBXContainerItemProxy */;
+		};
 		AB710EB51BA060FB003AE8B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AB710EA61BA060FB003AE8B0 /* ConfidoIOS */;
@@ -428,6 +537,52 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		AB06D7DA1BB5C880007127C6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB06D7BD1BB5C743007127C6 /* CommonCrypto.xcconfig */;
+			buildSettings = {
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = CommonCrypto/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.curoo.CommonCrypto;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		AB06D7DB1BB5C880007127C6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB06D7BD1BB5C743007127C6 /* CommonCrypto.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = CommonCrypto/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.curoo.CommonCrypto;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
 		AB3D207C1BB04B2900BB2899 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -465,6 +620,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -483,6 +639,10 @@
 				INFOPLIST_FILE = ConfidoIOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ConfidoIOS;
 				SKIP_INSTALL = YES;
@@ -561,6 +721,10 @@
 				INFOPLIST_FILE = ConfidoIOS/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ConfidoIOS;
 				SKIP_INSTALL = YES;
@@ -587,6 +751,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		AB06D7D91BB5C880007127C6 /* Build configuration list for PBXNativeTarget "CommonCrypto" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB06D7DA1BB5C880007127C6 /* Release */,
+				AB06D7DB1BB5C880007127C6 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		AB710EA11BA060FB003AE8B0 /* Build configuration list for PBXProject "ConfidoIOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

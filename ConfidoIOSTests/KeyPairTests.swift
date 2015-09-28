@@ -57,20 +57,20 @@ class KeyPairTests: BaseTests {
 
             XCTAssertEqual(publicKeyData!.length,140)
 
-            let signature = try keyPair.privateKey.sign(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]))
+            let signature = try keyPair.privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
             print(signature)
 
-            var verified = try keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+            var verified = try keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
             XCTAssertTrue(verified)
 
-            verified = try keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+            verified = try keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
             XCTAssertFalse(verified)
 
-            let cipherTextUnderPublicKey = try keyPair.publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+            let cipherTextUnderPublicKey = try keyPair.publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
             print("Cipher under public key: \(cipherTextUnderPublicKey)")
 
             let decryptedText = try keyPair.privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
-            XCTAssertEqual([1,2,3,4], decryptedText.bytes)
+            XCTAssertEqual([1,2,3,4], decryptedText.values)
 
 
 
