@@ -38,7 +38,7 @@ extension PublicKey where Self : PublicKey, Self: KeychainKey {
         var cipherText = Buffer<Byte>(size: maxBlockSize)
         var returnSize = maxBlockSize
 
-        try ensureOK(SecKeyEncrypt(self.keySecKey!, padding, plainText.values, plainText.size, cipherText.pointer, &returnSize))
+        try ensureOK(SecKeyEncrypt(self.keySecKey!, padding, plainText.values, plainText.size, cipherText.mutablePointer, &returnSize))
         cipherText.size = returnSize
         return cipherText
     }
@@ -66,7 +66,7 @@ extension KeychainPrivateKey {
         var plainText = Buffer<Byte>(size: maxBlockSize)
         var returnSize = maxBlockSize
 
-        try ensureOK(SecKeyDecrypt(self.keySecKey!, padding, cipherText.values, cipherText.size, plainText.pointer, &returnSize))
+        try ensureOK(SecKeyDecrypt(self.keySecKey!, padding, cipherText.values, cipherText.size, plainText.mutablePointer, &returnSize))
         plainText.size = returnSize
         return plainText
     }
@@ -75,7 +75,7 @@ extension KeychainPrivateKey {
         try ensureRSAKey()
         var signatureLength : Int = self.keySize / 8
         var signature = Buffer<Byte>(size: signatureLength)
-        try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.values,digest.size, signature.pointer, &signatureLength))
+        try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.values,digest.size, signature.mutablePointer, &signatureLength))
         signature.size = signatureLength
         return signature
     }

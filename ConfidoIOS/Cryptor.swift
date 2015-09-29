@@ -40,7 +40,7 @@ public class Cryptor {
                 key.keyMaterial.pointer, key.keyType.keySize,
                 iv,
                 inputBuffer.pointer, inputBuffer.byteCount,
-                outputBuffer.pointer, outputBuffer.byteCount,
+                outputBuffer.mutablePointer, outputBuffer.byteCount,
                 &numBytesEncrypted)
 
             if UInt32(cryptStatus) == UInt32(kCCSuccess) {

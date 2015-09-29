@@ -188,6 +188,37 @@ class CryptoTests: XCTestCase {
         }
         
     }
+/*
+    Josefsson                     Informational                     [Page 2]
+
+    RFC 6070               PKCS #5 PBKDF2 Test Vectors          January 2011
+    
+    2.  PBKDF2 HMAC-SHA1 Test Vectors
+
+*/
+    func testPBKDFVectors() {
+        //https://www.ietf.org/rfc/rfc6070.txt
+        self.measureBlock {
+            XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds:        1, size: 20).hexString, "0c60c80f961f0e71f3a9b524af6012062fe037a6" )
+            XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds:        2, size: 20).hexString, "ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957" )
+            XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds:     4096, size: 20).hexString, "4b007901b765489abead49d926f721d065a429c1" )
+            //The next one takes a long time, because it uses 16M rounds
+            XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds: 16777216, size: 20).hexString, "eefe3d61cd4da4e4e9945b3d6ba2158c2634e984" )
+            XCTAssertEqual(PBKDFDeriveKey("passwordPASSWORDpassword", salt: "saltSALTsaltSALTsaltSALTsaltSALTsalt", rounds: 4096, size: 25).hexString, "3d2eec4fe41c849b80c8d83662c0e44a8b291a964cf2f07038" )
+        }
+    }
+
+    func testDerivedAESKey() {
+            let key = CryptoKey(deriveKeyFromPassphrase: "ABC", salt: "ASDASDASD")
+            XCTAssertEqual(key.keyCheckValueString, "90ff0b")
+    }
+
+    func testDerivedAESKeyPerformance() {
+        self.measureBlock {
+            let key = CryptoKey(deriveKeyFromPassphrase: "ABC", salt: "ASDASDASD")
+            XCTAssertEqual(key.keyCheckValueString, "90ff0b")
+        }
+    }
 
 
 

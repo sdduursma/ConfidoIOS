@@ -147,7 +147,7 @@ public enum Padding : RawRepresentable {
 public func generateRandomBytes(size: Int) -> Buffer<Byte> {
     do {
         let keyBuffer = Buffer<Byte>(size: size)
-        try secEnsureOK(SecRandomCopyBytes(kSecRandomDefault, size, keyBuffer.pointer))
+        try secEnsureOK(SecRandomCopyBytes(kSecRandomDefault, size, keyBuffer.mutablePointer))
         return keyBuffer
     }
     catch {
@@ -198,7 +198,33 @@ public class KeyStorageWrapper {
     }
 }
 
+public let kNumberOfRounds : UInt32 = 20000
 
+
+public func PBKDFDeriveKey(passphrase: String, salt: String, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
+    do {
+        let utf8data = passphrase.dataUsingEncoding(NSUTF8StringEncoding)
+        let buffer = try Buffer<Byte>(data: utf8data!)
+        let utf8salt = salt.dataUsingEncoding(NSUTF8StringEncoding)
+        let saltBuffer = try Buffer<Byte>(data: utf8salt!)
+        return PBKDFDeriveKey(buffer, salt: saltBuffer, rounds: rounds, size: size, algorithm: algorithm)
+    } catch {
+        return nil
+    }
+
+}
+public func PBKDFDeriveKey(buffer: Buffer<Byte>, salt: Buffer<Byte>, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
+    do {
+        let bufferPointer = UnsafePointer<Int8>(buffer.voidPointer)
+        let derivedKeyBuffer = Buffer<Byte>(size: size)
+        try secEnsureOK(CCKeyDerivationPBKDF(UInt32(kCCPBKDF2), bufferPointer, buffer.byteCount,
+            salt.pointer, salt.byteCount, algorithm, rounds,
+            derivedKeyBuffer.mutablePointer, derivedKeyBuffer.byteCount))
+        return derivedKeyBuffer
+    } catch {
+        return nil
+    }
+}
 
 public struct CryptoKey {
     public let keyType:  CryptoKeyType
@@ -207,7 +233,7 @@ public struct CryptoKey {
 
     public init(keyType: CryptoKeyType) {
         self.keyType = keyType
-        self.keyMaterial = generateRandomBytes(keyType.keySize)
+        self.keyMaterial = Buffer<Byte>(bytes: generateRandomBytes(keyType.keySize).values)
         self.keyCheckValue = makeCheckValue()
     }
 
@@ -227,6 +253,14 @@ public struct CryptoKey {
         }
 
         self.keyMaterial = Buffer<Byte>(bytes: keyData)
+        self.keyCheckValue = makeCheckValue()
+    }
+
+    //Derives an AES128 key from a passphrase and salt using n rounds with PBKDF and HMAC-SHA1
+    //See http://robnapier.net/aes-commoncrypto
+    public init(deriveKeyFromPassphrase passphrase: String, salt: String, n rounds: UInt32 = kNumberOfRounds) {
+        self.keyMaterial = PBKDFDeriveKey(passphrase, salt: salt, rounds: rounds, size: 16)
+        self.keyType = CryptoKeyType.AES(keyLength: .AES128)
         self.keyCheckValue = makeCheckValue()
     }
 

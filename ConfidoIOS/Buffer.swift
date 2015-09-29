@@ -21,10 +21,41 @@ public enum BufferError : ErrorType, CustomStringConvertible {
 }
 
 
+//TODO: Split the struct in two and adopt the protocols below to create a MutableBuffer
+public protocol BufferType {
+    typealias T
+    var values: [T] { get }
+//    init()
+//    init(size: Int)
+//    init(bytes: [T])
+//    init(buffer: Self)
+//    init(data: NSData) throws
+//    init(hexData: String) throws
+    var size: Int { get }
+    var data: NSData { get }
+    var base64String: String  { get }
+    var hexString: String { get }
+}
+/**
+public protocol ImmutableBufferType: BufferType {
+    var memory: UnsafeBufferPointer<Byte> { get }
+}
+
+public protocol MutableBufferType: BufferType {
+    var memory: UnsafeMutableBufferPointer<Byte> { get }
+    var size: Int { get set }
+    mutating func append(bytes: [T])
+}
+*/
 
 public struct Buffer<T:UnsignedIntegerType> {
     public private(set) var values: [T]
     public var pointer: UnsafeMutablePointer<T> {
+        get {
+            return UnsafeMutablePointer<T>(values)
+        }
+    }
+    public var mutablePointer: UnsafeMutablePointer<T> {
         get {
             return UnsafeMutablePointer<T>(values)
         }
@@ -40,7 +71,6 @@ public struct Buffer<T:UnsignedIntegerType> {
         }
     }
 
-
     public init() {
         values = []
     }
@@ -50,6 +80,7 @@ public struct Buffer<T:UnsignedIntegerType> {
     public init(bytes: [T]) {
         self.values = bytes
     }
+//TODO:  public init<B where B:BufferType, B.T == T>(buffer: B)
     public init(buffer: Buffer<T>) {
         self.values = buffer.values
     }
@@ -129,6 +160,7 @@ public struct Buffer<T:UnsignedIntegerType> {
         }
     }
 }
+
 
 extension Array  where Element : UnsignedIntegerType {
     var buffer: Buffer<Element> {

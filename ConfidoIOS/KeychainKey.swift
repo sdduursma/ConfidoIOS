@@ -52,8 +52,6 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
     }
 }
 
-
-
 /**
 An instance of an IOS Keychain Public Key
 */
