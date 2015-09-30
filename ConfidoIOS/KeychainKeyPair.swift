@@ -30,7 +30,7 @@ extension Key where Self : Key, Self : KeychainKey {
 }
 extension PublicKey where Self : PublicKey, Self: KeychainKey {
     public func encrypt(plainText: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte> {
-        try ensureRSAKey()
+        try ensureRSAOrECKey()
         let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
         if plainText.size > maxBlockSize {
             throw KeychainError.DataExceedsBlockSize(size: maxBlockSize)
@@ -44,7 +44,7 @@ extension PublicKey where Self : PublicKey, Self: KeychainKey {
     }
 
     public func verify(digest: Digest, signature: Signature) throws -> Bool {
-        try ensureRSAKey()
+        try ensureRSAOrECKey()
         let status = SecKeyRawVerify(self.keySecKey!, SecPadding.PKCS1, digest.values, digest.size, signature.values, signature.size)
         if status == 0 { return true }
         return false
@@ -58,7 +58,7 @@ public protocol PrivateKey : Key {
 
 extension KeychainPrivateKey {
     public func decrypt(cipherText: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte> {
-        try ensureRSAKey()
+        try ensureRSAOrECKey()
         let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
         if cipherText.size > maxBlockSize {
             throw KeychainError.DataExceedsBlockSize(size: maxBlockSize)
@@ -72,8 +72,9 @@ extension KeychainPrivateKey {
     }
 
     public func sign(digest: Digest) throws -> Signature {
-        try ensureRSAKey()
-        var signatureLength : Int = self.keySize / 8
+        try ensureRSAOrECKey()
+
+        var signatureLength : Int = self.keyType!.signatureMaxSize(self.keySize)
         var signature = Buffer<Byte>(size: signatureLength)
         try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.values,digest.size, signature.mutablePointer, &signatureLength))
         signature.size = signatureLength
@@ -118,7 +119,9 @@ An instance of an IOS Keychain Private Key
 
 
 func ensureOK(status: OSStatus) throws {
-    if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
+    if status != 0 {
+        throw KeychainStatus.statusFromOSStatus(status)
+    }
 }
 
 

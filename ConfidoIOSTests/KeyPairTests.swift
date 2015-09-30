@@ -11,7 +11,7 @@ import ConfidoIOS
 
 class KeyPairTests: BaseTests {
 
-    func testGenerateNamedKeyPair() {
+    func testGenerateNamedRSAKeyPair() {
         do {
             clearKeychainItems(.Key)
             var items = try Keychain.keyChainItems(SecurityClass.Key)
@@ -76,6 +76,102 @@ class KeyPairTests: BaseTests {
             XCTFail("Unexpected Exception \(error)")
         }
     }
+
+    func testGenerateNamedECKeyPairSignVerify() {
+        do {
+            clearKeychainItems(.Key)
+            var items = try Keychain.keyChainItems(SecurityClass.Key)
+            XCTAssertEqual(items.count,0)
+
+            let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
+                privateKeyAccessControl: nil, publicKeyAccessControl: nil,
+                keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
+            var keyPair : KeychainKeyPair!
+            keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
+            XCTAssertNotNil(keyPair)
+
+            items = try Keychain.keyChainItems(.Key)
+            XCTAssertEqual(items.count,2)
+
+
+            let keyDescriptor = KeychainKeyDescriptor(keyLabel: "AAA")
+            var keyItem: KeychainItem?
+            keyItem = try Keychain.fetchItem(matchingDescriptor: keyDescriptor)
+            XCTAssertNotNil(keyItem)
+
+            XCTAssertEqual(keyPair.privateKey.keyType, KeyType.ElypticCurve)
+            XCTAssertEqual(keyPair.publicKey.keyType, KeyType.ElypticCurve)
+
+
+            XCTAssertEqual(keyPair.privateKey.keySize, 256)
+            XCTAssertEqual(keyPair.publicKey.keySize, 256)
+
+
+            let publicKeyData = keyPair.publicKey.keyData
+            XCTAssertNotNil(publicKeyData)
+
+            XCTAssertEqual(publicKeyData!.length,65)
+
+            let signature = try keyPair.privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
+            print("Signature: \(signature.hexString)")
+
+            var verified = try keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+            XCTAssertTrue(verified)
+
+            verified = try keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+            XCTAssertFalse(verified)
+
+
+        } catch let error  {
+            XCTFail("Unexpected Exception \(error)")
+        }
+    }
+
+
+    func testGenerateNamedECKeyPairEncryptDecrypt() {
+        // This test fails because it seems that Apple has not implemented encrypting/decrypting (only signing) for EC keys.
+        do {
+            clearKeychainItems(.Key)
+            var items = try Keychain.keyChainItems(SecurityClass.Key)
+            XCTAssertEqual(items.count,0)
+
+            let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
+                privateKeyAccessControl: nil, publicKeyAccessControl: nil,
+                keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
+            var keyPair : KeychainKeyPair!
+            keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
+            XCTAssertNotNil(keyPair)
+
+            items = try Keychain.keyChainItems(.Key)
+            XCTAssertEqual(items.count,2)
+
+
+            let keyDescriptor = KeychainKeyDescriptor(keyLabel: "AAA")
+            var keyItem: KeychainItem?
+            keyItem = try Keychain.fetchItem(matchingDescriptor: keyDescriptor)
+            XCTAssertNotNil(keyItem)
+
+            XCTAssertEqual(keyPair.privateKey.keyType, KeyType.ElypticCurve)
+            XCTAssertEqual(keyPair.publicKey.keyType, KeyType.ElypticCurve)
+
+
+            let publicKeyData = keyPair.publicKey.keyData
+            XCTAssertNotNil(publicKeyData)
+
+            XCTAssertEqual(publicKeyData!.length,65)
+
+
+            let cipherTextUnderPublicKey = try keyPair.publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+            print("Cipher under public key: \(cipherTextUnderPublicKey)")
+
+            let decryptedText = try keyPair.privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
+            XCTAssertEqual([1,2,3,4], decryptedText.values)
+            
+        } catch let error  {
+            XCTFail("Unexpected Exception \(error)")
+        }
+    }
+
 
 
     func testGenerateKeyPairDifferentLabels() {
