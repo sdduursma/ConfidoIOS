@@ -29,11 +29,35 @@ public enum CryptoError : ErrorType, CustomStringConvertible {
 }
 
 
-public enum DESKeyLength {
-    case DES1, DES3
+public enum DESKeyLength : UInt8 {
+    case DES1 = 8
+    case DES3 = 24
+    var byteCount: UInt8 {
+        get {
+            return self.rawValue / 8 * 8
+        }
+    }
+    var bitCount: Int {
+        get {
+            return Int(self.rawValue) * 8
+        }
+    }
+
 }
-public enum AESKeyLength {
-    case AES128, AES192, AES256
+public enum AESKeyLength : UInt8 {
+    case AES128 = 16
+    case AES192 = 24
+    case AES256 = 32
+    var byteCount: UInt8 {
+        get {
+            return self.rawValue
+        }
+    }
+    var bitCount: Int {
+        get {
+            return Int(self.rawValue) * 8
+        }
+    }
 }
 
 public let kCryptorAESKeyType : Byte = 1
@@ -65,12 +89,8 @@ public enum CryptoKeyType : CustomStringConvertible {
 
     public var rawValue: [Byte] {
         switch self {
-        case AES(let keyLength) where keyLength == AESKeyLength.AES128: return [kCryptorAESKeyType,16]
-        case AES(let keyLength) where keyLength == AESKeyLength.AES192: return [kCryptorAESKeyType,24]
-        case AES(let keyLength) where keyLength == AESKeyLength.AES256: return [kCryptorAESKeyType,32]
-        case DES(let keyLength) where keyLength == DESKeyLength.DES1:   return [kCryptorDESKeyType,7]
-        case DES(let keyLength) where keyLength == DESKeyLength.DES3:   return [kCryptorDESKeyType,21]
-        default: return []
+        case AES(let keyLength): return [kCryptorAESKeyType,keyLength.rawValue]
+        case DES(let keyLength): return [kCryptorDESKeyType,keyLength.rawValue]
         }
     }
 
@@ -84,12 +104,8 @@ public enum CryptoKeyType : CustomStringConvertible {
     }
     public var keySize: Int {
         switch self {
-        case AES(let keyLength) where keyLength == AESKeyLength.AES128: return kCCKeySizeAES128
-        case AES(let keyLength) where keyLength == AESKeyLength.AES192: return kCCKeySizeAES192
-        case AES(let keyLength) where keyLength == AESKeyLength.AES256: return kCCKeySizeAES256
-        case DES(let keyLength) where keyLength == DESKeyLength.DES1:   return kCCKeySizeDES
-        case DES(let keyLength) where keyLength == DESKeyLength.DES3:   return kCCKeySize3DES
-        default: assertionFailure("Logic error - this code should not be called"); return 0
+        case AES(let keyLength): return Int(keyLength.byteCount)
+        case DES(let keyLength): return Int(keyLength.byteCount)
         }
     }
     public var coreCryptoAlgorithm: Int {
@@ -172,9 +188,6 @@ public class KeyStorageWrapper {
     }
 
     public class func unwrap(buffer: Buffer<Byte>) throws -> CryptoKey {
-        if buffer.byteCount < 1 + 1 + 1 + 3 {
-            throw CryptoError.NoKeyFound
-        }
         if let keyType = CryptoKeyType.init(keyTypeCode: buffer.values[0], keyLength: buffer.values[1]) {
             var startIndex  = buffer.values.startIndex
             startIndex = startIndex.advancedBy(2) // Skip keyTypeCode, keyLength
@@ -182,7 +195,7 @@ public class KeyStorageWrapper {
             let keyData = buffer.values[Range<Int>(start: startIndex, end: endIndex)]
             let kvcLength = buffer.values[endIndex]
             if kvcLength != kKeyCheckValueByteCount {
-
+                //TODO: Raise Error
             }
             startIndex = endIndex.advancedBy(1)
             endIndex = startIndex.advancedBy(Int(kvcLength))
