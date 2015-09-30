@@ -72,13 +72,73 @@ class KeyPairTests: BaseTests {
             let decryptedText = try keyPair.privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
             XCTAssertEqual([1,2,3,4], decryptedText.values)
 
-
-
         } catch let error as NSError {
             XCTFail("Unexpected Exception \(error)")
         }
+    }
 
 
+    func testGenerateKeyPairDifferentLabels() {
+        do {
+            clearKeychainItems(.Key)
+            var items = try Keychain.keyChainItems(SecurityClass.Key)
+            XCTAssertEqual(items.count,0)
+            let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: .WhenUnlockedThisDeviceOnly,
+                privateKeyLabel: "KPriv", privateKeyAppTag: nil, privateKeyAccessControl: nil,
+                publicKeyLabel: "KPub", publicKeyAppTag: nil, publicKeyAccessControl: nil,
+                keyType: .RSA, keySize: 1024)
+
+            var keyPair : KeychainKeyPair!
+            keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
+            XCTAssertNotNil(keyPair)
+
+            items = try Keychain.keyChainItems(.Key)
+            XCTAssertEqual(items.count,2)
+
+
+            let privKeyDescriptor = KeychainKeyDescriptor(keyLabel: "KPriv")
+            var privKeyItem: KeychainItem?
+            privKeyItem = try Keychain.fetchItem(matchingDescriptor: privKeyDescriptor)
+            XCTAssertNotNil(privKeyItem)
+
+            XCTAssert(privKeyItem is KeychainPrivateKey)
+
+            let pubKeyDescriptor = KeychainKeyDescriptor(keyLabel: "KPub")
+            var pubKeyItem: KeychainItem?
+            pubKeyItem = try Keychain.fetchItem(matchingDescriptor: pubKeyDescriptor)
+            XCTAssertNotNil(pubKeyItem)
+
+            XCTAssert(pubKeyItem is KeychainPublicKey)
+            let publicKey  =  pubKeyItem as! KeychainPublicKey
+            let privateKey = privKeyItem as! KeychainPrivateKey
+
+            let publicKeyData = publicKey.keyData
+            XCTAssertNotNil(publicKeyData)
+
+            XCTAssertEqual(publicKeyData!.length,140)
+
+            let signature = try privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
+            print(signature)
+
+            var verified = try publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+            XCTAssertTrue(verified)
+
+            verified = try publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+            XCTAssertFalse(verified)
+
+            let cipherTextUnderPublicKey = try publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+            print("Cipher under public key: \(cipherTextUnderPublicKey)")
+
+            let decryptedText = try privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
+            XCTAssertEqual([1,2,3,4], decryptedText.values)
+            
+
+            
+        } catch let error as NSError {
+            XCTFail("Unexpected Exception \(error)")
+        }
+        
+        
     }
 
     func testGenerateNamedKeyPairNoKeyLabel() {

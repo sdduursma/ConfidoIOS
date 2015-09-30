@@ -221,14 +221,38 @@ public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable
     }
 
     public func privateKeyDescriptor() -> KeychainKeyDescriptor {
-        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
-        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
+        let descriptor = KeychainKeyDescriptor()
+        descriptor.attributes[String(kSecAttrKeyClass)]       = KeyClass.kSecAttrKeyClass(.PrivateKey)
+        descriptor.attributes[String(kSecAttrKeyType)]        = self.attributes[String(kSecAttrKeyType)]
+        descriptor.attributes[String(kSecAttrKeySizeInBits)]  = self.attributes[String(kSecAttrKeySizeInBits)]
+        descriptor.attributes[String(kSecAttrLabel)]          = self.attributes[String(kSecAttrLabel)]
+        if let privAttrs = self.attributes[String(kSecPrivateKeyAttrs)] as? [String:AnyObject] {
+            if let privKeyLabel = privAttrs[String(kSecAttrLabel)] as? String {
+                descriptor.attributes[String(kSecAttrLabel)]  = privKeyLabel
+            }
+            if let privKeyAppTag = privAttrs[String(kSecAttrApplicationTag)]  {
+                descriptor.attributes[String(kSecAttrApplicationTag)]  = privKeyAppTag
+            }
+
+        }
         return descriptor
     }
 
     public func publicKeyDescriptor() -> KeychainKeyDescriptor {
-        let descriptor = KeychainKeyDescriptor(keyDescriptor: self)
-        descriptor.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
+        let descriptor = KeychainKeyDescriptor()
+        descriptor.attributes[String(kSecAttrKeyClass)]       = KeyClass.kSecAttrKeyClass(.PublicKey)
+        descriptor.attributes[String(kSecAttrKeyType)]        = self.attributes[String(kSecAttrKeyType)]
+        descriptor.attributes[String(kSecAttrKeySizeInBits)]  = self.attributes[String(kSecAttrKeySizeInBits)]
+        descriptor.attributes[String(kSecAttrLabel)]          = self.attributes[String(kSecAttrLabel)]
+        if let pubAttrs = self.attributes[String(kSecPublicKeyAttrs)] as? [String:AnyObject] {
+            if let pubKeyLabel = pubAttrs[String(kSecAttrLabel)] as? String {
+                descriptor.attributes[String(kSecAttrLabel)]  = pubKeyLabel
+            }
+            if let pubKeyAppTag = pubAttrs[String(kSecAttrApplicationTag)]  {
+                descriptor.attributes[String(kSecAttrApplicationTag)]  = pubKeyAppTag
+            }
+
+        }
         return descriptor
     }
 }
@@ -259,6 +283,37 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
         if (publicKeyAccessControl != nil) {
             attributes[String(kSecPublicKeyAttrs)] = [ String(kSecAttrAccessControl): publicKeyAccessControl! ]
         }
+    }
+    public init(accessible: Accessible,
+        privateKeyLabel: String, privateKeyAppTag: String?, privateKeyAccessControl: SecAccessControl?,
+        publicKeyLabel: String,  publicKeyAppTag: String?,  publicKeyAccessControl: SecAccessControl?,
+        keyType: KeyType, keySize: Int) {
+            super.init(keyType: keyType, keySize: keySize, keyLabel: nil, keyAppTag: nil, keyAppLabel: nil )
+            attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
+            attributes[String(kSecAttrAccessible)] = accessible.rawValue
+
+            var privateAttrs  : [String: AnyObject] = [ : ]
+            var publicAttrs   : [String: AnyObject] = [ : ]
+
+            attributes[String(kSecPublicKeyAttrs)]  = [ : ]
+            if (privateKeyAccessControl != nil) {
+                privateAttrs[ String(kSecAttrAccessControl)] = privateKeyAccessControl!
+            }
+            if (publicKeyAccessControl != nil) {
+                publicAttrs[ String(kSecAttrAccessControl)] = publicKeyAccessControl!
+            }
+            privateAttrs[ String(kSecAttrLabel)] = privateKeyLabel
+            publicAttrs[ String(kSecAttrLabel)] = publicKeyLabel
+
+            if (privateKeyAppTag != nil) {
+                privateAttrs[ String(kSecAttrApplicationTag)] = privateKeyAppTag!
+            }
+            if (publicKeyAppTag != nil) {
+                publicAttrs[ String(kSecAttrApplicationTag)] = publicKeyAppTag!
+            }
+
+            attributes[String(kSecPrivateKeyAttrs)] = privateAttrs
+            attributes[String(kSecPublicKeyAttrs)]  = publicAttrs
     }
 }
 

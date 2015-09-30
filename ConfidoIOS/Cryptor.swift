@@ -22,7 +22,6 @@ public class Cryptor {
                 key: key, mode: mode, padding: padding,initialVector: initialVector)
     }
 
-
     class func operation<T>(operation: CCOperation, inputBuffer: Buffer<T>, key: CryptoKey,
         mode: CipherMode, padding: Padding, initialVector: Buffer<Byte>?) throws -> Buffer<Byte> {
             if initialVector != nil && initialVector?.byteCount != key.keyType.blockSize {
