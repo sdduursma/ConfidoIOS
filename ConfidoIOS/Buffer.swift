@@ -99,7 +99,7 @@ public struct Buffer<T:UnsignedIntegerType> {
                 temp+=String(char)
                 if(temp.characters.count == 2) {
                     let scanner = NSScanner(string: temp)
-                    var value: CUnsignedInt = 0
+                    var value: UInt32 = 0
                     scanner.scanHexInt(&value)
                     data.appendBytes(&value, length: 1)
                     temp = ""
