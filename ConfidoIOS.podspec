@@ -16,12 +16,13 @@ Pod::Spec.new do |s|
   #
 
   s.name         = "ConfidoIOS"
-  s.version      = "1.0.2"
+  s.version      = "1.1.0"
   s.summary      = "A Library encapsulating IOS keychain access and certificates"
 
   s.description  = <<-DESC
                    The library provides Object Oriented wrappers for the IOS Keychain Objects and hide the complexities of dealing with the Keychain API in IOS.
                    Includes objects for Keychain Key Pair, Keychain Certificate, etc
+		   It includes support Symmetric encryption using CommonCrypto and PBKDF2 Key Derivation
                    DESC
 
   s.homepage     = "https://github.com/curoo/ConfidoIOS"
@@ -63,10 +64,12 @@ Pod::Spec.new do |s|
   #  Supports git, hg, bzr, svn and HTTP.
   #
 
-  s.source       = { :git => "https://github.com/curoo/ConfidoIOS.git", :tag => "1.0.2" }
+  s.source       = { :git => "https://github.com/curoo/ConfidoIOS.git", :tag => "1.1.0" }
 
 
   s.source_files  = "ConfidoIOS/*.swift"
+
+  s.module_map = "CommonCrypto/module.modulemap"
 
 
 end

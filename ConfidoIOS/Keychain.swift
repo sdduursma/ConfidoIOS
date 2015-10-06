@@ -24,9 +24,13 @@ public enum KeychainError : ErrorType, CustomStringConvertible {
     NoSecCertificateReference,
     NoSecKeyReference,
     UnimplementedSecurityClass,
+    UnimplementedKeyType(reason: String?),
     MismatchedResultType(returnedType: AnyClass, declaredType: Any),
     InvalidCertificateData,
-    TrustError(trustResult: TrustResult, reason: String?)
+    TrustError(trustResult: TrustResult, reason: String?),
+    DataExceedsBlockSize(size: Int),
+    InitialVectorMismatch(size: Int),
+    CryptoOperationFailed(status: Int32)
 
     public var description : String {
         switch self {
@@ -34,9 +38,13 @@ public enum KeychainError : ErrorType, CustomStringConvertible {
         case NoSecCertificateReference: return "NoSecCertificateReference"
         case NoSecKeyReference: return "NoSecKeyReference"
         case UnimplementedSecurityClass: return "UnimplementedSecurityClass"
+        case UnimplementedKeyType(let reason): return "UnimplementedKeyType \(reason)"
         case MismatchedResultType(let returnedType, let declaredType) : return "MismatchedResultType (returned \(returnedType)) declared \(declaredType)"
         case InvalidCertificateData: return "InvalidCertificateData"
         case TrustError(_, let reason) : return "TrustError \(reason)"
+        case DataExceedsBlockSize(let size) : return "Data exceeds cipher block size of \(size)"
+        case InitialVectorMismatch(let size) : return "Size of Initial Vector does not match block size of cipher (\(size))"
+        case .CryptoOperationFailed(let status): return "Common Crypto Operation Failed (\(status))"
         }
     }
 }

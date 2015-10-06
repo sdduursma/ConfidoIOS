@@ -1,15 +1,17 @@
 # ConfidoIOS [![Build Status](https://www.bitrise.io/app/e6ce6063a5c21539.svg?token=rE2YCzi0GQ9GqP5lDsMlkg&branch=master)](https://www.bitrise.io/app/e6ce6063a5c21539)
 
-TODO
+# TODO
 - [ ] Add skeletons for other Keychain classes that might be needed in future (Passwords)
 - [ ] Get rid of Keychain.swift
 - [ ] Complete KeychainCertificate
 - [ ] Complete KeychainIdentity
-- [ ] Add README that describes the design and usage
-- [ ] Add License
-- [ ] Rename Repository to final name before publishing
+- [x] Add README that describes the design and usage
+- [x] Add License
+- [x] Rename Repository to final name before publishing
 - [ ] Test on an actual phone
 - [ ] Remove old commented code that currently serve as documentation
+- [ ] Add a local testing services that can issue Certificates
+- [ ] Write a test case that generates a CSR, request a certificate from the service and import it
 
 This is a major rewrite because the previous attempts didn't work. I used Swift 2, protocol extensions and exceptions (throws) throughout which made the implementation much saner.
 
@@ -48,21 +50,7 @@ These classes represent actual items in the IOS Keychain.
 In order to add something (like a PKCS12 Identity from a .p12 file), you first have to import it. This you do with a call to `SecPKCS12Import(...)`. This returns a temporary reference to an Identity, but it is not stored in the keychain yet. In order to add it, the code uses objects named `TransportXYZ` to store these temporary values. In the case of an identity, this class is called `TransportKeyPair`. `TransportKeyPair` supports the `KeychainAddable` protocol, which means it has a method `addToKeychain() -> KeychainIdentity`. The Transport classes derive from `KeychainDescriptor`.
 
 # OpenSSL
-This Library uses a precompiled OpenSSL library to speed up compile time. This is not a good thing, because someone can replace the library with hacked code and we will not have any way to know that the code has been compromised.
-
-The code uses OpenSSL to do the following:
-* Generating a Certificate Signing Request (CSR) with a Key Pair stored in the IOS Keychain:
-```
-public class func generateCSRWithKeyPair(keyPair: IOSKeychain.OpenSSLKeyPair, csrData: [NSObject : AnyObject]) throws -> NSData
-```
-* Importing an RSA Key Pair from a passphrase protected PEM file:
-```    
-public class func keyPairFromPEMData(pemData: NSData, encryptedWithPassword passphrase: String) throws -> IOSKeychain.OpenSSLKeyPair
-```    
-* Convert a certificate received from a certificate authority into a PKCS12 Identity that can be added to the IOS Keychain:
-```
-public class func pkcs12IdentityWithKeyPair(keyPair: IOSKeychain.OpenSSLKeyPair, certificate: IOSKeychain.OpenSSLCertificate, protectedWithPassphrase passphrase: String) throws -> IOSKeychain.OpenSSLIdentity
-```
+This Library uses a precompiled OpenSSL library to speed up compile time used in some unit tests. 
 
 # Keychain Protocols
 ## KeyChainAttributeStorage

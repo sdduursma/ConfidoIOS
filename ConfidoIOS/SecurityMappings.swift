@@ -259,6 +259,13 @@ public enum KeyType: RawRepresentable {
             return String(kSecAttrKeyTypeEC)
         }
     }
+    public func signatureMaxSize(keySize: Int) -> Int {
+        switch self {
+        case .RSA: return keySize / 8
+        //Overhead should not be more than ~16 bytes, plus twice the number of EC field size of course (for example, for SECP256 it will be 256/8=32, 32*2 + 16 bytes ~ 80 bytes).
+        case .ElypticCurve: return 80
+        }
+    }
 }
 
 

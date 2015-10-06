@@ -253,6 +253,7 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
             if let intValue = attributes[String(kSecAttrKeyType)] as? Int {
                 switch intValue {
                 case 42: return KeyType.RSA
+                case 73: return KeyType.ElypticCurve
                 default : return nil
                 }
             } else if let stringValue = attributes[String(kSecAttrKeyType)] as? String {
