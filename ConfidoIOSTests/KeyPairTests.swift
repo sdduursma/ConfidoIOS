@@ -387,6 +387,20 @@ class KeyPairTests: BaseTests {
         
     }
 
+    func testPublicKeyFromDERFile() {
+        do {
+            clearKeychainItems(.Key)
+            let publicKeyData = try contentsOfBundleResource("public-key", ofType: "der")
+            let publicKey = try KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData, keyLabel: "build-key")
+            let cipherTextUnderPublicKey = try publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+            print("Cipher under public key: \(cipherTextUnderPublicKey)")
+
+        } catch let error{
+            XCTFail("Unexpected Exception \(error)")
+        }
+
+    }
+
 
 
 

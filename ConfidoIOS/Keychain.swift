@@ -174,7 +174,6 @@ public class Keychain {
         query[String(kSecReturnData)]       = returnData ? kCFBooleanTrue : kCFBooleanFalse
         query[String(kSecReturnRef)]        = returnRef ? kCFBooleanTrue : kCFBooleanFalse
         query[String(kSecMatchLimit)]       = returning == .One ? kSecMatchLimitOne : kSecMatchLimitAll
-        query[String(kSecReturnData)]       = kCFBooleanTrue
         query += attributes.keychainMatchPropertyValues()
 
         do {
