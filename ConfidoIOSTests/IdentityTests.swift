@@ -27,6 +27,9 @@ class IdentityTests: BaseTests {
             XCTAssertEqual(self.keychainItems(.Identity).count, 1)
             let storedIdentity = try KeychainIdentity.identity(IdentityDescriptor(identityLabel: "identity"))
             XCTAssertNotNil(storedIdentity)
+            let items = self.keychainItems(.Identity)
+            XCTAssertEqual(items.count,1)
+
 
         } catch let error  {
             let items = self.keychainItems(.Identity)

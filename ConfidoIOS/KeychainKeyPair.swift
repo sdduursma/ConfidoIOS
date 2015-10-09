@@ -327,11 +327,11 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
         publicKeyLabel: String,  publicKeyAppTag: String?,  publicKeyAccessControl: SecAccessControl?,
         keyType: KeyType, keySize: Int) {
             super.init(keyType: keyType, keySize: keySize, keyLabel: nil, keyAppTag: nil, keyAppLabel: nil )
-            attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
             attributes[String(kSecAttrAccessible)] = accessible.rawValue
 
             var privateAttrs  : [String: AnyObject] = [ : ]
             var publicAttrs   : [String: AnyObject] = [ : ]
+            privateAttrs[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
 
             attributes[String(kSecPublicKeyAttrs)]  = [ : ]
             if (privateKeyAccessControl != nil) {
