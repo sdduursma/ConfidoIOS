@@ -42,11 +42,24 @@ public class KeychainIdentity: KeychainItem, KeychainFindable, GenerateKeychainF
     public typealias ResultType = KeychainIdentity
     public let keyPair : KeychainKeyPair?
     public let certificate : KeychainCertificate?
+    public let secIdentity: SecIdentity!
+
+    class func getSecIdentity(SecItemAttributes attributes: NSDictionary) -> SecIdentity {
+        if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
+            if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+                let secIdentity = (valueRef as! SecIdentity)
+                return secIdentity
+            }
+        }
+        fatalError("No CertificateRef found")
+    }
+
 
     public class func identityFromAttributes(SecItemAttributes attributes: SecItemAttributes) throws -> KeychainIdentity {
         let keyPair = try KeychainKeyPair(SecItemAttributes: attributes)
         let certificate = try KeychainCertificate(SecItemAttributes: attributes)
-        return KeychainIdentity(keyPair: keyPair, certificate: certificate)
+        let secIdentity = getSecIdentity(SecItemAttributes: attributes)
+        return KeychainIdentity(secIdentity: secIdentity, keyPair: keyPair, certificate: certificate)
     }
 
 
@@ -80,7 +93,8 @@ public class KeychainIdentity: KeychainItem, KeychainFindable, GenerateKeychainF
         fatalError("No SecIdentity Reference returned")
     }
 
-    init(keyPair: KeychainKeyPair, certificate: KeychainCertificate) {
+    init(secIdentity: SecIdentity, keyPair: KeychainKeyPair, certificate: KeychainCertificate) {
+        self.secIdentity = secIdentity
         self.keyPair = keyPair
         self.certificate = certificate
         super.init(securityClass: .Identity)
