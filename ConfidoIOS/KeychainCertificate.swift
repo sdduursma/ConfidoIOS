@@ -40,9 +40,13 @@ public class KeychainCertificate : KeychainItem,
         if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
             if CFGetTypeID(valueRef) == SecCertificateGetTypeID() {
                 return (valueRef as! SecCertificate)
+            } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+                let secIdentity = (valueRef as! SecIdentity)
+                return try certificateRef(secIdentity)
             }
+
         }
-        throw KeychainError.NoSecCertificateReference
+        fatalError("No CertificateRef found")
     }
 
     public init(SecItemAttributes attributes: SecItemAttributes) throws {

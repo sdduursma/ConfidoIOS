@@ -125,7 +125,7 @@ An instance of an IOS Keychain Private Key
 */
 
 
-func ensureOK(status: OSStatus) throws {
+public func ensureOK(status: OSStatus) throws {
     if status != 0 {
         throw KeychainStatus.statusFromOSStatus(status)
     }

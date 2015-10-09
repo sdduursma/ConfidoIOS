@@ -10,6 +10,18 @@ import Foundation
 import CommonCrypto
 
 
+public func certificateRef(secIdentity: SecIdentity) throws -> SecCertificate {
+    var certificateRef: SecCertificate? = nil
+    try ensureOK(SecIdentityCopyCertificate(secIdentity, &certificateRef))
+    return certificateRef!
+}
+
+public func privateKeyRef(secIdentity: SecIdentity) throws -> SecKey {
+    var keyRef: SecKey? = nil
+    try ensureOK(SecIdentityCopyPrivateKey(secIdentity, &keyRef))
+    return keyRef!
+}
+
 public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
     public class func keychainKeyFromAttributes(SecItemAttributes attributes: SecItemAttributes) throws -> KeychainKey {
         let keyClass = KeyClass.keyClass(attributes[String(kSecAttrKeyClass)])
@@ -36,9 +48,12 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
         if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
             if CFGetTypeID(valueRef) == SecKeyGetTypeID() {
                 return (valueRef as! SecKey)
+            } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+                let secIdentity = (valueRef as! SecIdentity)
+                return try privateKeyRef(secIdentity)
             }
         }
-        throw KeychainError.NoSecKeyReference
+        fatalError("No SecKey Reference")
     }
 
     override public func specifierMatchingProperties() -> Set<String> {

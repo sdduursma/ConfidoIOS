@@ -20,22 +20,26 @@ class IdentityTests: BaseTests {
 
     func testImportPKCS12Identity() {
         do {
-            //TODO: Need a proper
             clearKeychainItems(.Identity)
             clearKeychainItems(.Key)
             clearKeychainItems(.Certificate)
-            try addCertificateToKeychain("Curoo Root CA" )
-            try addCertificateToKeychain("Curoo Product CA")
-            try addCertificateToKeychain("Expend CA")
-            try addCertificateToKeychain("Expend Device CA")
-            XCTAssertEqual(self.keychainItems(.Certificate).count, 4)
 
             let p12Data = try contentsOfBundleResource("Device Identity", ofType: "p12")
 
             let transportIdentity = try KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
-            _ = try transportIdentity.addToKeychain()
+            let keychainIdentity = try transportIdentity.addToKeychain()
+            XCTAssertEqual(keychainIdentity.certificate!.subject, "Expend Device ABCD")
+            XCTAssertEqual(self.keychainItems(.Identity).count, 1)
+            let storedIdentity = try KeychainIdentity.identity(IdentityDescriptor(identityLabel: "identity"))
+            XCTAssertNotNil(storedIdentity)
 
         } catch let error  {
+            let items = self.keychainItems(.Identity)
+            let certificates = self.keychainItems(.Certificate)
+            let keys = self.keychainItems(.Key)
+            print(items.count)
+            print(certificates.count)
+            print(keys.count)
             XCTFail("Unexpected Exception \(error)")
         }
         
