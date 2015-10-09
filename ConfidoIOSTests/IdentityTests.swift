@@ -11,11 +11,6 @@ import XCTest
 import ConfidoIOS
 
 class IdentityTests: BaseTests {
-    func addCertificateToKeychain(certificateName: String) throws -> KeychainCertificate {
-        let certificateDERData = try contentsOfBundleResource(certificateName, ofType: "cer")
-        let transportCertificate = try KeychainCertificate.certificate(certificateDERData)
-        return try transportCertificate.addToKeychain()
-    }
 
 
     func testImportPKCS12Identity() {

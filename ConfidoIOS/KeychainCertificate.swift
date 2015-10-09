@@ -19,7 +19,7 @@ public protocol ClientAuthenticationCertificate: Certificate { }
 
 public class KeychainCertificate : KeychainItem,
     Certificate, KeychainCertificateClassProperties, KeychainFindable, GenerateKeychainFind {
-    public typealias QueryType = TransportCertificate
+    public typealias QueryType = CertificateDescriptor
     public typealias ResultType = KeychainCertificate
     public private(set) var secCertificate: SecCertificate! = nil
     public private(set) var subject: String = ""
@@ -28,10 +28,10 @@ public class KeychainCertificate : KeychainItem,
         return try KeychainCertificate(SecItemAttributes: attributes)
     }
 
-    public class func certificate(derEncodedCertificateData: NSData) throws -> TransportCertificate {
+    public class func certificate(derEncodedCertificateData: NSData, itemLabel: String? = nil) throws -> TransportCertificate {
         let secCertificate = SecCertificateCreateWithData(nil, derEncodedCertificateData)
         if secCertificate != nil {
-            return TransportCertificate(secCertificate: secCertificate!)
+            return TransportCertificate(secCertificate: secCertificate!, itemLabel: itemLabel)
         }
         throw KeychainError.InvalidCertificateData
     }
@@ -57,22 +57,38 @@ public class KeychainCertificate : KeychainItem,
 
 }
 
+public class CertificateDescriptor : KeychainDescriptor {
+    public init(certificateDescriptor: CertificateDescriptor) {
+        super.init(descriptor: certificateDescriptor)
+    }
+
+    public init(certificateLabel: String) {
+        super.init(securityClass: .Certificate, itemLabel: certificateLabel)
+    }
+}
+
+
 /**
 Container class for an identity in a transportable format
 */
 public class TransportCertificate : KeychainDescriptor, SecItemAddable, Certificate {
     public private(set) var subject: String
     public private(set) var secCertificate: SecCertificate!
+    let label : String?
     public init(secCertificate: SecCertificate, itemLabel: String? = nil) {
         self.secCertificate = secCertificate
+        self.label = itemLabel
         self.subject = SecCertificateCopySubjectSummary(secCertificate) as String
         super.init(securityClass: SecurityClass.Certificate, itemLabel: itemLabel)
         attributes[kSecValueRef as String] = secCertificate
 
     }
-    public func addToKeychain() throws -> KeychainCertificate {
+    public func addToKeychain() throws -> KeychainCertificate? {
         try self.secItemAdd()
-        return try KeychainCertificate.findInKeychain(self)!
+        if label != nil {
+            return try KeychainCertificate.findInKeychain(CertificateDescriptor(certificateLabel: self.label!))!
+        }
+        return nil
     }
 
 }

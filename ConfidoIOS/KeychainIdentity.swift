@@ -135,7 +135,6 @@ public class IdentityImportDescriptor : KeyChainAttributeStorage, SecItemAddable
 
 
 public class IdentityDescriptor : KeychainDescriptor {
-
     public init(identityDescriptor: IdentityDescriptor) {
         super.init(descriptor: identityDescriptor)
     }
