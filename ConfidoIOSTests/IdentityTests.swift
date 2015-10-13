@@ -25,6 +25,8 @@ class IdentityTests: BaseTests {
             let keychainIdentity = try transportIdentity.addToKeychain()
             XCTAssertEqual(keychainIdentity.certificate!.subject, "Expend Device ABCD")
             XCTAssertEqual(self.keychainItems(.Identity).count, 1)
+            let keys = self.keychainItems(.Key)
+            XCTAssertEqual(keys.count,1)
             let storedIdentity = try KeychainIdentity.identity(IdentityDescriptor(identityLabel: "identity"))
             XCTAssertNotNil(storedIdentity)
             let items = self.keychainItems(.Identity)

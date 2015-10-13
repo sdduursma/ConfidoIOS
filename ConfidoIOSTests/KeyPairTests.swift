@@ -19,7 +19,7 @@ class KeyPairTests: BaseTests {
 
             let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
                 privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-                keyType: .RSA, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
+                keyType: .RSA, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
             var keyPair : KeychainKeyPair!
             keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
@@ -46,8 +46,9 @@ class KeyPairTests: BaseTests {
             XCTAssertNotNil(keyPair.privateKey.keyAppTag)
             XCTAssertEqual(keyPair.privateKey.keyAppTag!, "BBB")
 
-            XCTAssertNotNil(keyPair.privateKey.keyAppLabelString)
-            XCTAssertEqual(keyPair.privateKey.keyAppLabelString!, "CCC")
+            XCTAssertNil(keyPair.privateKey.keyAppLabelString)
+            XCTAssertNotNil(keyPair.publicKey.keyAppLabelString)
+            XCTAssertEqual(keyPair.publicKey.keyAppLabelString!, "CCC")
 
             XCTAssertEqual(keyPair.publicKey.itemAccessGroup, "")
             XCTAssertEqual(keyPair.publicKey.itemAccessible, Accessible.WhenUnlockedThisDeviceOnly)
@@ -85,7 +86,7 @@ class KeyPairTests: BaseTests {
 
             let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
                 privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-                keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
+                keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
             var keyPair : KeychainKeyPair!
             keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
@@ -137,7 +138,7 @@ class KeyPairTests: BaseTests {
 
             let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
                 privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-                keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", keyAppLabel: "CCC")
+                keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
             var keyPair : KeychainKeyPair!
             keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
@@ -180,8 +181,8 @@ class KeyPairTests: BaseTests {
             var items = try Keychain.keyChainItems(SecurityClass.Key)
             XCTAssertEqual(items.count,0)
             let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: .WhenUnlockedThisDeviceOnly,
-                privateKeyLabel: "KPriv", privateKeyAppTag: nil, privateKeyAccessControl: nil,
-                publicKeyLabel: "KPub", publicKeyAppTag: nil, publicKeyAccessControl: nil,
+                keyLabel: "KPriv", privateKeyAppTag: nil, privateKeyAccessControl: nil,
+                publicKeyAppLabel: "KPub", publicKeyAppTag: nil, publicKeyAccessControl: nil,
                 keyType: .RSA, keySize: 1024)
 
             var keyPair : KeychainKeyPair!
@@ -192,14 +193,14 @@ class KeyPairTests: BaseTests {
             XCTAssertEqual(items.count,2)
 
 
-            let privKeyDescriptor = KeychainKeyDescriptor(keyLabel: "KPriv")
+            let privKeyDescriptor = KeychainKeyDescriptor(keyClass: KeyClass.PrivateKey, keyLabel: "KPriv")
             var privKeyItem: KeychainItem?
             privKeyItem = try Keychain.fetchItem(matchingDescriptor: privKeyDescriptor)
             XCTAssertNotNil(privKeyItem)
 
             XCTAssert(privKeyItem is KeychainPrivateKey)
 
-            let pubKeyDescriptor = KeychainKeyDescriptor(keyLabel: "KPub")
+            let pubKeyDescriptor = KeychainKeyDescriptor(keyClass: KeyClass.PublicKey, keyLabel: "KPriv", keyAppLabel: "KPub")
             var pubKeyItem: KeychainItem?
             pubKeyItem = try Keychain.fetchItem(matchingDescriptor: pubKeyDescriptor)
             XCTAssertNotNil(pubKeyItem)
@@ -327,7 +328,7 @@ class KeyPairTests: BaseTests {
             var keypairDescriptor = PermanentKeychainKeyPairDescriptor(
                 accessible: Accessible.AlwaysThisDeviceOnly,
                 privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-                keyType: .RSA, keySize: 1024, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")
+                keyType: .RSA, keySize: 1024, keyLabel: "A1", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
             var keyPair : KeychainKeyPair? = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
 
@@ -347,7 +348,7 @@ class KeyPairTests: BaseTests {
             keypairDescriptor = PermanentKeychainKeyPairDescriptor(
                 accessible: Accessible.AlwaysThisDeviceOnly,
                 privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-                keyType: .RSA, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", keyAppLabel: "CCC")
+                keyType: .RSA, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
             keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
             XCTAssertNotNil(keyPair)
         } catch let error {

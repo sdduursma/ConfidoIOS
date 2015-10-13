@@ -260,10 +260,12 @@ public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable
 
     public func privateKeyDescriptor() -> KeychainKeyDescriptor {
         let descriptor = KeychainKeyDescriptor()
-        descriptor.attributes[String(kSecAttrKeyClass)]       = KeyClass.kSecAttrKeyClass(.PrivateKey)
-        descriptor.attributes[String(kSecAttrKeyType)]        = self.attributes[String(kSecAttrKeyType)]
-        descriptor.attributes[String(kSecAttrKeySizeInBits)]  = self.attributes[String(kSecAttrKeySizeInBits)]
-        descriptor.attributes[String(kSecAttrLabel)]          = self.attributes[String(kSecAttrLabel)]
+        descriptor.attributes[String(kSecAttrKeyClass)]         = KeyClass.kSecAttrKeyClass(.PrivateKey)
+        descriptor.attributes[String(kSecAttrKeyType)]          = self.attributes[String(kSecAttrKeyType)]
+        descriptor.attributes[String(kSecAttrKeySizeInBits)]    = self.attributes[String(kSecAttrKeySizeInBits)]
+        descriptor.attributes[String(kSecAttrLabel)]            = self.attributes[String(kSecAttrLabel)]
+        descriptor.attributes[String(kSecAttrApplicationLabel)] = self.attributes[String(kSecAttrApplicationLabel)]
+
         if let privAttrs = self.attributes[String(kSecPrivateKeyAttrs)] as? [String:AnyObject] {
             if let privKeyLabel = privAttrs[String(kSecAttrLabel)] as? String {
                 descriptor.attributes[String(kSecAttrLabel)]  = privKeyLabel
@@ -272,22 +274,30 @@ public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable
                 descriptor.attributes[String(kSecAttrApplicationTag)]  = privKeyAppTag
             }
 
+            if let privKeyAppLabel = privAttrs[String(kSecAttrApplicationLabel)]  {
+                descriptor.attributes[String(kSecAttrApplicationLabel)] = privKeyAppLabel
+            }
         }
         return descriptor
     }
 
     public func publicKeyDescriptor() -> KeychainKeyDescriptor {
         let descriptor = KeychainKeyDescriptor()
-        descriptor.attributes[String(kSecAttrKeyClass)]       = KeyClass.kSecAttrKeyClass(.PublicKey)
-        descriptor.attributes[String(kSecAttrKeyType)]        = self.attributes[String(kSecAttrKeyType)]
-        descriptor.attributes[String(kSecAttrKeySizeInBits)]  = self.attributes[String(kSecAttrKeySizeInBits)]
-        descriptor.attributes[String(kSecAttrLabel)]          = self.attributes[String(kSecAttrLabel)]
+        descriptor.attributes[String(kSecAttrKeyClass)]         = KeyClass.kSecAttrKeyClass(.PublicKey)
+        descriptor.attributes[String(kSecAttrKeyType)]          = self.attributes[String(kSecAttrKeyType)]
+        descriptor.attributes[String(kSecAttrKeySizeInBits)]    = self.attributes[String(kSecAttrKeySizeInBits)]
+        descriptor.attributes[String(kSecAttrLabel)]            = self.attributes[String(kSecAttrLabel)]
+        descriptor.attributes[String(kSecAttrApplicationLabel)] = self.attributes[String(kSecAttrApplicationLabel)]
+
         if let pubAttrs = self.attributes[String(kSecPublicKeyAttrs)] as? [String:AnyObject] {
             if let pubKeyLabel = pubAttrs[String(kSecAttrLabel)] as? String {
                 descriptor.attributes[String(kSecAttrLabel)]  = pubKeyLabel
             }
             if let pubKeyAppTag = pubAttrs[String(kSecAttrApplicationTag)]  {
                 descriptor.attributes[String(kSecAttrApplicationTag)]  = pubKeyAppTag
+            }
+            if let pubKeyAppLabel = pubAttrs[String(kSecAttrApplicationLabel)]  {
+                descriptor.attributes[String(kSecAttrApplicationLabel)] = pubKeyAppLabel
             }
 
         }
@@ -309,29 +319,53 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     :param:   keySize     Size of the key to generate
     :param:   keyLabel    A searchable label for the key pair
     :param:   keyAppTag
-    :returns: keyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nit
+    :returns: keyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nil
     */
-    public init(accessible: Accessible, privateKeyAccessControl: SecAccessControl?,publicKeyAccessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, keyAppLabel: String? = nil) {
-        super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: keyAppLabel )
-        attributes[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
+    public init(accessible: Accessible, privateKeyAccessControl: SecAccessControl?,publicKeyAccessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, publicKeyAppLabel: String = "public") {
+        super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: nil )
         attributes[String(kSecAttrAccessible)] = accessible.rawValue
+
+        var privateAttrs  : [String: AnyObject] = [ : ]
+        var publicAttrs   : [String: AnyObject] = [ : ]
+
+        privateAttrs[ String(kSecAttrIsPermanent)]     =  NSNumber(bool: true)
+        publicAttrs [String(kSecAttrIsPermanent)]      = NSNumber(bool: true)
+        /** We assign a label to the public key, to avoid a bug in the keychain where both private and 
+            public keys are marked "private" and when combined with certificate, results in two identities (only one valid) to be returned
+            The mechanism uses a query " WHERE keys.priv == 1 AND cert.pkhh == keys.klbl" to find matching keys. By overiding the 
+            public key's KeyAppLabel, it won't match, and only the correct identity is returned
+        */
+        publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
+
         if (privateKeyAccessControl != nil) {
-            attributes[String(kSecPrivateKeyAttrs)] = [ String(kSecAttrAccessControl): privateKeyAccessControl! ]
+            privateAttrs[ String(kSecAttrAccessControl)] =  privateKeyAccessControl!
         }
         if (publicKeyAccessControl != nil) {
-            attributes[String(kSecPublicKeyAttrs)] = [ String(kSecAttrAccessControl): publicKeyAccessControl! ]
+            publicAttrs[ String(kSecAttrAccessControl)] =  publicKeyAccessControl!
         }
+
+        attributes[String(kSecPrivateKeyAttrs)] = privateAttrs
+        attributes[String(kSecPublicKeyAttrs)]  = publicAttrs
+
     }
-    public init(accessible: Accessible,
-        privateKeyLabel: String, privateKeyAppTag: String?, privateKeyAccessControl: SecAccessControl?,
-        publicKeyLabel: String?,  publicKeyAppTag: String?,  publicKeyAccessControl: SecAccessControl?,
+    public init(accessible: Accessible, keyLabel: String,
+        privateKeyAppTag: String?, privateKeyAccessControl: SecAccessControl?,
+        publicKeyAppLabel: String = "public",  publicKeyAppTag: String?,  publicKeyAccessControl: SecAccessControl?,
         keyType: KeyType, keySize: Int) {
-            super.init(keyType: keyType, keySize: keySize, keyLabel: nil, keyAppTag: nil, keyAppLabel: nil )
+            super.init(keyType: keyType, keySize: keySize, keyLabel: keyLabel, keyAppTag: nil, keyAppLabel: nil )
             attributes[String(kSecAttrAccessible)] = accessible.rawValue
 
             var privateAttrs  : [String: AnyObject] = [ : ]
             var publicAttrs   : [String: AnyObject] = [ : ]
             privateAttrs[String(kSecAttrIsPermanent)] = NSNumber(bool: true)
+            publicAttrs [String(kSecAttrIsPermanent)] = NSNumber(bool: true)
+
+            /** We assign a label to the public key, to avoid a bug in the keychain where both private and
+            public keys are marked "private" and when combined with certificate, results in two identities (only one valid) to be returned
+            The mechanism uses a query " WHERE keys.priv == 1 AND cert.pkhh == keys.klbl" to find matching keys. By overiding the
+            public key's KeyAppLabel, it won't match, and only the correct identity is returned
+            */
+            publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
 
             attributes[String(kSecPublicKeyAttrs)]  = [ : ]
             if (privateKeyAccessControl != nil) {
@@ -339,11 +373,6 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
             }
             if (publicKeyAccessControl != nil) {
                 publicAttrs[ String(kSecAttrAccessControl)] = publicKeyAccessControl!
-            }
-            privateAttrs[ String(kSecAttrLabel)] = privateKeyLabel
-
-            if (publicKeyLabel != nil) {
-                publicAttrs[ String(kSecAttrLabel)] = publicKeyLabel!
             }
 
             if (privateKeyAppTag != nil) {
