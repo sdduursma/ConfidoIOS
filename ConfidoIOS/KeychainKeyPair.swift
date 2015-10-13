@@ -324,7 +324,7 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     }
     public init(accessible: Accessible,
         privateKeyLabel: String, privateKeyAppTag: String?, privateKeyAccessControl: SecAccessControl?,
-        publicKeyLabel: String,  publicKeyAppTag: String?,  publicKeyAccessControl: SecAccessControl?,
+        publicKeyLabel: String?,  publicKeyAppTag: String?,  publicKeyAccessControl: SecAccessControl?,
         keyType: KeyType, keySize: Int) {
             super.init(keyType: keyType, keySize: keySize, keyLabel: nil, keyAppTag: nil, keyAppLabel: nil )
             attributes[String(kSecAttrAccessible)] = accessible.rawValue
@@ -341,7 +341,10 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
                 publicAttrs[ String(kSecAttrAccessControl)] = publicKeyAccessControl!
             }
             privateAttrs[ String(kSecAttrLabel)] = privateKeyLabel
-            publicAttrs[ String(kSecAttrLabel)] = publicKeyLabel
+
+            if (publicKeyLabel != nil) {
+                publicAttrs[ String(kSecAttrLabel)] = publicKeyLabel!
+            }
 
             if (privateKeyAppTag != nil) {
                 privateAttrs[ String(kSecAttrApplicationTag)] = privateKeyAppTag!
