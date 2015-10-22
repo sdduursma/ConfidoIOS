@@ -97,6 +97,10 @@ public class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, Gener
         return try KeychainPublicKey.findInKeychain(descriptor)!
     }
 
+    public class func existingKeys(matchingDescriptor: PublicKeyMatchingDescriptor) -> [KeychainKey] {
+       return try! Keychain.fetchItems(matchingDescriptor: matchingDescriptor, returning: .All) as! [KeychainKey]
+    }
+
     override public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
         super.init(descriptor: descriptor, keyRef: keyRef)
         attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PublicKey)
@@ -225,7 +229,7 @@ public protocol KeyPairQueryable {
 }
 
 public class PublicKeyDescriptor: KeychainKeyDescriptor, SecItemAddable {
-    public init(derEncodedKeyData data: NSData, keyLabel: String, keyAppTag: String?) {
+    public init(derEncodedKeyData data: NSData, keyLabel: String?, keyAppTag: String?) {
         let size = PublicKeyDescriptor.guessBitSize(data)
         super.init(keyType: KeyType.RSA, keySize: size, keyClass: KeyClass.PublicKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: nil)
         attributes[String(kSecValueData)] = data
@@ -252,6 +256,14 @@ public class PublicKeyDescriptor: KeychainKeyDescriptor, SecItemAddable {
         }
     }
 }
+
+public class PublicKeyMatchingDescriptor: KeychainKeyDescriptor {
+    public init(keyLabel: String?, keyAppTag: String?) {
+        super.init(keyType: KeyType.RSA, keySize: nil, keyClass: KeyClass.PublicKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: nil)
+    }
+}
+
+
 
 public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable {
     override public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil, keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
@@ -334,6 +346,13 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
             public keys are marked "private" and when combined with certificate, results in two identities (only one valid) to be returned
             The mechanism uses a query " WHERE keys.priv == 1 AND cert.pkhh == keys.klbl" to find matching keys. By overiding the 
             public key's KeyAppLabel, it won't match, and only the correct identity is returned
+        
+        @constant kSecAttrApplicationLabel Specifies a dictionary key whose value
+        is the key's application label attribute. This is different from the
+        kSecAttrLabel (which is intended to be human-readable). This attribute
+        is used to look up a key programmatically; in particular, for keys of
+        class kSecAttrKeyClassPublic and kSecAttrKeyClassPrivate, the value of
+        this attribute is the hash of the public key.
         */
         publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
 

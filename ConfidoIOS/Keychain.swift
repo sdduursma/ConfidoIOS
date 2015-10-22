@@ -120,12 +120,9 @@ public class SecurityWrapper {
         )
 
         if status == .OK {
-            print(persistedRef)
-            if let data = persistedRef as? NSData {
-                print(data)
-            }
+            return persistedRef
         }
-        return []
+        throw status
     }
 
     public class func secItemDelete(query: KeyChainPropertiesData) throws  {

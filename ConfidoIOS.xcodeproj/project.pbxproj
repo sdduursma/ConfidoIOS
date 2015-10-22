@@ -55,6 +55,7 @@
 		AB710EB31BA060FB003AE8B0 /* ConfidoIOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB710EA71BA060FB003AE8B0 /* ConfidoIOS.framework */; };
 		ABBA33E21BC67CE6002B6FC7 /* public-key.der in Resources */ = {isa = PBXBuildFile; fileRef = ABBA33E11BC67CE6002B6FC7 /* public-key.der */; settings = {ASSET_TAGS = (); }; };
 		ABBA33E41BC6928B002B6FC7 /* OpenSSLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABBA33E31BC6928B002B6FC7 /* OpenSSLTests.swift */; settings = {ASSET_TAGS = (); }; };
+		ABF300DA1BD92C4900A7BAFD /* development-build-public-key.der in Resources */ = {isa = PBXBuildFile; fileRef = ABF300D91BD92C4900A7BAFD /* development-build-public-key.der */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +130,7 @@
 		AB710EB21BA060FB003AE8B0 /* ConfidoIOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ConfidoIOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABBA33E11BC67CE6002B6FC7 /* public-key.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "public-key.der"; sourceTree = "<group>"; };
 		ABBA33E31BC6928B002B6FC7 /* OpenSSLTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenSSLTests.swift; sourceTree = "<group>"; };
+		ABF300D91BD92C4900A7BAFD /* development-build-public-key.der */ = {isa = PBXFileReference; lastKnownFileType = file; path = "development-build-public-key.der"; sourceTree = "<group>"; };
 		B6933143883CF50B5E488FCA /* libPods-ConfidoIOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ConfidoIOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -218,6 +220,7 @@
 		AB3D20FD1BB0568100BB2899 /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				ABF300D91BD92C4900A7BAFD /* development-build-public-key.der */,
 				ABBA33E11BC67CE6002B6FC7 /* public-key.der */,
 				AB3D21501BB2B9FB00BB2899 /* Custom Level 2 CA.cer */,
 				AB3D21511BB2B9FB00BB2899 /* Custom Level 3 CA.cer */,
@@ -391,6 +394,7 @@
 				AB3D211A1BB0568100BB2899 /* Symantec Class 3 EV SSL CA - G3.cer in Resources */,
 				AB3D21541BB2B9FB00BB2899 /* Custom Level 2 CA.cer in Resources */,
 				ABBA33E21BC67CE6002B6FC7 /* public-key.der in Resources */,
+				ABF300DA1BD92C4900A7BAFD /* development-build-public-key.der in Resources */,
 				AB3D211F1BB0568100BB2899 /* www.google.co.uk.cer in Resources */,
 				AB3D211D1BB0568100BB2899 /* test keypair 1.pem in Resources */,
 				AB3D21141BB0568100BB2899 /* Device Identity.p12 in Resources */,

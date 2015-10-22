@@ -403,6 +403,37 @@ class KeyPairTests: BaseTests {
     }
 
 
+    func testTwoPublicKeysDifferentAppTagsSameLabel() {
+        // In the keychain, keyAppTag is unique, so no two items can share it.
+        // itemLabel is not unique, so two items can have the same label
+        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+
+        clearKeychainItems(.Key)
+        let publicKeyData = try! contentsOfBundleResource("public-key", ofType: "der")
+        let publicKey = try! KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData, keyLabel: "build-key", keyAppTag: "build")
+
+        items = try! Keychain.keyChainItems(SecurityClass.Key)
+        XCTAssertEqual(items.count,1)
+
+        let cipherTextUnderPublicKey = try! publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+        print("Cipher under public key: \(cipherTextUnderPublicKey)")
+
+        let publicKeyData2 = try! contentsOfBundleResource("development-build-public-key", ofType: "der")
+
+        let publicKey2 = try! KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData2, keyLabel: "build-key", keyAppTag: "build-1")
+        XCTAssertNotNil(publicKey2)
+        items = try! Keychain.keyChainItems(SecurityClass.Key)
+        XCTAssertEqual(items.count,2)
+        let matchingDescriptor = PublicKeyMatchingDescriptor(keyLabel: "build-key", keyAppTag: nil)
+        var keys = KeychainPublicKey.existingKeys(matchingDescriptor)
+        XCTAssertEqual(keys.count,2)
+
+        try! Keychain.deleteKeyChainItem(itemDescriptor: matchingDescriptor)
+        keys = KeychainPublicKey.existingKeys(matchingDescriptor)
+        XCTAssertEqual(keys.count,0)
+
+    }
+
 
 
 }
