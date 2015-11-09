@@ -333,7 +333,7 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     :param:   keyAppTag
     :returns: keyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nil
     */
-    public init(accessible: Accessible, privateKeyAccessControl: SecAccessControl?,publicKeyAccessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, publicKeyAppLabel: String = "public") {
+    public init(accessible: Accessible, privateKeyAccessControl: SecAccessControl?,publicKeyAccessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, publicKeyAppLabel: String? = nil) {
         super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: nil )
         attributes[String(kSecAttrAccessible)] = accessible.rawValue
 
@@ -354,7 +354,9 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
         class kSecAttrKeyClassPublic and kSecAttrKeyClassPrivate, the value of
         this attribute is the hash of the public key.
         */
-        publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
+        if publicKeyAppLabel != nil {
+            publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
+        }
 
         if (privateKeyAccessControl != nil) {
             privateAttrs[ String(kSecAttrAccessControl)] =  privateKeyAccessControl!
