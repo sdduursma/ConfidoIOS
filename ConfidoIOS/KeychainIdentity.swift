@@ -140,7 +140,6 @@ public class IdentityImportDescriptor : KeyChainAttributeStorage, SecItemAddable
     public func secItemAdd() throws -> AnyObject? {
         var item : KeyChainPropertiesData = [ : ]
         item += self.attributes
-//        item[String(kSecClass)] = SecurityClass.kSecClass(SecurityClass.Identity)
         let itemRef: AnyObject? = try SecurityWrapper.secItemAdd(item)
         return itemRef
     }

@@ -16,24 +16,14 @@ class OpenSSLCSRTests: BaseTests {
         let keyPair = OpenSSLRSAKeyPair(keyLength: 2048, privateKeyData: NSData(), publicKeyData: NSData())
         let attributes : [ NSObject : AnyObject] = [ : ]
         do {
-            _ = try OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKeyData, csrData: attributes)
-            XCTAssert(false, "Exception should have been raised")
+            try OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKeyData, csrData: attributes)
+            XCTFail("Exception should have been raised")
         } catch let error as NSError {
             XCTAssertEqual(error.code, 9999)
             XCTAssertEqual(error.localizedDescription,"Internal Error")
         }
     }
 
-    func testCSRWithCorruptDataAndNilError() {
-        do {
-            let attributes : [ NSObject : AnyObject] = [ : ]
-            let keyPair = OpenSSLRSAKeyPair(keyLength: 2048, privateKeyData: NSData(), publicKeyData: NSData())
-            _ = try OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKeyData, csrData: attributes)
-        } catch let error as NSError {
-            XCTAssertEqual(error.code, 9999)
-            XCTAssertEqual(error.localizedDescription,"Internal Error")
-        }
-    }
 
     func testGenerateCSR() {
         let keypairData = try! contentsOfBundleResource("test keypair 1", ofType: "pem")
@@ -61,15 +51,12 @@ class OpenSSLCSRTests: BaseTests {
 
         let keyPair = OpenSSLRSAKeyPair(keyLength: 2048, privateKeyData: NSData(), publicKeyData: NSData())
         do {
-            _ = try OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKeyData,csrData: attributes)
-            XCTAssert(false, "Exception should have been raised")
+            try OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKeyData,csrData: attributes)
+            XCTFail("Exception should have been raised")
         } catch let error as NSError {
             XCTAssertEqual(error.code, 9999)
             XCTAssertEqual(error.localizedDescription,"Internal Error")
         }
-
-        let csrData = try? OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKeyData,csrData: attributes)
-        XCTAssertNil(csrData)
     }
 }
 
@@ -87,8 +74,8 @@ class OpenSSLKeyPairTests: BaseTests {
     func testKeyPairWrongPassphrase() {
         do {
             let pemFileData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
-            _ = try OpenSSL.keyPairFromPEMData(pemFileData, encryptedWithPassword: "wrongpassword")
-            XCTAssert(false, "Exception should have been raised")
+            try OpenSSL.keyPairFromPEMData(pemFileData, encryptedWithPassword: "wrongpassword")
+            XCTFail("Exception should have been raised")
         } catch let error as NSError {
             XCTAssertEqual(error.code, 9997)
             XCTAssertEqual(error.localizedDescription,"Invalid Private Key in PEM File or Incorrect Passphrase")
@@ -104,8 +91,8 @@ class OpenSSLKeyPairTests: BaseTests {
             //Load a P12 file, this is not a PEM, so it will be corrupt.
             let corruptPEMFileData = try contentsOfBundleResource("Device Identity", ofType: "p12")
             XCTAssertNotNil(corruptPEMFileData)
-            _ = try OpenSSL.keyPairFromPEMData(corruptPEMFileData, encryptedWithPassword: "wrongpassword")
-            XCTAssert(false, "Exception should have been raised")
+            try OpenSSL.keyPairFromPEMData(corruptPEMFileData, encryptedWithPassword: "wrongpassword")
+            XCTFail("Exception should have been raised")
         } catch let error as NSError {
             XCTAssertEqual(error.code, 9997)
             XCTAssertEqual(error.localizedDescription,"Invalid Private Key in PEM File or Incorrect Passphrase")
@@ -140,11 +127,11 @@ class OpenSSLIdentityTests: BaseTests {
     // These tests are not exhaustive. There are many paths through the code and ideally there should be tests for every combination of input.
 
     func testIdentityFromX509FileCorruptInputs() {
-        let keyPairPEMData : NSData = NSData()
+        let keyPairPEMData = NSData()
 
         XCTAssertNotNil(keyPairPEMData)
 
-        let certificateData : NSData = NSData()
+        let certificateData = NSData()
 
         XCTAssertNotNil(certificateData)
 
@@ -154,7 +141,7 @@ class OpenSSLIdentityTests: BaseTests {
         XCTAssertNotNil(openSSLKeyPair)
         do {
             _ = try OpenSSL.pkcs12IdentityWithPrivateKeyData(openSSLKeyPair.privateKeyData, certificateData: certificateData, protectedWithPassphrase: "password")
-            XCTAssert(false, "Exception should have been raised")
+            XCTFail("Exception should have been raised")
         } catch let error as NSError {
             XCTAssertEqual(error.code, 9999)
             XCTAssertEqual(error.localizedDescription,"Internal Error")

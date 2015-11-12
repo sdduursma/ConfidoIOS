@@ -12,11 +12,11 @@ import UIKit
 import XCTest
 import ConfidoIOS
 
-let customCACertificateName      = "Custom Root CA"
-let levelOneCACertificateName    = "Custom Level 2 CA"
-let levelTwoCACertificateName    = "Custom Level 3 CA"
-let finalPinnedCACertificateName = "Final Level 4 Issuing CA"
-let finalPinnedCASubject         = "Expend Development Device Identity Authority RSA Certificate"
+let kCustomCACertificateName      = "Custom Root CA"
+let kLevelOneCACertificateName    = "Custom Level 2 CA"
+let kLevelTwoCACertificateName    = "Custom Level 3 CA"
+let kFinalPinnedCACertificateName = "Final Level 4 Issuing CA"
+let kFinalPinnedCASubject         = "Expend Development Device Identity Authority RSA Certificate"
 
 //TODO: Lock the evaluation date to... today to prevent future failures
 //TODO: TrustEvaluationPoints (TrustManager)
@@ -24,18 +24,18 @@ let finalPinnedCASubject         = "Expend Development Device Identity Authority
 class CertificateTests: BaseTests {
 
     func rootAnchor() throws -> TrustAnchor  {
-        let rootCertificate = try bundledCertificate(customCACertificateName)
+        let rootCertificate = try bundledCertificate(kCustomCACertificateName)
         return TrustAnchor(anchorCertificate: rootCertificate, name: "RootCA")
     }
 
     func level1CustomCA() throws -> TrustAnchor {
-        let certificate = try bundledCertificate(levelOneCACertificateName)
+        let certificate = try bundledCertificate(kLevelOneCACertificateName)
         let parentAnchor = try rootAnchor()
         return try parentAnchor.extendAnchor(certificate, name: "Level 1 CA")
     }
 
     func level2CustomCA() throws -> TrustAnchor {
-        let certificate = try bundledCertificate(levelTwoCACertificateName)
+        let certificate = try bundledCertificate(kLevelTwoCACertificateName)
         let parentAnchor = try level1CustomCA()
 
         return try parentAnchor.extendAnchor(certificate, name: "Level 2 CA")
@@ -43,7 +43,7 @@ class CertificateTests: BaseTests {
 
     func level3IssuerCA() throws -> TrustAnchor {
         return try level2CustomCA().extendAnchor(
-            try bundledCertificate(finalPinnedCACertificateName),
+            try bundledCertificate(kFinalPinnedCACertificateName),
             name: "Issuing CA")
     }
 
@@ -68,20 +68,20 @@ class CertificateTests: BaseTests {
     }
 
     func customPinnedAnchorOnly() throws -> TrustAnchor {
-        return TrustAnchor(anchorCertificate: try bundledCertificate(finalPinnedCACertificateName))
+        return TrustAnchor(anchorCertificate: try bundledCertificate(kFinalPinnedCACertificateName))
     }
 
 
     func testCertificateFromCERFileWithLabel() {
         self.clearKeychainItems(.Certificate)
-        let certificateDERData = try! contentsOfBundleResource(finalPinnedCACertificateName, ofType: "cer")
+        let certificateDERData = try! contentsOfBundleResource(kFinalPinnedCACertificateName, ofType: "cer")
         let transportCertificate = try! KeychainCertificate.certificate(certificateDERData, itemLabel: "certificate")
-        XCTAssertEqual(transportCertificate.subject, finalPinnedCASubject)
+        XCTAssertEqual(transportCertificate.subject, kFinalPinnedCASubject)
 
         let certificate = try! transportCertificate.addToKeychain()
         XCTAssertNotNil(certificate)
 
-        XCTAssertEqual(certificate!.subject, finalPinnedCASubject)
+        XCTAssertEqual(certificate!.subject, kFinalPinnedCASubject)
         XCTAssertNotNil(certificate!.secCertificate)
         XCTAssertEqual(self.keychainItems(.Certificate).count,1)
 
@@ -91,9 +91,9 @@ class CertificateTests: BaseTests {
 
     func testCertificateFromCERFileWithoutLabel() {
         self.clearKeychainItems(.Certificate)
-        let certificateDERData = try! contentsOfBundleResource(finalPinnedCACertificateName, ofType: "cer")
+        let certificateDERData = try! contentsOfBundleResource(kFinalPinnedCACertificateName, ofType: "cer")
         let transportCertificate = try! KeychainCertificate.certificate(certificateDERData)
-        XCTAssertEqual(transportCertificate.subject, finalPinnedCASubject)
+        XCTAssertEqual(transportCertificate.subject, kFinalPinnedCASubject)
 
         let certificate = try! transportCertificate.addToKeychain()
         XCTAssertNil(certificate) // The certificate does not have label, so we can't get a reference this way

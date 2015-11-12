@@ -150,8 +150,6 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
         try super.init(SecItemAttributes: attributes)
         self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.PrivateKey)
     }
-
-
 }
 
 public protocol KeyPair {
@@ -188,7 +186,6 @@ public class KeychainKeyPair : KeychainItem, KeyPair, KeychainFindable {
         try secEnsureOK(SecKeyGeneratePair(descriptor.keychainMatchPropertyValues(), &publicKeyRef, &privateKeyRef))
 
         return try findInKeychain(descriptor)!
-        
     }
 
     public class func findInKeychain(matchingDescriptor: KeychainKeyPairDescriptor) throws -> KeychainKeyPair? {
@@ -237,7 +234,8 @@ public class PublicKeyDescriptor: KeychainKeyDescriptor, SecItemAddable {
 
     public func addToKeychain() throws -> KeychainPublicKey {
         try self.secItemAdd()
-        //This is a hack because you cannot query on kSecValueData
+        //This is a hack because you cannot query on kSecValueData. At this time the query dictionary contains the
+        //binary representation of they key, we need to remove it from the dictionary for the next call or it won't work.
         attributes.removeValueForKey(String(kSecValueData))
         return try KeychainPublicKey.findInKeychain(self)!
     }
@@ -251,8 +249,7 @@ public class PublicKeyDescriptor: KeychainKeyDescriptor, SecItemAddable {
         case 4: return 2048
         case 8: return 4096
         default:
-            assertionFailure("Could not estimate size of RSA key with input data length \(len)")
-            return 0
+            fatalError("Could not estimate size of RSA key with input data length \(len)")
         }
     }
 }
@@ -262,8 +259,6 @@ public class PublicKeyMatchingDescriptor: KeychainKeyDescriptor {
         super.init(keyType: KeyType.RSA, keySize: nil, keyClass: KeyClass.PublicKey, keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: nil)
     }
 }
-
-
 
 public class KeychainKeyPairDescriptor : KeychainKeyDescriptor, KeyPairQueryable {
     override public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil, keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
@@ -410,7 +405,7 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
 //https://github.com/henrinormak/Heimdall/blob/master/Heimdall/Heimdall.swift
 
 
-public extension NSInteger {
+extension NSInteger {
     func encodedOctets() -> [CUnsignedChar] {
         // Short form
         if self < 128 {
@@ -458,7 +453,7 @@ public extension NSInteger {
 }
 
 
-public extension NSData {
+extension NSData {
     convenience init(modulus: NSData, exponent: NSData) {
         // Make sure neither the modulus nor the exponent start with a null byte
         let modulusBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: UnsafePointer<CUnsignedChar>(modulus.bytes), count: modulus.length / sizeof(CUnsignedChar)))
