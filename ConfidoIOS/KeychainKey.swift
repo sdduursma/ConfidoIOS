@@ -10,17 +10,20 @@ import Foundation
 import CommonCrypto
 
 
-public func certificateRef(secIdentity: SecIdentity) throws -> SecCertificate {
-    var certificateRef: SecCertificate? = nil
-    try ensureOK(SecIdentityCopyCertificate(secIdentity, &certificateRef))
-    return certificateRef!
+extension SecIdentityRef {
+    func certificateRef() throws -> SecCertificate {
+        var certificateRef: SecCertificate? = nil
+        try ensureOK(SecIdentityCopyCertificate(self, &certificateRef))
+        return certificateRef!
+    }
+
+    func privateKeyRef() throws -> SecKey {
+        var keyRef: SecKey? = nil
+        try ensureOK(SecIdentityCopyPrivateKey(self, &keyRef))
+        return keyRef!
+    }
 }
 
-public func privateKeyRef(secIdentity: SecIdentity) throws -> SecKey {
-    var keyRef: SecKey? = nil
-    try ensureOK(SecIdentityCopyPrivateKey(secIdentity, &keyRef))
-    return keyRef!
-}
 
 public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
     public class func keychainKeyFromAttributes(SecItemAttributes attributes: SecItemAttributes) throws -> KeychainKey {
@@ -50,7 +53,7 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
                 return (valueRef as! SecKey)
             } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
                 let secIdentity = (valueRef as! SecIdentity)
-                return try privateKeyRef(secIdentity)
+                return try secIdentity.privateKeyRef()
             }
         }
         fatalError("No SecKey Reference")

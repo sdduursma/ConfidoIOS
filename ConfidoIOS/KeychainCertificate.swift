@@ -42,7 +42,7 @@ public class KeychainCertificate : KeychainItem,
                 return (valueRef as! SecCertificate)
             } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
                 let secIdentity = (valueRef as! SecIdentity)
-                return try certificateRef(secIdentity)
+                return try secIdentity.certificateRef()
             }
 
         }
