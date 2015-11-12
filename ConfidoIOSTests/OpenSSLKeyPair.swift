@@ -7,13 +7,8 @@
 //
 
 import Foundation
-import ConfidoIOS
+@testable import ConfidoIOS
 
-func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>) {
-    for (k, v) in right {
-        left.updateValue(v, forKey: k)
-    }
-}
 
 extension KeychainPrivateKey {
     //This extension makes it possible to extract the private key data. This is insecure, but only used for testing. This will not work on a device.

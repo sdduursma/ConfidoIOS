@@ -36,27 +36,22 @@ class OpenSSLCSRTests: BaseTests {
     }
 
     func testGenerateCSR() {
-        do {
-            let keypairData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
-            let attributes : [ NSObject : AnyObject] = [ : ]
+        let keypairData = try! contentsOfBundleResource("test keypair 1", ofType: "pem")
+        let attributes : [ NSObject : AnyObject] = [ : ]
 
-            XCTAssertNotNil(keypairData)
-            let openSSLKeyPair: OpenSSLKeyPair?
-            openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keypairData, encryptedWithPassword: "password")
-            XCTAssertNotNil(openSSLKeyPair)
-            XCTAssertNotNil(openSSLKeyPair!.privateKeyData)
-            XCTAssertNotNil(openSSLKeyPair!.publicKeyData)
-            let csrData = try OpenSSL.generateCSRWithPrivateKeyData(openSSLKeyPair!.privateKeyData,csrData: attributes)
-            XCTAssertNotNil(csrData)
-            let csrString : NSString! = NSString(data: csrData, encoding: NSUTF8StringEncoding)
-            XCTAssert(csrString.hasPrefix("-----BEGIN CERTIFICATE REQUEST-----\n"))
-            XCTAssert(csrString.hasSuffix("-----END CERTIFICATE REQUEST-----\n"))
-            print("CSR:")
-            print(csrString)
-
-        } catch let error as NSError {
-            XCTFail("Unexpected Exception \(error)")
-        }
+        XCTAssertNotNil(keypairData)
+        let openSSLKeyPair: OpenSSLKeyPair?
+        openSSLKeyPair = try! OpenSSL.keyPairFromPEMData(keypairData, encryptedWithPassword: "password")
+        XCTAssertNotNil(openSSLKeyPair)
+        XCTAssertNotNil(openSSLKeyPair!.privateKeyData)
+        XCTAssertNotNil(openSSLKeyPair!.publicKeyData)
+        let csrData = try! OpenSSL.generateCSRWithPrivateKeyData(openSSLKeyPair!.privateKeyData,csrData: attributes)
+        XCTAssertNotNil(csrData)
+        let csrString : NSString! = NSString(data: csrData, encoding: NSUTF8StringEncoding)
+        XCTAssert(csrString.hasPrefix("-----BEGIN CERTIFICATE REQUEST-----\n"))
+        XCTAssert(csrString.hasSuffix("-----END CERTIFICATE REQUEST-----\n"))
+        print("CSR:")
+        print(csrString)
     }
 
     // These tests are not exhaustive. There are many paths through the code and ideally there should be tests for every combination of input.
@@ -81,17 +76,11 @@ class OpenSSLCSRTests: BaseTests {
 class OpenSSLKeyPairTests: BaseTests {
 
     func testKeyPairFromPEM() {
-        do {
-            let pemFileData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
+        let pemFileData = try! contentsOfBundleResource("test keypair 1", ofType: "pem")
 
-            let openSSLKeyPair: OpenSSLKeyPair?
-            openSSLKeyPair = try OpenSSL.keyPairFromPEMData(pemFileData, encryptedWithPassword: "password")
-            XCTAssertNotNil(openSSLKeyPair)
-
-        } catch let error as NSError {
-            XCTFail("Unexpected Exception \(error)")
-        }
-
+        let openSSLKeyPair: OpenSSLKeyPair?
+        openSSLKeyPair = try! OpenSSL.keyPairFromPEMData(pemFileData, encryptedWithPassword: "password")
+        XCTAssertNotNil(openSSLKeyPair)
     }
 
 
@@ -128,29 +117,24 @@ class OpenSSLKeyPairTests: BaseTests {
 
 class OpenSSLIdentityTests: BaseTests {
     func testIdentityFromX509File() {
-        do {
-        let keyPairPEMData = try contentsOfBundleResource("test keypair 1", ofType: "pem")
+        let keyPairPEMData = try! contentsOfBundleResource("test keypair 1", ofType: "pem")
 
-        let certificateData = try contentsOfBundleResource("test keypair 1 certificate", ofType: "x509")
+        let certificateData = try! contentsOfBundleResource("test keypair 1 certificate", ofType: "x509")
 
         XCTAssertNotNil(certificateData)
 
 
-            let openSSLKeyPair = try OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
+        let openSSLKeyPair = try! OpenSSL.keyPairFromPEMData(keyPairPEMData, encryptedWithPassword: "password")
 
-            XCTAssertNotNil(openSSLKeyPair)
+        XCTAssertNotNil(openSSLKeyPair)
 
-            let identity = try OpenSSL.pkcs12IdentityWithPrivateKeyData(openSSLKeyPair.privateKeyData, certificateData: certificateData, protectedWithPassphrase: "password")
+        let identity = try! OpenSSL.pkcs12IdentityWithPrivateKeyData(openSSLKeyPair.privateKeyData, certificateData: certificateData, protectedWithPassphrase: "password")
 
 
-            XCTAssertNotNil(identity)
+        XCTAssertNotNil(identity)
 
-            XCTAssertNotNil(identity.p12identityData)
-            XCTAssertEqual(identity.friendlyName, "Expend Device ABCD")
-        } catch let error as NSError {
-            XCTFail("Unexpected Exception \(error)")
-        }
-
+        XCTAssertNotNil(identity.p12identityData)
+        XCTAssertEqual(identity.friendlyName, "Expend Device ABCD")
     }
 
     // These tests are not exhaustive. There are many paths through the code and ideally there should be tests for every combination of input.
@@ -175,10 +159,7 @@ class OpenSSLIdentityTests: BaseTests {
             XCTAssertEqual(error.code, 9999)
             XCTAssertEqual(error.localizedDescription,"Internal Error")
         }
-
     }
-
-
 }
 
 
