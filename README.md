@@ -94,3 +94,9 @@ public protocol SecItemAddable {
 func secItemAdd() throws -> AnyObject?
 }
 ```
+
+# HELP
+## FAQ
+Q: I'm getting an `header /usr/include/CommonCrypto/CommonCrypto.h not found` error.
+
+A: Try reinstalling Xcode tools using `xcode-select --install`
