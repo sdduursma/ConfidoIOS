@@ -328,6 +328,7 @@
 				AB710EAF1BA060FB003AE8B0 /* Frameworks */,
 				AB710EB01BA060FB003AE8B0 /* Resources */,
 				ECC0B920E20DC153174D0B81 /* Copy Pods Resources */,
+				F048AB6F2F107CB718E35C30 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -438,6 +439,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F048AB6F2F107CB718E35C30 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ConfidoIOSTests/Pods-ConfidoIOSTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

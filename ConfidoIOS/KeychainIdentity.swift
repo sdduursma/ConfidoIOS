@@ -42,7 +42,7 @@ public class KeychainIdentity: KeychainItem, KeychainFindable, GenerateKeychainF
     public typealias ResultType = KeychainIdentity
     public let keyPair : KeychainKeyPair?
     public let certificate : KeychainCertificate?
-    public let secIdentity: SecIdentity!
+    public let secIdentity: SecIdentity
 
     class func getSecIdentity(SecItemAttributes attributes: NSDictionary) -> SecIdentity {
         if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
@@ -133,8 +133,8 @@ public class IdentityImportDescriptor : KeyChainAttributeStorage, SecItemAddable
     public var attributes : [String : AnyObject] = [ : ]
     public init(identity: TransportIdentity, label: String?) {
         attributes[String(kSecValueRef)] = identity.secIdentity
-        if label != nil {
-            attributes[String(kSecAttrLabel)] = label!
+        if let label = label {
+            attributes[String(kSecAttrLabel)] = label
         }
     }
     public func secItemAdd() throws -> AnyObject? {

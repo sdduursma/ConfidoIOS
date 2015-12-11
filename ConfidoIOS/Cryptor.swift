@@ -24,12 +24,13 @@ public class Cryptor {
 
     class func operation<T>(operation: CCOperation, inputBuffer: Buffer<T>, key: CryptoKey,
         mode: CipherMode, padding: Padding, initialVector: Buffer<Byte>?) throws -> Buffer<Byte> {
-            if initialVector != nil && initialVector?.byteCount != key.keyType.blockSize {
+            if let initialVector = initialVector
+            where initialVector.byteCount != key.keyType.blockSize {
                 throw KeychainError.InitialVectorMismatch(size: key.keyType.blockSize)
             }
             let algoritm:  CCAlgorithm = UInt32(key.keyType.coreCryptoAlgorithm)
             let options:   CCOptions   = UInt32(padding.rawValue) + UInt32(mode.rawValue)
-            let iv                     = initialVector != nil ? initialVector!.voidPointer : nil
+            let iv                     = initialVector?.voidPointer ?? nil
             var numBytesEncrypted :size_t = 0
             var outputBuffer = Buffer<Byte>(size: inputBuffer.byteCount + key.keyType.blockSize)
 

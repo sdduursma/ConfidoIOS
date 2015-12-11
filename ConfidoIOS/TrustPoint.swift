@@ -138,8 +138,8 @@ public struct CertificateTrustPoint: TrustPoint {
     Evaluates the trust of the TrustPoint against a TrustAnchor
     */
     public func evaluateTrust(trustAnchor: TrustAnchor) throws -> TrustResult {
-        if trustAnchor.anchorCertificate != nil {
-            try setTrustAnchorCertificates([trustAnchor.anchorCertificate])
+        if let anchorCertificate = trustAnchor.anchorCertificate {
+            try setTrustAnchorCertificates([anchorCertificate])
         }
         try setTrustAnchorCertificatesOnly(true)
         return try evaluateSecTrust()
@@ -194,10 +194,10 @@ public class TrustAnchor {
     init(parentTrustAnchor: TrustAnchor?, anchorCertificate: Certificate?, name: String? = nil) {
         self.parentTrustAnchor = parentTrustAnchor
         self.anchorCertificate = anchorCertificate
-        if name != nil {
-            self.name = name!
-        } else if anchorCertificate != nil {
-            self.name = anchorCertificate!.subject
+        if let name = name {
+            self.name = name
+        } else if let subject = anchorCertificate?.subject {
+            self.name = subject
         } else {
             self.name = "Unspecified"
         }
@@ -233,11 +233,11 @@ public class TrustAnchor {
     public var certificateChain: [Certificate] {
         get {
             var certificates : [ Certificate ] = []
-            if anchorCertificate != nil {
+            if let anchorCertificate = anchorCertificate {
                 certificates = [anchorCertificate]
             }
-            if parentTrustAnchor != nil {
-                certificates.appendContentsOf(parentTrustAnchor!.certificateChain)
+            if let certificateChain = parentTrustAnchor?.certificateChain {
+                certificates.appendContentsOf(certificateChain)
             }
             return certificates
         }
