@@ -43,8 +43,8 @@ public class AbstractItem: KeychainItemClass, KeyChainAttributeStorage {
     }
 
     func initAttributes(attributes: KeyChainAttributeStorage?) {
-        if attributes != nil {
-            self.attributes = attributes!.attributes
+        if let attributes = attributes {
+            self.attributes = attributes.attributes
         }
     }
 
@@ -114,7 +114,7 @@ public class KeychainDescriptor : AbstractItem, KeychainMatchable {
 
     public init(securityClass: SecurityClass, itemLabel: String? = nil) {
         super.init(securityClass: securityClass)
-        if (itemLabel != nil) {
+        if let itemLabel = itemLabel {
             attributes[String(kSecAttrLabel)] = itemLabel
         }
     }

@@ -30,8 +30,8 @@ public class KeychainCertificate : KeychainItem,
 
     public class func certificate(derEncodedCertificateData: NSData, itemLabel: String? = nil) throws -> TransportCertificate {
         let secCertificate = SecCertificateCreateWithData(nil, derEncodedCertificateData)
-        if secCertificate != nil {
-            return TransportCertificate(secCertificate: secCertificate!, itemLabel: itemLabel)
+        if let secCertificate = secCertificate {
+            return TransportCertificate(secCertificate: secCertificate, itemLabel: itemLabel)
         }
         throw KeychainError.InvalidCertificateData
     }
@@ -85,8 +85,8 @@ public class TransportCertificate : KeychainDescriptor, SecItemAddable, Certific
     }
     public func addToKeychain() throws -> KeychainCertificate? {
         try self.secItemAdd()
-        if label != nil {
-            return try KeychainCertificate.findInKeychain(CertificateDescriptor(certificateLabel: self.label!))!
+        if let label = label {
+            return try KeychainCertificate.findInKeychain(CertificateDescriptor(certificateLabel: label))!
         }
         return nil
     }

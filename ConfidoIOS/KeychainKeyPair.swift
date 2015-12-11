@@ -351,11 +351,11 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
         */
         publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
 
-        if (privateKeyAccessControl != nil) {
-            privateAttrs[ String(kSecAttrAccessControl)] =  privateKeyAccessControl!
+        if let privateKeyAccessControl = privateKeyAccessControl {
+            privateAttrs[ String(kSecAttrAccessControl)] =  privateKeyAccessControl
         }
-        if (publicKeyAccessControl != nil) {
-            publicAttrs[ String(kSecAttrAccessControl)] =  publicKeyAccessControl!
+        if let publicKeyAccessControl = publicKeyAccessControl {
+            publicAttrs[ String(kSecAttrAccessControl)] =  publicKeyAccessControl
         }
 
         attributes[String(kSecPrivateKeyAttrs)] = privateAttrs
@@ -382,18 +382,18 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
             publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel
 
             attributes[String(kSecPublicKeyAttrs)]  = [ : ]
-            if (privateKeyAccessControl != nil) {
-                privateAttrs[ String(kSecAttrAccessControl)] = privateKeyAccessControl!
+            if let privateKeyAccessControl = privateKeyAccessControl {
+                privateAttrs[ String(kSecAttrAccessControl)] = privateKeyAccessControl
             }
-            if (publicKeyAccessControl != nil) {
-                publicAttrs[ String(kSecAttrAccessControl)] = publicKeyAccessControl!
+            if let publicKeyAccessControl = publicKeyAccessControl {
+                publicAttrs[ String(kSecAttrAccessControl)] = publicKeyAccessControl
             }
 
-            if (privateKeyAppTag != nil) {
-                privateAttrs[ String(kSecAttrApplicationTag)] = privateKeyAppTag!
+            if let privateKeyAppTag = privateKeyAppTag {
+                privateAttrs[ String(kSecAttrApplicationTag)] = privateKeyAppTag
             }
-            if (publicKeyAppTag != nil) {
-                publicAttrs[ String(kSecAttrApplicationTag)] = publicKeyAppTag!
+            if let publicKeyAppTag = publicKeyAppTag {
+                publicAttrs[ String(kSecAttrApplicationTag)] = publicKeyAppTag
             }
 
             attributes[String(kSecPrivateKeyAttrs)] = privateAttrs

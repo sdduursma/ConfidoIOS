@@ -133,8 +133,8 @@ public class IdentityImportDescriptor : KeyChainAttributeStorage, SecItemAddable
     public var attributes : [String : AnyObject] = [ : ]
     public init(identity: TransportIdentity, label: String?) {
         attributes[String(kSecValueRef)] = identity.secIdentity
-        if label != nil {
-            attributes[String(kSecAttrLabel)] = label!
+        if let label = label {
+            attributes[String(kSecAttrLabel)] = label
         }
     }
     public func secItemAdd() throws -> AnyObject? {

@@ -156,8 +156,8 @@ extension KeychainCommonClassProperties where Self : KeychainCommonClassProperti
     public var itemAccessible: Accessible? {
         get {
             let accessible = attributes[String(kSecAttrAccessible)] as? String
-            if accessible != nil {
-                return Accessible.init(rawValue: accessible!)
+            if let accessible = accessible {
+                return Accessible(rawValue: accessible)
             }
             return nil
         }
