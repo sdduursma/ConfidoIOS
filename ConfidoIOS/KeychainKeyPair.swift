@@ -326,7 +326,7 @@ public class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
     :param:   keySize     Size of the key to generate
     :param:   keyLabel    A searchable label for the key pair
     :param:   keyAppTag
-    :returns: keyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nil
+    :param: publicKeyAppLabel The kSecAttrAppLabel to add to the keychain item. By default this is the hash of the public key and should be set to nil
     */
     public init(accessible: Accessible, privateKeyAccessControl: SecAccessControl?,publicKeyAccessControl: SecAccessControl?, keyType: KeyType, keySize: Int, keyLabel: String , keyAppTag: String? = nil, publicKeyAppLabel: String = "public") {
         super.init(keyType: keyType, keySize: keySize,keyLabel: keyLabel, keyAppTag: keyAppTag, keyAppLabel: nil )
