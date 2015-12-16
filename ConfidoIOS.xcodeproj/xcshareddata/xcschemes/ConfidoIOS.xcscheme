@@ -53,6 +53,9 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "CertificateTests/testRealCertificateChainAnchored()">
+               </Test>
+               <Test
                   Identifier = "IdentityTests/testCreateAndImportIdentity()">
                </Test>
                <Test
