@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0710"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -53,10 +53,10 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "IdentityTests/testCreateAndImportIdentity()">
+                  Identifier = "CertificateTests/testRealCertificateChainAnchored()">
                </Test>
                <Test
-                  Identifier = "IdentityTests/testImportPKCS12Identity()">
+                  Identifier = "IdentityTests/testCreateAndImportIdentity()">
                </Test>
                <Test
                   Identifier = "KeyPairTests/testGenerateNamedECKeyPair()">

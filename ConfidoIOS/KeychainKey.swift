@@ -3,11 +3,26 @@
 //  ExpendSecurity
 //
 //  Created by Rudolph van Graan on 21/08/2015.
-//  Copyright (c) 2015 Curoo Limited. All rights reserved.
+//
 //
 
 import Foundation
 import CommonCrypto
+
+
+extension SecIdentityRef {
+    func certificateRef() throws -> SecCertificate {
+        var certificateRef: SecCertificate? = nil
+        try ensureOK(SecIdentityCopyCertificate(self, &certificateRef))
+        return certificateRef!
+    }
+
+    func privateKeyRef() throws -> SecKey {
+        var keyRef: SecKey? = nil
+        try ensureOK(SecIdentityCopyPrivateKey(self, &keyRef))
+        return keyRef!
+    }
+}
 
 
 public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
@@ -36,9 +51,12 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
         if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
             if CFGetTypeID(valueRef) == SecKeyGetTypeID() {
                 return (valueRef as! SecKey)
+            } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+                let secIdentity = (valueRef as! SecIdentity)
+                return try secIdentity.privateKeyRef()
             }
         }
-        throw KeychainError.NoSecKeyReference
+        fatalError("No SecKey Reference")
     }
 
     override public func specifierMatchingProperties() -> Set<String> {

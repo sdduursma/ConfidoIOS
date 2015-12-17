@@ -13,7 +13,7 @@
 #import <openssl/x509.h>
 #import <openssl/pem.h>
 
-#import "pkcs12.h"
+#import <openssl/pkcs12.h>
 #import <openssl/err.h>
 
 #import <CommonCrypto/CommonCryptor.h>

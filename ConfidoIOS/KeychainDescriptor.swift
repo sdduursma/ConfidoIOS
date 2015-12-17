@@ -27,20 +27,20 @@ public class KeychainKeyDescriptor : KeychainDescriptor {
     public init(keyType: KeyType? = nil, keySize: Int? = nil, keyClass: KeyClass? = nil,
         keyLabel: String? = nil, keyAppTag: String? = nil, keyAppLabel: String? = nil) {
             super.init(securityClass: .Key, itemLabel: keyLabel)
-            if keyType != nil {
-                attributes[String(kSecAttrKeyType)]          = keyType!.rawValue
+            if let keyType = keyType {
+                attributes[String(kSecAttrKeyType)]          = keyType.rawValue
             }
-            if keySize != nil  {
-                attributes[String(kSecAttrKeySizeInBits)]    = keySize!
+            if let keySize = keySize {
+                attributes[String(kSecAttrKeySizeInBits)]    = keySize
             }
-            if keyClass != nil {
-                attributes[String(kSecAttrKeyClass)]         = KeyClass.kSecAttrKeyClass(keyClass!)
+            if let keyClass = keyClass {
+                attributes[String(kSecAttrKeyClass)]         = KeyClass.kSecAttrKeyClass(keyClass)
             }
-            if keyAppLabel != nil {
+            if let keyAppLabel = keyAppLabel {
                 attributes[String(kSecAttrApplicationLabel)] = KeychainKeyDescriptor.encodeKeyAppLabel(keyAppLabel)
             }
-            if keyAppTag != nil {
-                attributes[String(kSecAttrApplicationTag)]   = keyAppTag!
+            if let keyAppTag = keyAppTag {
+                attributes[String(kSecAttrApplicationTag)]   = keyAppTag
             }
     }
 }
