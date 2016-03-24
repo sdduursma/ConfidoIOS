@@ -246,9 +246,9 @@ public class Keychain {
             for item in items {
                 do {
                     try Keychain.deleteKeyChainItem(itemDescriptor: item.keychainMatchPropertyValues())
-                    successCount++
+                    successCount += 1
                 } catch {
-                    failCount++
+                    failCount += 1
                 }
             }
             return (successCount, failCount)
