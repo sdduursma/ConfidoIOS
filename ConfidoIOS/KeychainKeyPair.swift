@@ -417,7 +417,7 @@ extension NSInteger {
         var len = self
         var result: [CUnsignedChar] = [CUnsignedChar(i + 0x80)]
 
-        for (var j = 0; j < i; j++) {
+        for _ in 0 ..< i {
             result.insert(CUnsignedChar(len & 0xFF), atIndex: 1)
             len = len >> 8
         }
