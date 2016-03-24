@@ -192,7 +192,7 @@ public class KeyStorageWrapper {
             var startIndex  = buffer.values.startIndex
             startIndex = startIndex.advancedBy(2) // Skip keyTypeCode, keyLength
             var endIndex = startIndex.advancedBy(Int(buffer.values[1]))
-            let keyData = buffer.values[Range<Int>(start: startIndex, end: endIndex)]
+            let keyData = buffer.values[startIndex..<endIndex]
             let kvcLength = buffer.values[endIndex]
             if kvcLength != kKeyCheckValueByteCount {
                 //TODO: Raise Error
@@ -200,7 +200,7 @@ public class KeyStorageWrapper {
             startIndex = endIndex.advancedBy(1)
             endIndex = startIndex.advancedBy(Int(kvcLength))
 
-            let kvcData = buffer.values[Range<Int>(start: startIndex, end: endIndex)]
+            let kvcData = buffer.values[startIndex..<endIndex]
             let key = try CryptoKey(keyType: keyType, keyData: Array(keyData))
             if key.keyCheckValue == Array(kvcData) {
                 return key
