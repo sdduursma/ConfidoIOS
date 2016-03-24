@@ -153,10 +153,10 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
 }
 
 public protocol KeyPair {
-    typealias PrivKeyType : PrivateKey
-    typealias PubKeyType  : PublicKey
-    typealias KeyPairTransportClass
-    typealias GeneratorDescriptorClass
+    associatedtype PrivKeyType : PrivateKey
+    associatedtype PubKeyType  : PublicKey
+    associatedtype KeyPairTransportClass
+    associatedtype GeneratorDescriptorClass
     var privateKey: PrivKeyType! { get }
     var publicKey: PubKeyType!  { get }
     init (publicKey: PubKeyType, privateKey: PrivKeyType)

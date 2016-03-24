@@ -23,7 +23,7 @@ public enum BufferError : ErrorType, CustomStringConvertible {
 
 //TODO: Split the struct in two and adopt the protocols below to create a MutableBuffer
 public protocol BufferType {
-    typealias T
+    associatedtype T
     var values: [T] { get }
 //    init()
 //    init(size: Int)

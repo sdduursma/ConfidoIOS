@@ -36,8 +36,8 @@ public protocol KeychainMatchable {
 
 // Marks that the item provides a findInKeychain() method that returns matching keychain items
 public protocol KeychainFindable {
-    typealias QueryType : KeychainMatchable
-    typealias ResultType : KeychainItem
+    associatedtype QueryType : KeychainMatchable
+    associatedtype ResultType : KeychainItem
     static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
 }
 
@@ -73,7 +73,7 @@ extension KeychainItem  {
 
 // Indicates that the item can be added to the IOS keychain
 public protocol KeychainAddable {
-    typealias KeychainClassType : KeychainItem, KeychainFindable
+    associatedtype KeychainClassType : KeychainItem, KeychainFindable
     /**
     Adds the item to the IOS keychain
     :returns: an instance of KeychainClassType
