@@ -153,10 +153,10 @@ public class KeychainPrivateKey : KeychainKey, PrivateKey, KeychainFindable,  Ge
 }
 
 public protocol KeyPair {
-    typealias PrivKeyType : PrivateKey
-    typealias PubKeyType  : PublicKey
-    typealias KeyPairTransportClass
-    typealias GeneratorDescriptorClass
+    associatedtype PrivKeyType : PrivateKey
+    associatedtype PubKeyType  : PublicKey
+    associatedtype KeyPairTransportClass
+    associatedtype GeneratorDescriptorClass
     var privateKey: PrivKeyType! { get }
     var publicKey: PubKeyType!  { get }
     init (publicKey: PubKeyType, privateKey: PrivKeyType)
@@ -417,7 +417,7 @@ extension NSInteger {
         var len = self
         var result: [CUnsignedChar] = [CUnsignedChar(i + 0x80)]
 
-        for (var j = 0; j < i; j++) {
+        for _ in 0 ..< i {
             result.insert(CUnsignedChar(len & 0xFF), atIndex: 1)
             len = len >> 8
         }
@@ -511,16 +511,22 @@ extension NSData {
         // Total length of the container
         if let _ = NSInteger(octetBytes: keyBytes, startIdx: &i) {
             // First component is the modulus
-            if keyBytes[i++] == 0x02, let modulusLength = NSInteger(octetBytes: keyBytes, startIdx: &i) {
-                let modulus = self.subdataWithRange(NSMakeRange(i, modulusLength))
-                i += modulusLength
+            if keyBytes[i] == 0x02 {
+                i += 1
+                if let modulusLength = NSInteger(octetBytes: keyBytes, startIdx: &i) {
+                    let modulus = self.subdataWithRange(NSMakeRange(i, modulusLength))
+                    i += modulusLength
 
-                // Second should be the exponent
-                if keyBytes[i++] == 0x02, let exponentLength = NSInteger(octetBytes: keyBytes, startIdx: &i) {
-                    let exponent = self.subdataWithRange(NSMakeRange(i, exponentLength))
-                    i += exponentLength
+                    // Second should be the exponent
+                    if keyBytes[i] == 0x02 {
+                        i += 1
+                        if let exponentLength = NSInteger(octetBytes: keyBytes, startIdx: &i) {
+                            let exponent = self.subdataWithRange(NSMakeRange(i, exponentLength))
+                            i += exponentLength
 
-                    return (modulus, exponent)
+                            return (modulus, exponent)
+                        }
+                    }
                 }
             }
         }
@@ -567,44 +573,44 @@ extension NSData {
         var offset = 0
 
         // ASN.1 Sequence
-        if bytes[offset++] == 0x30 {
+        if bytes[offset] == 0x30 {
+            offset += 1
+
             // Skip over length
             let _ = NSInteger(octetBytes: bytes, startIdx: &offset)
 
             // PKCS #1 rsaEncryption szOID_RSA_RSA 1.2.840.113549.1.1.1
 
             let OID: [CUnsignedChar] = [0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
-                0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]
+                                        0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]
             let slice: [CUnsignedChar] = Array(bytes[offset..<(offset + OID.count)])
 
             if slice == OID {
                 offset += OID.count
 
                 // Type
-                if bytes[offset++] != 0x03 {
+                if bytes[offset] != 0x03 {
                     return self
                 }
+
+                offset += 1
 
                 // Skip over the contents length field
                 let _ = NSInteger(octetBytes: bytes, startIdx: &offset)
 
                 // Contents should be separated by a null from the header
-                if bytes[offset++] != 0x00 {
+                if bytes[offset] != 0x00 {
                     return self
                 }
 
+                offset += 1
                 range.location += offset
                 range.length -= offset
             } else {
                 return self
             }
         }
-        
+
         return self.subdataWithRange(range)
     }
-
-    
 }
-
-
-

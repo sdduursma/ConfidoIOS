@@ -52,7 +52,7 @@ public class KeychainCertificate : KeychainItem,
     public init(SecItemAttributes attributes: SecItemAttributes) throws {
         super.init(securityClass: SecurityClass.Certificate, SecItemAttributes: attributes)
         self.secCertificate = try KeychainCertificate.getSecCertificate(SecItemAttributes: attributes)
-        self.subject = SecCertificateCopySubjectSummary(self.secCertificate) as String
+        self.subject = SecCertificateCopySubjectSummary(self.secCertificate)! as String
     }
 
 }
@@ -78,7 +78,7 @@ public class TransportCertificate : KeychainDescriptor, SecItemAddable, Certific
     public init(secCertificate: SecCertificate, itemLabel: String? = nil) {
         self.secCertificate = secCertificate
         self.label = itemLabel
-        self.subject = SecCertificateCopySubjectSummary(secCertificate) as String
+        self.subject = SecCertificateCopySubjectSummary(secCertificate)! as String
         super.init(securityClass: SecurityClass.Certificate, itemLabel: itemLabel)
         attributes[kSecValueRef as String] = secCertificate
 
@@ -92,4 +92,3 @@ public class TransportCertificate : KeychainDescriptor, SecItemAddable, Certific
     }
 
 }
-

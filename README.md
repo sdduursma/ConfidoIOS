@@ -50,7 +50,7 @@ These classes represent actual items in the IOS Keychain.
 In order to add something (like a PKCS12 Identity from a .p12 file), you first have to import it. This you do with a call to `SecPKCS12Import(...)`. This returns a temporary reference to an Identity, but it is not stored in the keychain yet. In order to add it, the code uses objects named `TransportXYZ` to store these temporary values. In the case of an identity, this class is called `TransportKeyPair`. `TransportKeyPair` supports the `KeychainAddable` protocol, which means it has a method `addToKeychain() -> KeychainIdentity`. The Transport classes derive from `KeychainDescriptor`.
 
 # OpenSSL
-This Library uses a precompiled OpenSSL library to speed up compile time used in some unit tests. 
+This Library uses a precompiled OpenSSL library to speed up compile time used in some unit tests.
 
 # Keychain Protocols
 ## KeyChainAttributeStorage
@@ -74,8 +74,8 @@ var securityClass: SecurityClass { get }
 Marks that the item provides a findInKeychain() method that returns matching keychain items
 ```
 public protocol KeychainFindable {
-typealias QueryType : KeychainMatchable
-typealias ResultType : KeychainItem
+associatedtype QueryType : KeychainMatchable
+associatedtype ResultType : KeychainItem
 static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
 }
 ```
@@ -83,7 +83,7 @@ static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
 Indicates that the item can be added to the IOS keychain
 ```
 public protocol KeychainAddable {
-typealias KeychainClassType : KeychainItem, KeychainFindable
+associatedtype KeychainClassType : KeychainItem, KeychainFindable
 func addToKeychain() throws -> KeychainClassType?
 }
 ```

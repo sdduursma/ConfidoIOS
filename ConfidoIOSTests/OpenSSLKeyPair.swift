@@ -62,6 +62,3 @@ extension KeychainPrivateKey {
         return publicKeyData.dataByPrependingX509RSAHeader()
     }
 }
-
-
-

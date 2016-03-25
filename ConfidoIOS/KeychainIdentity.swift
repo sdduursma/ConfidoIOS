@@ -11,8 +11,8 @@ import Security
 
 
 public protocol Identity {
-    typealias CertificateType : Certificate
-    typealias KeyPairType  : KeyPair
+    associatedtype CertificateType : Certificate
+    associatedtype KeyPairType  : KeyPair
     var certificate: CertificateType { get }
     var keyPair: KeyPairType { get }
 }
