@@ -1,7 +1,5 @@
 # Created by https://www.gitignore.io
 
-Podfile.lock
-
 ## infoPlist ##
 InfoPlist.h
 
@@ -73,5 +71,3 @@ xcuserdata
 *.moved-aside
 DerivedData
 *.xcuserstate
-
-

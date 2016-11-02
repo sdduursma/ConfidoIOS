@@ -12,4 +12,3 @@ target 'ConfidoIOSTests' do
   common
   pod 'OpenSSL-Static', '1.0.2.c1'
 end
-
