@@ -12,8 +12,8 @@
 import Foundation
 import Security
 
-public typealias Signature = Buffer<Byte>
-public typealias Digest    = Buffer<Byte>
+public typealias Signature = ByteBuffer
+public typealias Digest    = ByteBuffer
 
 
 public protocol Key {
@@ -21,7 +21,7 @@ public protocol Key {
 
 public protocol PublicKey : Key {
     func verify(_ digest: Digest, signature: Signature) throws ->  Bool
-    func encrypt(_ plaintext: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte>
+    func encrypt(_ plaintext: ByteBuffer, padding: SecPadding) throws -> ByteBuffer
 }
 
 
@@ -29,13 +29,13 @@ extension Key where Self : Key, Self : KeychainKey {
 
 }
 extension PublicKey where Self : PublicKey, Self: KeychainKey {
-    public func encrypt(_ plainText: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte> {
+    public func encrypt(_ plainText: ByteBuffer, padding: SecPadding) throws -> ByteBuffer {
         try ensureRSAOrECKey()
         let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
         if plainText.size > maxBlockSize {
             throw KeychainError.dataExceedsBlockSize(size: maxBlockSize)
         }
-        var cipherText = Buffer<Byte>(size: maxBlockSize)
+        var cipherText = ByteBuffer(size: maxBlockSize)
         var returnSize = maxBlockSize
 
         try ensureOK(SecKeyEncrypt(self.keySecKey!, padding, plainText.values, plainText.size, cipherText.mutablePointer, &returnSize))
@@ -53,17 +53,17 @@ extension PublicKey where Self : PublicKey, Self: KeychainKey {
 
 public protocol PrivateKey : Key {
     func sign(_ digest: Digest) throws -> Signature
-    func decrypt(_ cipherBlock: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte>
+    func decrypt(_ cipherBlock: ByteBuffer, padding: SecPadding) throws -> ByteBuffer
 }
 
 extension KeychainPrivateKey {
-    public func decrypt(_ cipherText: Buffer<Byte>, padding: SecPadding) throws -> Buffer<Byte> {
+    public func decrypt(_ cipherText: ByteBuffer, padding: SecPadding) throws -> ByteBuffer {
         try ensureRSAOrECKey()
         let maxBlockSize = SecKeyGetBlockSize(self.keySecKey!)
         if cipherText.size > maxBlockSize {
             throw KeychainError.dataExceedsBlockSize(size: maxBlockSize)
         }
-        var plainText = Buffer<Byte>(size: maxBlockSize)
+        var plainText = ByteBuffer(size: maxBlockSize)
         var returnSize = maxBlockSize
 
         try ensureOK(SecKeyDecrypt(self.keySecKey!, padding, cipherText.values, cipherText.size, plainText.mutablePointer, &returnSize))
@@ -75,7 +75,7 @@ extension KeychainPrivateKey {
         try ensureRSAOrECKey()
 
         var signatureLength : Int = self.keyType!.signatureMaxSize(self.keySize)
-        var signature = Buffer<Byte>(size: signatureLength)
+        var signature = ByteBuffer(size: signatureLength)
         try ensureOK(SecKeyRawSign(self.keySecKey!, SecPadding.PKCS1, digest.values,digest.size, signature.mutablePointer, &signatureLength))
         signature.size = signatureLength
         return signature
@@ -91,7 +91,7 @@ open class KeychainPublicKey : KeychainKey, PublicKey, KeychainFindable, Generat
     public typealias ResultType = KeychainPublicKey
 
     open class func importRSAPublicKey(derEncodedData data: Data, keyLabel: String, keyAppTag: String? = nil) throws -> KeychainPublicKey {
-        let dataStrippedOfX509Header = data.dataByStrippingX509RSAHeader()
+        let dataStrippedOfX509Header = data.dataByStrippingX509Header()
         let descriptor = PublicKeyDescriptor(derEncodedKeyData: dataStrippedOfX509Header, keyLabel: keyLabel, keyAppTag: keyAppTag)
         try descriptor.addToKeychain()
         return try KeychainPublicKey.findInKeychain(descriptor)!
@@ -232,7 +232,7 @@ open class PublicKeyDescriptor: KeychainKeyDescriptor, SecItemAddable {
         attributes[String(kSecValueData)] = data as AnyObject?
     }
 
-    open func addToKeychain() throws -> KeychainPublicKey {
+    @discardableResult open func addToKeychain() throws -> KeychainPublicKey {
         try self.secItemAdd()
         //This is a hack because you cannot query on kSecValueData. At this time the query dictionary contains the
         //binary representation of they key, we need to remove it from the dictionary for the next call or it won't work.
@@ -381,7 +381,6 @@ open class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
             */
             publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel as AnyObject?
 
-            attributes[String(kSecPublicKeyAttrs)]  = [ : ]
             if let privateKeyAccessControl = privateKeyAccessControl {
                 privateAttrs[ String(kSecAttrAccessControl)] = privateKeyAccessControl
             }
@@ -432,7 +431,7 @@ extension NSInteger {
             startIdx += 1
         } else {
             // Long form
-            let octets = NSInteger(octetBytes[startIdx] - 128)
+            let octets = NSInteger(octetBytes[startIdx] as UInt8 - 128)
 
             if octets > octetBytes.count - startIdx {
                 self.init(0)
@@ -456,8 +455,13 @@ extension NSInteger {
 extension Data {
     init(modulus: Data, exponent: Data) {
         // Make sure neither the modulus nor the exponent start with a null byte
-        let modulusBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: (modulus as NSData).bytes.bindMemory(to: CUnsignedChar.self, capacity: modulus.count), count: modulus.count / MemoryLayout<CUnsignedChar>.size))
+        var modulusBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: (modulus as NSData).bytes.bindMemory(to: CUnsignedChar.self, capacity: modulus.count), count: modulus.count / MemoryLayout<CUnsignedChar>.size))
         let exponentBytes = [CUnsignedChar](UnsafeBufferPointer<CUnsignedChar>(start: (exponent as NSData).bytes.bindMemory(to: CUnsignedChar.self, capacity: exponent.count), count: exponent.count / MemoryLayout<CUnsignedChar>.size))
+
+        // Make sure modulus starts with a 0x00
+        if let prefix = modulusBytes.first , prefix != 0x00 {
+            modulusBytes.insert(0x00, at: 0)
+        }
 
         // Lengths
         let modulusLengthOctets = modulusBytes.count.encodedOctets()
@@ -489,7 +493,7 @@ extension Data {
         data.append(builder, length: builder.count)
         data.append(exponentBytes, length: exponentBytes.count)
 
-        (self as NSData).init(data: data)
+        self.init(bytes: data.bytes, count: data.length)
     }
 
     func splitIntoComponents() -> (modulus: Data, exponent: Data)? {
@@ -507,21 +511,20 @@ extension Data {
         } else {
             i += 1
         }
-
         // Total length of the container
         if let _ = NSInteger(octetBytes: keyBytes, startIdx: &i) {
             // First component is the modulus
             if keyBytes[i] == 0x02 {
                 i += 1
                 if let modulusLength = NSInteger(octetBytes: keyBytes, startIdx: &i) {
-                    let modulus = self.subdata(in: NSMakeRange(i, modulusLength))
+                    let modulus = self.subdata(in: NSRange(location: i, length: modulusLength).toRange()!)
                     i += modulusLength
 
                     // Second should be the exponent
                     if keyBytes[i] == 0x02 {
                         i += 1
                         if let exponentLength = NSInteger(octetBytes: keyBytes, startIdx: &i) {
-                            let exponent = self.subdata(in: NSMakeRange(i, exponentLength))
+                            let exponent = self.subdata(in: NSRange(location: i, length: exponentLength).toRange()!)
                             i += exponentLength
 
                             return (modulus, exponent)
@@ -565,7 +568,7 @@ extension Data {
         return result as Data
     }
 
-    func dataByStrippingX509RSAHeader() -> Data {
+    func dataByStrippingX509Header() -> Data {
         var bytes = [CUnsignedChar](repeating: 0, count: self.count)
         (self as NSData).getBytes(&bytes, length:self.count)
 
@@ -578,8 +581,6 @@ extension Data {
 
             // Skip over length
             let _ = NSInteger(octetBytes: bytes, startIdx: &offset)
-
-            // PKCS #1 rsaEncryption szOID_RSA_RSA 1.2.840.113549.1.1.1
 
             let OID: [CUnsignedChar] = [0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
                                         0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00]
@@ -611,6 +612,6 @@ extension Data {
             }
         }
 
-        return self.subdata(in: range)
+        return self.subdata(in: range.toRange()!)
     }
 }

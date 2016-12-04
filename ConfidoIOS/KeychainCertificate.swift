@@ -37,10 +37,10 @@ open class KeychainCertificate : KeychainItem,
     }
 
     class func getSecCertificate(SecItemAttributes attributes: NSDictionary) throws -> SecCertificate {
-        if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
-            if CFGetTypeID(valueRef) == SecCertificateGetTypeID() {
+        if let valueRef = attributes[String(kSecValueRef)] {
+            if CFGetTypeID(valueRef as CFTypeRef!) == SecCertificateGetTypeID() {
                 return (valueRef as! SecCertificate)
-            } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+            } else if CFGetTypeID(valueRef as CFTypeRef!) == SecIdentityGetTypeID() {
                 let secIdentity = (valueRef as! SecIdentity)
                 return try secIdentity.certificateRef()
             }

@@ -160,15 +160,15 @@ public enum Padding : RawRepresentable {
     }
 }
 
-public func generateRandomBytes(_ size: Int) -> Buffer<Byte> {
+public func generateRandomBytes(_ size: Int) -> ByteBuffer {
     do {
-        let keyBuffer = Buffer<Byte>(size: size)
+        let keyBuffer = ByteBuffer(size: size)
         try secEnsureOK(SecRandomCopyBytes(kSecRandomDefault, size, keyBuffer.mutablePointer))
         return keyBuffer
     }
     catch {
         assertionFailure("Could not generate random bytes")
-        return Buffer<Byte>()
+        return ByteBuffer()
     }
 }
 
@@ -178,8 +178,8 @@ open class KeyStorageWrapper {
     Returns a raw, storable representation of the key material
     The buffer stores (1) The type of Key, (2) A Key Check Value (KCV) (3) the actual cryptographic key
     */
-    open class func wrap(_ key: CryptoKey) -> Buffer<Byte> {
-        var buffer = Buffer<Byte>()
+    open class func wrap(_ key: CryptoKey) -> ByteBuffer {
+        var buffer = ByteBuffer()
         buffer.append(key.keyType.rawValue)             // Type and length of Key (Two bytes)
         buffer.append(key.keyMaterial.values)
         buffer.append([kKeyCheckValueByteCount])        // Length of KCV
@@ -187,7 +187,7 @@ open class KeyStorageWrapper {
         return buffer
     }
 
-    open class func unwrap(_ buffer: Buffer<Byte>) throws -> CryptoKey {
+    open class func unwrap(_ buffer: ByteBuffer) throws -> CryptoKey {
         if let keyType = CryptoKeyType.init(keyTypeCode: buffer.values[0], keyLength: buffer.values[1]) {
             var startIndex  = buffer.values.startIndex
             startIndex = startIndex.advanced(by: 2) // Skip keyTypeCode, keyLength
@@ -214,26 +214,27 @@ open class KeyStorageWrapper {
 public let kNumberOfRounds : UInt32 = 20000
 
 
-public func PBKDFDeriveKey(_ passphrase: String, salt: String, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
+public func PBKDFDeriveKey(_ passphrase: String, salt: String, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> ByteBuffer! {
     do {
         let utf8data = passphrase.data(using: String.Encoding.utf8)
-        let buffer = try Buffer<Byte>(data: utf8data!)
+        let buffer = try ByteBuffer(data: utf8data!)
         let utf8salt = salt.data(using: String.Encoding.utf8)
-        let saltBuffer = try Buffer<Byte>(data: utf8salt!)
+        let saltBuffer = try ByteBuffer(data: utf8salt!)
         return PBKDFDeriveKey(buffer, salt: saltBuffer, rounds: rounds, size: size, algorithm: algorithm)
     } catch {
         return nil
     }
 
 }
-public func PBKDFDeriveKey(_ buffer: Buffer<Byte>, salt: Buffer<Byte>, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
+public func PBKDFDeriveKey(_ buffer: ByteBuffer, salt: ByteBuffer, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> ByteBuffer! {
     do {
-        let bufferPointer = UnsafePointer<Int8>(buffer.voidPointer)
-        let derivedKeyBuffer = Buffer<Byte>(size: size)
-        try secEnsureOK(CCKeyDerivationPBKDF(UInt32(kCCPBKDF2), bufferPointer, buffer.byteCount,
-            salt.pointer, salt.byteCount, algorithm, rounds,
-            derivedKeyBuffer.mutablePointer, derivedKeyBuffer.byteCount))
-        return derivedKeyBuffer
+        return try buffer.pointer.withMemoryRebound(to: Int8.self, capacity: 1) { int8BufferPointer in
+            let derivedKeyBuffer = ByteBuffer(size: size)
+            try secEnsureOK(CCKeyDerivationPBKDF(UInt32(kCCPBKDF2), int8BufferPointer, buffer.byteCount,
+                                                 salt.mutablePointer, salt.byteCount, algorithm, rounds,
+                                                 derivedKeyBuffer.mutablePointer, derivedKeyBuffer.byteCount))
+            return derivedKeyBuffer
+        }
     } catch {
         return nil
     }
@@ -241,12 +242,12 @@ public func PBKDFDeriveKey(_ buffer: Buffer<Byte>, salt: Buffer<Byte>, rounds: U
 
 public struct CryptoKey {
     public let keyType:  CryptoKeyType
-    let keyMaterial:     Buffer<Byte>
+    let keyMaterial:     ByteBuffer
     var keyCheckValue:   [Byte] = []
 
     public init(keyType: CryptoKeyType) {
         self.keyType = keyType
-        self.keyMaterial = Buffer<Byte>(bytes: generateRandomBytes(keyType.keySize).values)
+        self.keyMaterial = ByteBuffer(bytes: generateRandomBytes(keyType.keySize).values)
         self.keyCheckValue = makeCheckValue()
     }
 
@@ -255,7 +256,7 @@ public struct CryptoKey {
         if hexKeyData.characters.count != keyType.keySize * 2 {
             throw KeychainError.dataExceedsBlockSize(size: keyType.keySize * 2)
         }
-        try self.keyMaterial = Buffer<Byte>(hexData: hexKeyData)
+        try self.keyMaterial = ByteBuffer(hexData: hexKeyData)
         self.keyCheckValue = makeCheckValue()
     }
 
@@ -265,7 +266,7 @@ public struct CryptoKey {
             throw CryptoError.keySizeMismatch(expected: keyType.keySize, got: keyData.count)
         }
 
-        self.keyMaterial = Buffer<Byte>(bytes: keyData)
+        self.keyMaterial = ByteBuffer(bytes: keyData)
         self.keyCheckValue = makeCheckValue()
     }
 
@@ -283,7 +284,7 @@ public struct CryptoKey {
 
     func makeCheckValue() -> [Byte] {
         do {
-            let zeroBuffer = Buffer<Byte>(size: self.keyType.blockSize)
+            let zeroBuffer = ByteBuffer(size: self.keyType.blockSize)
             let cryptoText = try Cryptor.encrypt(zeroBuffer, key: self, mode: .cbc, padding: .none, initialVector: nil)
             return Array(cryptoText.values[0..<Int(kKeyCheckValueByteCount)])
         } catch {
@@ -293,7 +294,7 @@ public struct CryptoKey {
 
     public var keyCheckValueString: String  {
         get {
-            let buffer = Buffer<Byte>(bytes: self.keyCheckValue)
+            let buffer = ByteBuffer(bytes: self.keyCheckValue)
             let hexString = buffer.hexString
             let index = hexString.characters.index(hexString.startIndex, offsetBy: Int(kKeyCheckValueByteCount * 2)) // First 6 characters is the KCV
             return hexString.substring(to: index)

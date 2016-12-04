@@ -20,13 +20,13 @@ public enum TrustResult: RawRepresentable, CustomStringConvertible, Error {
         fatalTrustFailure, otherError]
 
     public init?(rawValue: Int) {
-        if rawValue == SecTrustResultType.invalid                        { self = .invalid }
-        else if rawValue == SecTrustResultType.proceed                 { self = .proceed }
-        else if rawValue == SecTrustResultType.deny                    { self = .deny}
-        else if rawValue == SecTrustResultType.unspecified             { self = .unspecified}
-        else if rawValue == SecTrustResultType.recoverableTrustFailure { self = .recoverableTrustFailure}
-        else if rawValue == SecTrustResultType.fatalTrustFailure       { self = .fatalTrustFailure}
-        else if rawValue == SecTrustResultType.otherError              { self = .otherError}
+        if rawValue == Int(SecTrustResultType.invalid.rawValue)                        { self = .invalid }
+        else if rawValue == Int(SecTrustResultType.proceed.rawValue)              { self = .proceed }
+        else if rawValue == Int(SecTrustResultType.deny.rawValue)                    { self = .deny}
+        else if rawValue == Int(SecTrustResultType.unspecified.rawValue)             { self = .unspecified}
+        else if rawValue == Int(SecTrustResultType.recoverableTrustFailure.rawValue) { self = .recoverableTrustFailure}
+        else if rawValue == Int(SecTrustResultType.fatalTrustFailure.rawValue)       { self = .fatalTrustFailure}
+        else if rawValue == Int(SecTrustResultType.otherError.rawValue)              { self = .otherError}
         else {
             return nil
         }
@@ -148,7 +148,7 @@ public struct CertificateTrustPoint: TrustPoint {
     func evaluateSecTrust() throws -> TrustResult {
         var secTrustResultType : SecTrustResultType = SecTrustResultType(rawValue: 0)!
         try trustEnsureOK(SecTrustEvaluate(secTrust, &secTrustResultType))
-        let trustResult = TrustResult(rawValue: Int(secTrustResultType))!
+        let trustResult = TrustResult(rawValue: Int(secTrustResultType.rawValue))!
         if trustResult == .proceed || trustResult == .unspecified {
             return trustResult
         } else if trustResult == TrustResult.recoverableTrustFailure {

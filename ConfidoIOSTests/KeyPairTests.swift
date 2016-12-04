@@ -49,7 +49,7 @@ class KeyPairTests: BaseTests {
         XCTAssertNotNil(keyPair.publicKey.keyAppLabelString)
         XCTAssertEqual(keyPair.publicKey.keyAppLabelString!, "CCC")
 
-        XCTAssertEqual(keyPair.publicKey.itemAccessGroup, "")
+        XCTAssertEqual(keyPair.publicKey.itemAccessGroup, "com.curoo.ConfidoIOSTestsHostApp")
         XCTAssertEqual(keyPair.publicKey.itemAccessible, Accessible.whenUnlockedThisDeviceOnly)
 
         let publicKeyData = keyPair.publicKey.keyData
@@ -57,16 +57,16 @@ class KeyPairTests: BaseTests {
 
         XCTAssertEqual(publicKeyData!.count,140)
 
-        let signature = try! keyPair.privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
+        let signature = try! keyPair.privateKey.sign(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]))
         print(signature)
 
-        var verified = try! keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+        var verified = try! keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
         XCTAssertTrue(verified)
 
-        verified = try! keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+        verified = try! keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
         XCTAssertFalse(verified)
 
-        let cipherTextUnderPublicKey = try! keyPair.publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+        let cipherTextUnderPublicKey = try! keyPair.publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
         print("Cipher under public key: \(cipherTextUnderPublicKey)")
 
         let decryptedText = try! keyPair.privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
@@ -107,13 +107,13 @@ class KeyPairTests: BaseTests {
 
         XCTAssertEqual(publicKeyData!.count,65)
 
-        let signature = try! keyPair.privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
+        let signature = try! keyPair.privateKey.sign(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]))
         print("Signature: \(signature.hexString)")
 
-        var verified = try! keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+        var verified = try! keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
         XCTAssertTrue(verified)
 
-        verified = try! keyPair.publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+        verified = try! keyPair.publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
         XCTAssertFalse(verified)
     }
 
@@ -150,7 +150,7 @@ class KeyPairTests: BaseTests {
         XCTAssertEqual(publicKeyData!.count,65)
 
 
-        let cipherTextUnderPublicKey = try! keyPair.publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+        let cipherTextUnderPublicKey = try! keyPair.publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
         print("Cipher under public key: \(cipherTextUnderPublicKey)")
 
         let decryptedText = try! keyPair.privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
@@ -197,16 +197,16 @@ class KeyPairTests: BaseTests {
 
         XCTAssertEqual(publicKeyData!.count,140)
 
-        let signature = try! privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
+        let signature = try! privateKey.sign(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]))
         print(signature)
 
-        var verified = try! publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
+        var verified = try! publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8]), signature: signature)
         XCTAssertTrue(verified)
 
-        verified = try! publicKey.verify(Buffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
+        verified = try! publicKey.verify(ByteBuffer(bytes:[1,2,3,4,5,6,7,8,9]), signature: signature)
         XCTAssertFalse(verified)
 
-        let cipherTextUnderPublicKey = try! publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+        let cipherTextUnderPublicKey = try! publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
         print("Cipher under public key: \(cipherTextUnderPublicKey)")
 
         let decryptedText = try! privateKey.decrypt(cipherTextUnderPublicKey, padding: SecPadding.OAEP)
@@ -337,7 +337,7 @@ class KeyPairTests: BaseTests {
 
         let csr = try! OpenSSL.generateCSR(withPrivateKeyData: keyPair.privateKey.keyData(), csrData: attributes)
         XCTAssertNotNil(csr)
-        let csrString : NSString! = NSString(data: csr, encoding: String.Encoding.utf8)
+        let csrString : NSString! = NSString(data: csr, encoding: String.Encoding.utf8.rawValue)
         XCTAssert(csrString.hasPrefix("-----BEGIN CERTIFICATE REQUEST-----\n"))
         XCTAssert(csrString.hasSuffix("-----END CERTIFICATE REQUEST-----\n"))
         print("CSR:")
@@ -348,7 +348,7 @@ class KeyPairTests: BaseTests {
         clearKeychainItems(.key)
         let publicKeyData = try! contentsOfBundleResource("public-key", ofType: "der")
         let publicKey = try! KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData, keyLabel: "build-key")
-        let cipherTextUnderPublicKey = try! publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+        let cipherTextUnderPublicKey = try! publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
         print("Cipher under public key: \(cipherTextUnderPublicKey)")
     }
 
@@ -365,7 +365,7 @@ class KeyPairTests: BaseTests {
         items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,1)
 
-        let cipherTextUnderPublicKey = try! publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
+        let cipherTextUnderPublicKey = try! publicKey.encrypt(ByteBuffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
         print("Cipher under public key: \(cipherTextUnderPublicKey)")
 
         let publicKeyData2 = try! contentsOfBundleResource("development-build-public-key", ofType: "der")

@@ -1,5 +1,5 @@
 //
-//  Buffer.swift
+//  ByteBuffer.swift
 //  ConfidoIOS
 //
 //  Created by Rudolph van Graan on 25/09/2015.
@@ -22,9 +22,8 @@ public enum BufferError : Error, CustomStringConvertible {
 
 
 //TODO: Split the struct in two and adopt the protocols below to create a MutableBuffer
-public protocol BufferType {
-    associatedtype T
-    var values: [T] { get }
+public protocol ByteBufferType {
+    var values: [Byte] { get }
 //    init()
 //    init(size: Int)
 //    init(bytes: [T])
@@ -48,21 +47,22 @@ public protocol MutableBufferType: BufferType {
 }
 */
 
-public struct Buffer<T:UnsignedInteger> {
-    public fileprivate(set) var values: [T]
-    public var pointer: UnsafeMutablePointer<T> {
+public struct ByteBuffer {
+    public fileprivate(set) var values: [Byte]
+
+    public var pointer: UnsafePointer<Byte> {
         get {
-            return UnsafeMutablePointer<T>(mutating: values)
+            return UnsafePointer<Byte>(values)
         }
     }
-    public var mutablePointer: UnsafeMutablePointer<T> {
+    public var mutablePointer: UnsafeMutablePointer<Byte> {
         get {
-            return UnsafeMutablePointer<T>(mutating: values)
+            return UnsafeMutablePointer<Byte>(mutating: values)
         }
     }
     public var bufferPointer: UnsafeBufferPointer<Byte> {
         get {
-            return UnsafeBufferPointer<Byte>(start: UnsafeMutablePointer(values), count: self.byteCount)
+            return UnsafeBufferPointer<Byte>(start: UnsafeMutablePointer(mutating: values), count: self.byteCount)
         }
     }
     public var voidPointer: UnsafeRawPointer {
@@ -75,18 +75,18 @@ public struct Buffer<T:UnsignedInteger> {
         values = []
     }
     public init(size: Int) {
-        values = [T](repeating: 0, count: size)
+        values = [Byte](repeating: 0, count: size)
     }
-    public init(bytes: [T]) {
+    public init(bytes: [Byte]) {
         self.values = bytes
     }
 //TODO:  public init<B where B:BufferType, B.T == T>(buffer: B)
-    public init(buffer: Buffer<T>) {
+    public init(_ buffer: ByteBuffer) {
         self.values = buffer.values
     }
     public init(data: Data) throws {
-        let numberOfWords = data.count / MemoryLayout<T>.size
-        if data.count % MemoryLayout<T>.size != 0 {
+        let numberOfWords = data.count / MemoryLayout<Byte>.size
+        if data.count % MemoryLayout<Byte>.size != 0 {
             throw BufferError.wordLengthMismatch
         }
         self.init(size: numberOfWords)
@@ -117,8 +117,7 @@ public struct Buffer<T:UnsignedInteger> {
     public var hexString: String {
         get {
             var hexString = ""
-            let pointer = self.bufferPointer
-            pointer.forEach { (byte) -> () in
+            self.bufferPointer.forEach { (byte) -> () in
                 hexString.append(String(format:"%02x", byte))
             }
             return hexString
@@ -133,9 +132,9 @@ public struct Buffer<T:UnsignedInteger> {
                 //truncate the buffer to the new size
                 values = Array(values[0..<newValue])
             } else if newValue > values.count {
-                let newBuffer = [T](repeating: 0, count: newValue)
-                let newBufferPointer = UnsafeMutablePointer<T>(mutating: newBuffer)
-                newBufferPointer.moveInitialize(from: self.pointer, count: values.count)
+                let newBuffer = [Byte](repeating: 0, count: newValue)
+                let newBufferPointer = UnsafeMutablePointer<Byte>(mutating: newBuffer)
+                newBufferPointer.moveInitialize(from: self.mutablePointer, count: values.count)
                 values = newBuffer
             }
         }
@@ -146,25 +145,17 @@ public struct Buffer<T:UnsignedInteger> {
         }
     }
 
-    public mutating func append(_ bytes: [T])  {
+    public mutating func append(_ bytes: [Byte])  {
         let currentSize = self.size
         let newSize = self.size + bytes.count
         self.size = newSize
-        let appendLocation = self.pointer.advanced(by: currentSize)
+        let appendLocation = self.mutablePointer.advanced(by: currentSize)
         appendLocation.moveAssign(from: UnsafeMutablePointer(mutating: bytes), count: bytes.count)
 
     }
     public var elementSize: Int {
         get {
-            return MemoryLayout<T>.size
+            return MemoryLayout<Byte>.size
         }
     }
-}
-
-
-extension Array  where Element : UnsignedInteger {
-    var buffer: Buffer<Element> {
-        get { return Buffer(size: 0) }
-    }
-
 }

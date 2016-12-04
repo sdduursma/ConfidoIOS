@@ -48,10 +48,10 @@ open class KeychainKey : KeychainItem, KeychainKeyClassProperties {
     }
 
     class func getKeySecKey(SecItemAttributes attributes: NSDictionary) throws -> SecKey {
-        if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
-            if CFGetTypeID(valueRef) == SecKeyGetTypeID() {
+        if let valueRef = attributes[String(kSecValueRef)] {
+            if CFGetTypeID(valueRef as CFTypeRef!) == SecKeyGetTypeID() {
                 return (valueRef as! SecKey)
-            } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+            } else if CFGetTypeID(valueRef as CFTypeRef!) == SecIdentityGetTypeID() {
                 let secIdentity = (valueRef as! SecIdentity)
                 return try secIdentity.privateKeyRef()
             }

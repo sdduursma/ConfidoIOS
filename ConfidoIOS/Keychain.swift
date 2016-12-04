@@ -100,7 +100,7 @@ open class SecurityWrapper {
     open class func secItemCopyMatching<T>(_ query: KeyChainPropertiesData) throws -> T {
         var result: AnyObject?
         let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(to: &result) { SecItemCopyMatching(query, UnsafeMutablePointer($0)) }
+            withUnsafeMutablePointer(to: &result) { SecItemCopyMatching(query as CFDictionary, UnsafeMutablePointer($0)) }
             )
         if status == .ok, let returnValue = result as? T {
             return returnValue
@@ -116,7 +116,7 @@ open class SecurityWrapper {
         var persistedRef: AnyObject?
 
         let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(to: &persistedRef) { SecItemAdd(attributes, UnsafeMutablePointer($0)) }
+            withUnsafeMutablePointer(to: &persistedRef) { SecItemAdd(attributes as CFDictionary, UnsafeMutablePointer($0)) }
         )
 
         if status == .ok {
@@ -137,10 +137,9 @@ open class SecurityWrapper {
     }
 
     open class func secPKCS12Import(_ pkcs12Data: Data, options: KeyChainPropertiesData) throws -> [SecItemAttributes] {
-        var result: NSArray?
-        let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(to: &result) { SecPKCS12Import(pkcs12Data, options, UnsafeMutablePointer($0)) }
-        )
+        var result: CFArray?
+        let osStatus = withUnsafeMutablePointer(to: &result) { SecPKCS12Import(pkcs12Data as CFData, options as CFDictionary, UnsafeMutablePointer($0)) }
+        let status = KeychainStatus.statusFromOSStatus(osStatus)
         if status == .ok, let items = result as? [SecItemAttributes]
         {
             return items

@@ -45,8 +45,8 @@ open class KeychainIdentity: KeychainItem, KeychainFindable, GenerateKeychainFin
     open let secIdentity: SecIdentity
 
     class func getSecIdentity(SecItemAttributes attributes: NSDictionary) -> SecIdentity {
-        if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
-            if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+        if let valueRef = attributes[String(kSecValueRef)] {
+            if CFGetTypeID(valueRef as CFTypeRef!) == SecIdentityGetTypeID() {
                 let secIdentity = (valueRef as! SecIdentity)
                 return secIdentity
             }
@@ -85,9 +85,9 @@ open class KeychainIdentity: KeychainItem, KeychainFindable, GenerateKeychainFin
 
         let items = try SecurityWrapper.secPKCS12Import(pkcs12EncodedData, options: options)
         if items.count == 1 {
-            let secIdentity : SecIdentity          = items[0][kSecImportItemIdentity as String] as! SecIdentityRef
-            let secTrust    : SecTrust             = items[0][kSecImportItemTrust as String] as! SecTrustRef
-            let certificateChain: [SecCertificate] = items[0][kSecImportItemCertChain as String] as! [SecCertificateRef]
+            let secIdentity : SecIdentity          = items[0][kSecImportItemIdentity as String] as! SecIdentity
+            let secTrust    : SecTrust             = items[0][kSecImportItemTrust as String] as! SecTrust
+            let certificateChain: [SecCertificate] = items[0][kSecImportItemCertChain as String] as! [SecCertificate]
             return TransportIdentity(secIdentity: secIdentity,secTrust: secTrust, certificates: certificateChain, itemLabel: label)
         }
         fatalError("No SecIdentity Reference returned")
@@ -137,7 +137,7 @@ open class IdentityImportDescriptor : KeyChainAttributeStorage, SecItemAddable {
             attributes[String(kSecAttrLabel)] = label as AnyObject?
         }
     }
-    open func secItemAdd() throws -> AnyObject? {
+    @discardableResult open func secItemAdd() throws -> AnyObject? {
         var item : KeyChainPropertiesData = [ : ]
         item += self.attributes
         let itemRef: AnyObject? = try SecurityWrapper.secItemAdd(item)

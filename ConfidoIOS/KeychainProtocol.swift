@@ -94,11 +94,12 @@ public protocol KeychainAddable {
 // MARK: SecItemAddable
 // Generic Protocol to mark that the item can be added to the IOS Keychain
 public protocol SecItemAddable : KeyChainAttributeStorage {
-    func secItemAdd() throws -> AnyObject?
+    @discardableResult func secItemAdd() throws -> AnyObject?
 }
 
 extension SecItemAddable where Self : SecItemAddable, Self : KeychainMatchable {
-    public func secItemAdd() throws -> AnyObject? {
+
+    @discardableResult public func secItemAdd() throws -> AnyObject? {
         var item : KeyChainPropertiesData = [ : ]
         item += self.attributes
         item[String(kSecClass)] = SecurityClass.kSecClass(securityClass)

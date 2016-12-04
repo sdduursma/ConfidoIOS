@@ -39,7 +39,7 @@ open class AbstractItem: KeychainItemClass, KeyChainAttributeStorage {
         } else {
             self.securityClass = securityClass
         }
-        self.initAttributes(attributes)
+        self.initAttributes(attributes as NSDictionary)
     }
 
     func initAttributes(_ attributes: KeyChainAttributeStorage?) {

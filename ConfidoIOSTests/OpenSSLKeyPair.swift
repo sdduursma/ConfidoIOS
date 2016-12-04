@@ -51,7 +51,7 @@ extension KeychainPrivateKey {
 
 @objc open class OpenSSLRSAKeyPair: OpenSSLKeyPair {
     @objc public init(keyLength: Int, privateKeyData: Data, publicKeyDataWithX509Header: Data) {
-        let publicKeyData = publicKeyDataWithX509Header.dataByStrippingX509RSAHeader()
+        let publicKeyData = publicKeyDataWithX509Header.dataByStrippingX509Header()
         super.init(keyLength: keyLength, keyType: .rsa, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
     }
     public init(keyLength: Int, privateKeyData: Data, publicKeyData: Data) {

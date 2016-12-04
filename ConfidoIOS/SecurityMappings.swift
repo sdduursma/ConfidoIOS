@@ -165,15 +165,13 @@ public enum SecurityClass {
         return forwardMapping[securityClass]!
     }
 
-    static func securityClass(_ kSecClass: AnyObject) -> SecurityClass? {
-        if kSecClass is CFString {
-            let secClass = kSecClass as! CFString
-            if secClass == kSecClassGenericPassword  { return genericPassword }
-            if secClass == kSecClassInternetPassword { return internetPassword }
-            if secClass == kSecClassCertificate      { return certificate }
-            if secClass == kSecClassKey              { return key }
-            if secClass == kSecClassIdentity         { return identity }
-        }
+    static func securityClass(_ secClass: AnyObject) -> SecurityClass? {
+        guard let secClass = secClass as? NSString else { return nil }
+        if secClass == kSecClassGenericPassword  { return genericPassword }
+        if secClass == kSecClassInternetPassword { return internetPassword }
+        if secClass == kSecClassCertificate      { return certificate }
+        if secClass == kSecClassKey              { return key }
+        if secClass == kSecClassIdentity         { return identity }
         return nil
     }
 
