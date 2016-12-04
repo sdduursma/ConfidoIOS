@@ -13,38 +13,38 @@ public typealias ItemReference     = AnyObject
 public typealias KeyChainPropertiesData = [ String : AnyObject]
 public typealias KeychainItemData  = [ String : AnyObject]
 
-func += <KeyType, ValueType> (inout left: Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>) {
+func += <KeyType, ValueType> (left: inout Dictionary<KeyType, ValueType>, right: Dictionary<KeyType, ValueType>) {
     for (k, v) in right {
         left.updateValue(v, forKey: k)
     }
 }
-public enum KeychainError : ErrorType, CustomStringConvertible {
+public enum KeychainError : Error, CustomStringConvertible {
     case
-    NoSecIdentityReference,
-    NoSecCertificateReference,
-    NoSecKeyReference,
-    UnimplementedSecurityClass,
-    UnimplementedKeyType(reason: String?),
-    MismatchedResultType(returnedType: AnyClass, declaredType: Any),
-    InvalidCertificateData,
-    TrustError(trustResult: TrustResult, reason: String?),
-    DataExceedsBlockSize(size: Int),
-    InitialVectorMismatch(size: Int),
-    CryptoOperationFailed(status: Int32)
+    noSecIdentityReference,
+    noSecCertificateReference,
+    noSecKeyReference,
+    unimplementedSecurityClass,
+    unimplementedKeyType(reason: String?),
+    mismatchedResultType(returnedType: AnyClass, declaredType: Any),
+    invalidCertificateData,
+    trustError(trustResult: TrustResult, reason: String?),
+    dataExceedsBlockSize(size: Int),
+    initialVectorMismatch(size: Int),
+    cryptoOperationFailed(status: Int32)
 
     public var description : String {
         switch self {
-        case NoSecIdentityReference: return "NoSecIdentityReference"
-        case NoSecCertificateReference: return "NoSecCertificateReference"
-        case NoSecKeyReference: return "NoSecKeyReference"
-        case UnimplementedSecurityClass: return "UnimplementedSecurityClass"
-        case UnimplementedKeyType(let reason): return "UnimplementedKeyType \(reason)"
-        case MismatchedResultType(let returnedType, let declaredType) : return "MismatchedResultType (returned \(returnedType)) declared \(declaredType)"
-        case InvalidCertificateData: return "InvalidCertificateData"
-        case TrustError(_, let reason) : return "TrustError \(reason)"
-        case DataExceedsBlockSize(let size) : return "Data exceeds cipher block size of \(size)"
-        case InitialVectorMismatch(let size) : return "Size of Initial Vector does not match block size of cipher (\(size))"
-        case .CryptoOperationFailed(let status): return "Common Crypto Operation Failed (\(status))"
+        case .noSecIdentityReference: return "NoSecIdentityReference"
+        case .noSecCertificateReference: return "NoSecCertificateReference"
+        case .noSecKeyReference: return "NoSecKeyReference"
+        case .unimplementedSecurityClass: return "UnimplementedSecurityClass"
+        case .unimplementedKeyType(let reason): return "UnimplementedKeyType \(reason)"
+        case .mismatchedResultType(let returnedType, let declaredType) : return "MismatchedResultType (returned \(returnedType)) declared \(declaredType)"
+        case .invalidCertificateData: return "InvalidCertificateData"
+        case .trustError(_, let reason) : return "TrustError \(reason)"
+        case .dataExceedsBlockSize(let size) : return "Data exceeds cipher block size of \(size)"
+        case .initialVectorMismatch(let size) : return "Size of Initial Vector does not match block size of cipher (\(size))"
+        case .cryptoOperationFailed(let status): return "Common Crypto Operation Failed (\(status))"
         }
     }
 }
@@ -52,7 +52,7 @@ public enum KeychainError : ErrorType, CustomStringConvertible {
 /**
 Wraps the raw secXYZ APIs
 */
-public class SecurityWrapper {
+open class SecurityWrapper {
     /**
     A typical query consists of:
 
@@ -97,55 +97,55 @@ public class SecurityWrapper {
     reference), and a kSecReturnRef whose value is kCFBooleanTrue.
     */
 
-    public class func secItemCopyMatching<T>(query: KeyChainPropertiesData) throws -> T {
+    open class func secItemCopyMatching<T>(_ query: KeyChainPropertiesData) throws -> T {
         var result: AnyObject?
         let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(&result) { SecItemCopyMatching(query, UnsafeMutablePointer($0)) }
+            withUnsafeMutablePointer(to: &result) { SecItemCopyMatching(query, UnsafeMutablePointer($0)) }
             )
-        if status == .OK, let returnValue = result as? T {
+        if status == .ok, let returnValue = result as? T {
             return returnValue
-        } else if status == .OK, let returnValue = result {
-            throw KeychainError.MismatchedResultType(returnedType: returnValue.dynamicType, declaredType: T.self)
-        } else if status == .OK {
-            throw KeychainStatus.ItemNotFoundError
+        } else if status == .ok, let returnValue = result {
+            throw KeychainError.mismatchedResultType(returnedType: type(of: returnValue), declaredType: T.self)
+        } else if status == .ok {
+            throw KeychainStatus.itemNotFoundError
         }
         throw status
     }
 
-    public class func secItemAdd(attributes: KeychainItemData) throws -> AnyObject?  {
+    open class func secItemAdd(_ attributes: KeychainItemData) throws -> AnyObject?  {
         var persistedRef: AnyObject?
 
         let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(&persistedRef) { SecItemAdd(attributes, UnsafeMutablePointer($0)) }
+            withUnsafeMutablePointer(to: &persistedRef) { SecItemAdd(attributes, UnsafeMutablePointer($0)) }
         )
 
-        if status == .OK {
+        if status == .ok {
             return persistedRef
         }
         throw status
     }
 
-    public class func secItemDelete(query: KeyChainPropertiesData) throws  {
+    open class func secItemDelete(_ query: KeyChainPropertiesData) throws  {
         let dictionary = NSMutableDictionary()
-        dictionary.addEntriesFromDictionary(query)
+        dictionary.addEntries(from: query)
 
         let status = KeychainStatus.statusFromOSStatus(SecItemDelete(dictionary))
-        if status == .OK {
+        if status == .ok {
             return
         }
         throw status
     }
 
-    public class func secPKCS12Import(pkcs12Data: NSData, options: KeyChainPropertiesData) throws -> [SecItemAttributes] {
+    open class func secPKCS12Import(_ pkcs12Data: Data, options: KeyChainPropertiesData) throws -> [SecItemAttributes] {
         var result: NSArray?
         let status = KeychainStatus.statusFromOSStatus(
-            withUnsafeMutablePointer(&result) { SecPKCS12Import(pkcs12Data, options, UnsafeMutablePointer($0)) }
+            withUnsafeMutablePointer(to: &result) { SecPKCS12Import(pkcs12Data, options, UnsafeMutablePointer($0)) }
         )
-        if status == .OK, let items = result as? [SecItemAttributes]
+        if status == .ok, let items = result as? [SecItemAttributes]
         {
             return items
         }
-        else if status == .OK {
+        else if status == .ok {
             return []
         }
         throw status
@@ -153,15 +153,15 @@ public class SecurityWrapper {
 }
 
 public enum KeychainReturnLimit {
-    case One, All
+    case one, all
 }
 
-public class Keychain {
-    public class func keyChainItems(securityClass: SecurityClass) throws -> [KeychainItem] {
-        return try fetchItems(matchingDescriptor: KeychainDescriptor(securityClass: securityClass), returning: .All)
+open class Keychain {
+    open class func keyChainItems(_ securityClass: SecurityClass) throws -> [KeychainItem] {
+        return try fetchItems(matchingDescriptor: KeychainDescriptor(securityClass: securityClass), returning: .all)
     }
 
-    public class func fetchItems(matchingDescriptor attributes: KeychainMatchable, returning: KeychainReturnLimit, returnData: Bool = false, returnRef: Bool = true) throws -> [KeychainItem] {
+    open class func fetchItems(matchingDescriptor attributes: KeychainMatchable, returning: KeychainReturnLimit, returnData: Bool = false, returnRef: Bool = true) throws -> [KeychainItem] {
         var query : KeyChainPropertiesData = [ : ]
 
         query[String(kSecClass)]            = SecurityClass.kSecClass(attributes.securityClass)
@@ -170,7 +170,7 @@ public class Keychain {
         query[String(kSecReturnAttributes)] = kCFBooleanTrue
         query[String(kSecReturnData)]       = returnData ? kCFBooleanTrue : kCFBooleanFalse
         query[String(kSecReturnRef)]        = returnRef ? kCFBooleanTrue : kCFBooleanFalse
-        query[String(kSecMatchLimit)]       = returning == .One ? kSecMatchLimitOne : kSecMatchLimitAll
+        query[String(kSecMatchLimit)]       = returning == .one ? kSecMatchLimitOne : kSecMatchLimitAll
         query += attributes.keychainMatchPropertyValues()
 
         do {
@@ -184,22 +184,22 @@ public class Keychain {
             }
             return try keychainItemDicts.flatMap { try makeKeyChainItem(attributes.securityClass, keychainItemAttributes: $0) }
         }
-        catch KeychainStatus.ItemNotFoundError {
+        catch KeychainStatus.itemNotFoundError {
             return []
         }
     }
 
-    public class func fetchItem(matchingDescriptor attributes: KeychainMatchable, returnData: Bool = false, returnRef: Bool = true) throws -> KeychainItem {
-        let results = try self.fetchItems(matchingDescriptor: attributes, returning: .One, returnData: returnData, returnRef: returnRef)
+    open class func fetchItem(matchingDescriptor attributes: KeychainMatchable, returnData: Bool = false, returnRef: Bool = true) throws -> KeychainItem {
+        let results = try self.fetchItems(matchingDescriptor: attributes, returning: .one, returnData: returnData, returnRef: returnRef)
         if results.count == 1 { return results[0] }
-        throw KeychainStatus.ItemNotFoundError
+        throw KeychainStatus.itemNotFoundError
     }
 
-    public class func deleteKeyChainItem(itemDescriptor descriptor: KeychainMatchable) throws  {
+    open class func deleteKeyChainItem(itemDescriptor descriptor: KeychainMatchable) throws  {
         try SecurityWrapper.secItemDelete(descriptor.keychainMatchPropertyValues())
     }
 
-    class func makeKeyChainItem(securityClass: SecurityClass, keychainItemAttributes attributes: SecItemAttributes) throws -> KeychainItem? {
+    class func makeKeyChainItem(_ securityClass: SecurityClass, keychainItemAttributes attributes: SecItemAttributes) throws -> KeychainItem? {
         return try KeychainItem.itemFromAttributes(securityClass, SecItemAttributes: attributes)
     }
 
@@ -218,7 +218,7 @@ public class Keychain {
 //
 //    }
 
-    public class func keyData(key: KeychainPublicKey) throws -> NSData {
+    open class func keyData(_ key: KeychainPublicKey) throws -> Data {
         var query : KeyChainPropertiesData = [ : ]
 
         let descriptor = key.keychainMatchPropertyValues()
@@ -227,7 +227,7 @@ public class Keychain {
         query[String(kSecMatchLimit)]       = kSecMatchLimitOne
         query += descriptor.keychainMatchPropertyValues()
 
-        let keyData: NSData = try SecurityWrapper.secItemCopyMatching(query)
+        let keyData: Data = try SecurityWrapper.secItemCopyMatching(query)
         return keyData
 
     }
@@ -237,7 +237,7 @@ public class Keychain {
     :param: securityClass the class of item to delete
     :returns: (successCount:Int, failureCount:Int)
 */
-    public class func deleteAllItemsOfClass(securityClass: SecurityClass) -> (Int,Int) {
+    open class func deleteAllItemsOfClass(_ securityClass: SecurityClass) -> (Int,Int) {
         do {
             let items = try Keychain.keyChainItems(securityClass)
 

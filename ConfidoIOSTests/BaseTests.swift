@@ -10,25 +10,25 @@ import XCTest
 import ConfidoIOS
 
 
-enum TestError : ErrorType {
-    case UnknownResourceInBundle, ResourceAccessError
+enum TestError : Error {
+    case unknownResourceInBundle, resourceAccessError
 }
 
-public class BaseTests: XCTestCase {
-    func testsBundle() -> NSBundle {
-        return NSBundle(forClass: self.dynamicType)
+open class BaseTests: XCTestCase {
+    func testsBundle() -> Bundle {
+        return Bundle(for: type(of: self))
     }
-    func contentsOfBundleResource(resourceName: String, ofType resourceType: String) throws -> NSData {
-        if let path = testsBundle().pathForResource(resourceName, ofType: resourceType) {
-            if let data = NSData(contentsOfFile: path) {
+    func contentsOfBundleResource(_ resourceName: String, ofType resourceType: String) throws -> Data {
+        if let path = testsBundle().path(forResource: resourceName, ofType: resourceType) {
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: path)) {
                 return data
             }
-            throw TestError.ResourceAccessError
+            throw TestError.resourceAccessError
         }
-        throw TestError.UnknownResourceInBundle
+        throw TestError.unknownResourceInBundle
     }
 
-    func keychainItems(type: SecurityClass) -> [KeychainItem] {
+    func keychainItems(_ type: SecurityClass) -> [KeychainItem] {
         do {
             return try Keychain.keyChainItems(type)
         } catch {
@@ -36,7 +36,7 @@ public class BaseTests: XCTestCase {
         }
     }
 
-    func clearKeychainItems(type: SecurityClass) {
+    func clearKeychainItems(_ type: SecurityClass) {
         do {
             let items = try Keychain.keyChainItems(type)
 

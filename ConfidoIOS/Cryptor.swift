@@ -9,24 +9,23 @@ import CommonCrypto
 
 
 
-public class Cryptor {
-    public class func encrypt<T>(inputBuffer: Buffer<T>, key: CryptoKey,
+open class Cryptor {
+    open class func encrypt<T>(_ inputBuffer: Buffer<T>, key: CryptoKey,
         mode: CipherMode, padding: Padding, initialVector: Buffer<Byte>?) throws -> Buffer<Byte> {
             return try self.operation(UInt32(kCCEncrypt), inputBuffer: inputBuffer,
                 key: key, mode: mode, padding: padding, initialVector: initialVector)
     }
 
-    public class func decrypt<T>(inputBuffer: Buffer<T>, key: CryptoKey,
+    open class func decrypt<T>(_ inputBuffer: Buffer<T>, key: CryptoKey,
         mode: CipherMode, padding: Padding, initialVector: Buffer<Byte>?) throws -> Buffer<Byte> {
             return try self.operation(UInt32(kCCDecrypt), inputBuffer: inputBuffer,
                 key: key, mode: mode, padding: padding,initialVector: initialVector)
     }
 
-    class func operation<T>(operation: CCOperation, inputBuffer: Buffer<T>, key: CryptoKey,
+    class func operation<T>(_ operation: CCOperation, inputBuffer: Buffer<T>, key: CryptoKey,
         mode: CipherMode, padding: Padding, initialVector: Buffer<Byte>?) throws -> Buffer<Byte> {
-            if let initialVector = initialVector
-            where initialVector.byteCount != key.keyType.blockSize {
-                throw KeychainError.InitialVectorMismatch(size: key.keyType.blockSize)
+            if let initialVector = initialVector, initialVector.byteCount != key.keyType.blockSize {
+                throw KeychainError.initialVectorMismatch(size: key.keyType.blockSize)
             }
             let algoritm:  CCAlgorithm = UInt32(key.keyType.coreCryptoAlgorithm)
             let options:   CCOptions   = UInt32(padding.rawValue) + UInt32(mode.rawValue)
@@ -47,6 +46,6 @@ public class Cryptor {
                 outputBuffer.size = numBytesEncrypted
                 return outputBuffer
             }
-            throw KeychainError.CryptoOperationFailed(status: cryptStatus)
+            throw KeychainError.cryptoOperationFailed(status: cryptStatus)
     }
 }

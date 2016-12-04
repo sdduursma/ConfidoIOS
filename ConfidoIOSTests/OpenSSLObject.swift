@@ -9,5 +9,5 @@
 import Foundation
 
 
-@objc public class OpenSSLObject : NSObject {
+@objc open class OpenSSLObject : NSObject {
 }

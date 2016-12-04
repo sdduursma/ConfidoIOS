@@ -12,7 +12,7 @@ import Foundation
 
 extension KeychainPrivateKey {
     //This extension makes it possible to extract the private key data. This is insecure, but only used for testing. This will not work on a device.
-    public func keyData() throws ->  NSData  {
+    public func keyData() throws ->  Data  {
         // It is possible that a key is not permanent, then there isn't any data to return
         var query : KeyChainPropertiesData = [ : ]
 
@@ -22,43 +22,43 @@ extension KeychainPrivateKey {
         query[String(kSecMatchLimit)]       = kSecMatchLimitOne
         query += descriptor.attributes
 
-        let keyData: NSData = try SecurityWrapper.secItemCopyMatching(query)
+        let keyData: Data = try SecurityWrapper.secItemCopyMatching(query)
         return keyData
     }
 }
 
-@objc public class OpenSSLKeyPair : OpenSSLObject {
-    @objc public private(set) var privateKeyData: NSData
-    @objc public private(set) var publicKeyData: NSData
-    public private(set) var keyLength: Int
-    public private(set) var keyType: KeyType
-    public init(keyLength: Int, keyType: KeyType, privateKeyData: NSData, publicKeyData: NSData) {
+@objc open class OpenSSLKeyPair : OpenSSLObject {
+    @objc open fileprivate(set) var privateKeyData: Data
+    @objc open fileprivate(set) var publicKeyData: Data
+    open fileprivate(set) var keyLength: Int
+    open fileprivate(set) var keyType: KeyType
+    public init(keyLength: Int, keyType: KeyType, privateKeyData: Data, publicKeyData: Data) {
         self.privateKeyData = privateKeyData
         self.publicKeyData = publicKeyData
         self.keyType = keyType
         self.keyLength = keyLength
         super.init()
     }
-    @objc public var publicKeyDataWithX509Header: NSData {
+    @objc open var publicKeyDataWithX509Header: Data {
         get {
             return publicKeyData.dataByPrependingX509RSAHeader()
         }
     }
-    func publicKeyDataWithX590Header() -> NSData? {
+    func publicKeyDataWithX590Header() -> Data? {
         return nil;
     }
 }
 
-@objc public class OpenSSLRSAKeyPair: OpenSSLKeyPair {
-    @objc public init(keyLength: Int, privateKeyData: NSData, publicKeyDataWithX509Header: NSData) {
+@objc open class OpenSSLRSAKeyPair: OpenSSLKeyPair {
+    @objc public init(keyLength: Int, privateKeyData: Data, publicKeyDataWithX509Header: Data) {
         let publicKeyData = publicKeyDataWithX509Header.dataByStrippingX509RSAHeader()
-        super.init(keyLength: keyLength, keyType: .RSA, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
+        super.init(keyLength: keyLength, keyType: .rsa, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
     }
-    public init(keyLength: Int, privateKeyData: NSData, publicKeyData: NSData) {
-        super.init(keyLength: keyLength, keyType: .RSA, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
+    public init(keyLength: Int, privateKeyData: Data, publicKeyData: Data) {
+        super.init(keyLength: keyLength, keyType: .rsa, privateKeyData: privateKeyData, publicKeyData: publicKeyData)
     }
 
-    override func publicKeyDataWithX590Header() -> NSData? {
+    override func publicKeyDataWithX590Header() -> Data? {
         return publicKeyData.dataByPrependingX509RSAHeader()
     }
 }

@@ -12,18 +12,18 @@ import ConfidoIOS
 class KeyPairTests: BaseTests {
 
     func testGenerateNamedRSAKeyPair() {
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
-        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
+        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.whenUnlockedThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: .RSA, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
+            keyType: .rsa, keySize: 1024, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
         var keyPair : KeychainKeyPair!
         keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
-        items = try! Keychain.keyChainItems(.Key)
+        items = try! Keychain.keyChainItems(.key)
         XCTAssertEqual(items.count,2)
 
 
@@ -32,8 +32,8 @@ class KeyPairTests: BaseTests {
         keyItem = try! Keychain.fetchItem(matchingDescriptor: keyDescriptor)
         XCTAssertNotNil(keyItem)
 
-        XCTAssertEqual(keyPair.privateKey.keyType, KeyType.RSA)
-        XCTAssertEqual(keyPair.publicKey.keyType, KeyType.RSA)
+        XCTAssertEqual(keyPair.privateKey.keyType, KeyType.rsa)
+        XCTAssertEqual(keyPair.publicKey.keyType, KeyType.rsa)
 
 
         XCTAssertEqual(keyPair.privateKey.keySize, 1024)
@@ -50,12 +50,12 @@ class KeyPairTests: BaseTests {
         XCTAssertEqual(keyPair.publicKey.keyAppLabelString!, "CCC")
 
         XCTAssertEqual(keyPair.publicKey.itemAccessGroup, "")
-        XCTAssertEqual(keyPair.publicKey.itemAccessible, Accessible.WhenUnlockedThisDeviceOnly)
+        XCTAssertEqual(keyPair.publicKey.itemAccessible, Accessible.whenUnlockedThisDeviceOnly)
 
         let publicKeyData = keyPair.publicKey.keyData
         XCTAssertNotNil(publicKeyData)
 
-        XCTAssertEqual(publicKeyData!.length,140)
+        XCTAssertEqual(publicKeyData!.count,140)
 
         let signature = try! keyPair.privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
         print(signature)
@@ -74,18 +74,18 @@ class KeyPairTests: BaseTests {
     }
 
     func testGenerateNamedECKeyPairSignVerify() {
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
-        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
+        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.whenUnlockedThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
+            keyType: KeyType.elypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
         var keyPair : KeychainKeyPair!
         keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
-        items = try! Keychain.keyChainItems(.Key)
+        items = try! Keychain.keyChainItems(.key)
         XCTAssertEqual(items.count,2)
 
 
@@ -94,8 +94,8 @@ class KeyPairTests: BaseTests {
         keyItem = try! Keychain.fetchItem(matchingDescriptor: keyDescriptor)
         XCTAssertNotNil(keyItem)
 
-        XCTAssertEqual(keyPair.privateKey.keyType, KeyType.ElypticCurve)
-        XCTAssertEqual(keyPair.publicKey.keyType, KeyType.ElypticCurve)
+        XCTAssertEqual(keyPair.privateKey.keyType, KeyType.elypticCurve)
+        XCTAssertEqual(keyPair.publicKey.keyType, KeyType.elypticCurve)
 
 
         XCTAssertEqual(keyPair.privateKey.keySize, 256)
@@ -105,7 +105,7 @@ class KeyPairTests: BaseTests {
         let publicKeyData = keyPair.publicKey.keyData
         XCTAssertNotNil(publicKeyData)
 
-        XCTAssertEqual(publicKeyData!.length,65)
+        XCTAssertEqual(publicKeyData!.count,65)
 
         let signature = try! keyPair.privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
         print("Signature: \(signature.hexString)")
@@ -120,18 +120,18 @@ class KeyPairTests: BaseTests {
 
     func testGenerateNamedECKeyPairEncryptDecrypt() {
         // This test fails because it seems that Apple has not implemented encrypting/decrypting (only signing) for EC keys.
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
-        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.WhenUnlockedThisDeviceOnly,
+        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: Accessible.whenUnlockedThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: KeyType.ElypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
+            keyType: KeyType.elypticCurve, keySize: 256, keyLabel: "AAA", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
         var keyPair : KeychainKeyPair!
         keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
-        items = try! Keychain.keyChainItems(.Key)
+        items = try! Keychain.keyChainItems(.key)
         XCTAssertEqual(items.count,2)
 
 
@@ -140,14 +140,14 @@ class KeyPairTests: BaseTests {
         keyItem = try! Keychain.fetchItem(matchingDescriptor: keyDescriptor)
         XCTAssertNotNil(keyItem)
 
-        XCTAssertEqual(keyPair.privateKey.keyType, KeyType.ElypticCurve)
-        XCTAssertEqual(keyPair.publicKey.keyType, KeyType.ElypticCurve)
+        XCTAssertEqual(keyPair.privateKey.keyType, KeyType.elypticCurve)
+        XCTAssertEqual(keyPair.publicKey.keyType, KeyType.elypticCurve)
 
 
         let publicKeyData = keyPair.publicKey.keyData
         XCTAssertNotNil(publicKeyData)
 
-        XCTAssertEqual(publicKeyData!.length,65)
+        XCTAssertEqual(publicKeyData!.count,65)
 
 
         let cipherTextUnderPublicKey = try! keyPair.publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
@@ -160,30 +160,30 @@ class KeyPairTests: BaseTests {
 
 
     func testGenerateKeyPairDifferentLabels() {
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
-        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: .WhenUnlockedThisDeviceOnly,
+        let keypairDescriptor = PermanentKeychainKeyPairDescriptor(accessible: .whenUnlockedThisDeviceOnly,
             keyLabel: "KPriv", privateKeyAppTag: nil, privateKeyAccessControl: nil,
             publicKeyAppLabel: "KPub", publicKeyAppTag: nil, publicKeyAccessControl: nil,
-            keyType: .RSA, keySize: 1024)
+            keyType: .rsa, keySize: 1024)
 
         var keyPair : KeychainKeyPair!
         keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
-        items = try! Keychain.keyChainItems(.Key)
+        items = try! Keychain.keyChainItems(.key)
         XCTAssertEqual(items.count,2)
 
 
-        let privKeyDescriptor = KeychainKeyDescriptor(keyClass: KeyClass.PrivateKey, keyLabel: "KPriv")
+        let privKeyDescriptor = KeychainKeyDescriptor(keyClass: KeyClass.privateKey, keyLabel: "KPriv")
         var privKeyItem: KeychainItem?
         privKeyItem = try! Keychain.fetchItem(matchingDescriptor: privKeyDescriptor)
         XCTAssertNotNil(privKeyItem)
 
         XCTAssert(privKeyItem is KeychainPrivateKey)
 
-        let pubKeyDescriptor = KeychainKeyDescriptor(keyClass: KeyClass.PublicKey, keyLabel: "KPriv", keyAppLabel: "KPub")
+        let pubKeyDescriptor = KeychainKeyDescriptor(keyClass: KeyClass.publicKey, keyLabel: "KPriv", keyAppLabel: "KPub")
         var pubKeyItem: KeychainItem?
         pubKeyItem = try! Keychain.fetchItem(matchingDescriptor: pubKeyDescriptor)
         XCTAssertNotNil(pubKeyItem)
@@ -195,7 +195,7 @@ class KeyPairTests: BaseTests {
         let publicKeyData = publicKey.keyData
         XCTAssertNotNil(publicKeyData)
 
-        XCTAssertEqual(publicKeyData!.length,140)
+        XCTAssertEqual(publicKeyData!.count,140)
 
         let signature = try! privateKey.sign(Buffer(bytes:[1,2,3,4,5,6,7,8]))
         print(signature)
@@ -214,19 +214,19 @@ class KeyPairTests: BaseTests {
     }
 
     func testGenerateNamedKeyPairNoKeyLabel() {
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
         let keypairDescriptor = PermanentKeychainKeyPairDescriptor(
-            accessible: Accessible.AlwaysThisDeviceOnly,
+            accessible: Accessible.alwaysThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: .RSA, keySize: 1024, keyLabel: "AAA")
+            keyType: .rsa, keySize: 1024, keyLabel: "AAA")
         var keyPair : KeychainKeyPair?
         keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
-        items = try! Keychain.keyChainItems(.Key)
+        items = try! Keychain.keyChainItems(.key)
         XCTAssertEqual(items.count,2)
 
         let keyDescriptor = KeychainKeyDescriptor(keyLabel: "AAA")
@@ -234,8 +234,8 @@ class KeyPairTests: BaseTests {
         keyItem = try! Keychain.fetchItem(matchingDescriptor: keyDescriptor)
         XCTAssertNotNil(keyItem)
 
-        XCTAssertEqual(keyPair!.privateKey.keyType, KeyType.RSA)
-        XCTAssertEqual(keyPair!.publicKey.keyType, KeyType.RSA)
+        XCTAssertEqual(keyPair!.privateKey.keyType, KeyType.rsa)
+        XCTAssertEqual(keyPair!.publicKey.keyType, KeyType.rsa)
 
 
         XCTAssertEqual(keyPair!.privateKey.keySize, 1024)
@@ -254,20 +254,20 @@ class KeyPairTests: BaseTests {
         XCTAssertNotNil(publicKeyData)
 
 
-        XCTAssertEqual(publicKeyData!.length,140)
+        XCTAssertEqual(publicKeyData!.count,140)
     }
 
 
     func testGenerateUnnamedKeyPair() {
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
-        let keypairDescriptor = TemporaryKeychainKeyPairDescriptor(keyType: .RSA, keySize: 1024)
+        let keypairDescriptor = TemporaryKeychainKeyPairDescriptor(keyType: .rsa, keySize: 1024)
         let keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
-        items =  try! Keychain.keyChainItems(.Key)
+        items =  try! Keychain.keyChainItems(.key)
         // Temporary keys are not stored in the keychain
         XCTAssertEqual(items.count,0)
 
@@ -282,19 +282,19 @@ class KeyPairTests: BaseTests {
 
 
     func testDuplicateKeyPairMatching() {
-        clearKeychainItems(.Key)
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
         var keypairDescriptor = PermanentKeychainKeyPairDescriptor(
-            accessible: Accessible.AlwaysThisDeviceOnly,
+            accessible: Accessible.alwaysThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: .RSA, keySize: 1024, keyLabel: "A1", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
+            keyType: .rsa, keySize: 1024, keyLabel: "A1", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
         var keyPair : KeychainKeyPair? = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
 
-        items = try! Keychain.keyChainItems(.Key)
+        items = try! Keychain.keyChainItems(.key)
         XCTAssertEqual(items.count,2)
 
         // Test that labels make the keypair unique
@@ -302,7 +302,7 @@ class KeyPairTests: BaseTests {
             do {
                 keyPair = try KeychainKeyPair.generateKeyPair(keypairDescriptor)
                 XCTFail("Expected DuplicateItemError")
-            } catch KeychainStatus.DuplicateItemError {
+            } catch KeychainStatus.duplicateItemError {
                 // keySize, keyLabel, keyAppTag, keyAppLabel all the same --> DuplicateItemError
             }
         } catch let error {
@@ -311,23 +311,23 @@ class KeyPairTests: BaseTests {
 
         // different keySize
         keypairDescriptor = PermanentKeychainKeyPairDescriptor(
-            accessible: Accessible.AlwaysThisDeviceOnly,
+            accessible: Accessible.alwaysThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: .RSA, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
+            keyType: .rsa, keySize: 2048, keyLabel: "A1", keyAppTag: "BBB", publicKeyAppLabel: "CCC")
         keyPair = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
     }
 
 
     func testExportCSR (){
-        clearKeychainItems(.Key)
-        let items = try! Keychain.keyChainItems(SecurityClass.Key)
+        clearKeychainItems(.key)
+        let items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,0)
 
         let keypairDescriptor = PermanentKeychainKeyPairDescriptor(
-            accessible: Accessible.AlwaysThisDeviceOnly,
+            accessible: Accessible.alwaysThisDeviceOnly,
             privateKeyAccessControl: nil, publicKeyAccessControl: nil,
-            keyType: .RSA, keySize: 1024, keyLabel: "KeyPair for CSR")
+            keyType: .rsa, keySize: 1024, keyLabel: "KeyPair for CSR")
         let keyPair : KeychainKeyPair! = try! KeychainKeyPair.generateKeyPair(keypairDescriptor)
         XCTAssertNotNil(keyPair)
 
@@ -335,9 +335,9 @@ class KeyPairTests: BaseTests {
             "UID" : "Test Device",
             "CN" : "Expend Device ABCD" ]
 
-        let csr = try! OpenSSL.generateCSRWithPrivateKeyData(keyPair.privateKey.keyData(), csrData: attributes)
+        let csr = try! OpenSSL.generateCSR(withPrivateKeyData: keyPair.privateKey.keyData(), csrData: attributes)
         XCTAssertNotNil(csr)
-        let csrString : NSString! = NSString(data: csr, encoding: NSUTF8StringEncoding)
+        let csrString : NSString! = NSString(data: csr, encoding: String.Encoding.utf8)
         XCTAssert(csrString.hasPrefix("-----BEGIN CERTIFICATE REQUEST-----\n"))
         XCTAssert(csrString.hasSuffix("-----END CERTIFICATE REQUEST-----\n"))
         print("CSR:")
@@ -345,7 +345,7 @@ class KeyPairTests: BaseTests {
     }
 
     func testPublicKeyFromDERFile() {
-        clearKeychainItems(.Key)
+        clearKeychainItems(.key)
         let publicKeyData = try! contentsOfBundleResource("public-key", ofType: "der")
         let publicKey = try! KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData, keyLabel: "build-key")
         let cipherTextUnderPublicKey = try! publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
@@ -356,13 +356,13 @@ class KeyPairTests: BaseTests {
     func testTwoPublicKeysDifferentAppTagsSameLabel() {
         // In the keychain, keyAppTag is unique, so no two items can share it.
         // itemLabel is not unique, so two items can have the same label
-        var items = try! Keychain.keyChainItems(SecurityClass.Key)
+        var items = try! Keychain.keyChainItems(SecurityClass.key)
 
-        clearKeychainItems(.Key)
+        clearKeychainItems(.key)
         let publicKeyData = try! contentsOfBundleResource("public-key", ofType: "der")
         let publicKey = try! KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData, keyLabel: "build-key", keyAppTag: "build")
 
-        items = try! Keychain.keyChainItems(SecurityClass.Key)
+        items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,1)
 
         let cipherTextUnderPublicKey = try! publicKey.encrypt(Buffer(bytes:[1,2,3,4]), padding: SecPadding.OAEP)
@@ -372,7 +372,7 @@ class KeyPairTests: BaseTests {
         
         let publicKey2 = try! KeychainPublicKey.importRSAPublicKey(derEncodedData: publicKeyData2, keyLabel: "build-key", keyAppTag: "build-1")
         XCTAssertNotNil(publicKey2)
-        items = try! Keychain.keyChainItems(SecurityClass.Key)
+        items = try! Keychain.keyChainItems(SecurityClass.key)
         XCTAssertEqual(items.count,2)
         let matchingDescriptor = PublicKeyMatchingDescriptor(keyLabel: "build-key", keyAppTag: nil)
         var keys = KeychainPublicKey.existingKeys(matchingDescriptor)

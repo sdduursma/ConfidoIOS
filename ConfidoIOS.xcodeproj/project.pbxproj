@@ -361,9 +361,11 @@
 				TargetAttributes = {
 					AB710EA61BA060FB003AE8B0 = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0810;
 					};
 					AB710EB11BA060FB003AE8B0 = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0810;
 					};
 				};
 			};
@@ -616,6 +618,7 @@
 				PRODUCT_NAME = ConfidoIOS;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/CommonCrypto";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -630,6 +633,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ConfidoIOSTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "ConfidoIOSTests/ConfidoIOSTests-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -699,6 +703,7 @@
 				PRODUCT_NAME = ConfidoIOS;
 				SKIP_INSTALL = YES;
 				SWIFT_INCLUDE_PATHS = "${SRCROOT}/CommonCrypto";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -713,6 +718,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.curoo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = ConfidoIOSTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "ConfidoIOSTests/ConfidoIOSTests-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

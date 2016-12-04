@@ -10,19 +10,19 @@ import Security
 import CommonCrypto
 
 
-public enum CryptoError : ErrorType, CustomStringConvertible {
-    case NoKeyFound
-    case KVCMismatch(expected: [Byte], got: [Byte])
-    case KeySizeMismatch(expected: Int, got: Int)
+public enum CryptoError : Error, CustomStringConvertible {
+    case noKeyFound
+    case kvcMismatch(expected: [Byte], got: [Byte])
+    case keySizeMismatch(expected: Int, got: Int)
 
 
     public var description: String {
         switch self {
-        case .NoKeyFound:
+        case .noKeyFound:
             return "NoKeyFound"
-        case .KVCMismatch(let expected, let got):
+        case .kvcMismatch(let expected, let got):
             return "Key KVC mismatch expected [\(expected)] got [\(got)]"
-        case .KeySizeMismatch(let expected, let got):
+        case .keySizeMismatch(let expected, let got):
             return "Key length mismatch expected [\(expected)]  bytes got [\(got)] bytes"
         }
     }
@@ -30,8 +30,8 @@ public enum CryptoError : ErrorType, CustomStringConvertible {
 
 
 public enum DESKeyLength : UInt8 {
-    case DES1 = 8
-    case DES3 = 24
+    case des1 = 8
+    case des3 = 24
     var byteCount: UInt8 {
         get {
             return self.rawValue / 8 * 8
@@ -45,9 +45,9 @@ public enum DESKeyLength : UInt8 {
 
 }
 public enum AESKeyLength : UInt8 {
-    case AES128 = 16
-    case AES192 = 24
-    case AES256 = 32
+    case aes128 = 16
+    case aes192 = 24
+    case aes256 = 32
     var byteCount: UInt8 {
         get {
             return self.rawValue
@@ -66,21 +66,21 @@ public let kCryptorDESKeyType : Byte = 2
 public let kKeyCheckValueByteCount : Byte = 3
 
 public enum CryptoKeyType : CustomStringConvertible {
-    case AES(keyLength: AESKeyLength)
-    case DES(keyLength: DESKeyLength)
+    case aes(keyLength: AESKeyLength)
+    case des(keyLength: DESKeyLength)
     public init?(keyTypeCode: Byte, keyLength: Byte) {
         switch keyTypeCode {
         case kCryptorAESKeyType:
             switch keyLength {
-            case 16: self = AES(keyLength: .AES128)
-            case 24: self = AES(keyLength: .AES192)
-            case 32: self = AES(keyLength: .AES256)
+            case 16: self = .aes(keyLength: .aes128)
+            case 24: self = .aes(keyLength: .aes192)
+            case 32: self = .aes(keyLength: .aes256)
             default: return nil
             }
         case kCryptorDESKeyType:
             switch keyLength {
-            case 7:  self = DES(keyLength: .DES1)
-            case 21: self = DES(keyLength: .DES3)
+            case 7:  self = .des(keyLength: .des1)
+            case 21: self = .des(keyLength: .des3)
             default: return nil
             }
         default: return nil
@@ -89,78 +89,78 @@ public enum CryptoKeyType : CustomStringConvertible {
 
     public var rawValue: [Byte] {
         switch self {
-        case AES(let keyLength): return [kCryptorAESKeyType,keyLength.rawValue]
-        case DES(let keyLength): return [kCryptorDESKeyType,keyLength.rawValue]
+        case .aes(let keyLength): return [kCryptorAESKeyType,keyLength.rawValue]
+        case .des(let keyLength): return [kCryptorDESKeyType,keyLength.rawValue]
         }
     }
 
     public var description: String {
         switch self {
-        case AES(let keyLength): return "AES-\(keyLength)"
-        case DES(let keyLength) where keyLength == DESKeyLength.DES1:   return "DES"
-        case DES(let keyLength) where keyLength == DESKeyLength.DES3:   return "3DES"
+        case .aes(let keyLength): return "AES-\(keyLength)"
+        case .des(let keyLength) where keyLength == DESKeyLength.des1:   return "DES"
+        case .des(let keyLength) where keyLength == DESKeyLength.des3:   return "3DES"
         default: return "-"
         }
     }
     public var keySize: Int {
         switch self {
-        case AES(let keyLength): return Int(keyLength.byteCount)
-        case DES(let keyLength): return Int(keyLength.byteCount)
+        case .aes(let keyLength): return Int(keyLength.byteCount)
+        case .des(let keyLength): return Int(keyLength.byteCount)
         }
     }
     public var coreCryptoAlgorithm: Int {
         switch self {
-        case AES( _): return kCCAlgorithmAES
-        case DES(let keyLength) where keyLength == DESKeyLength.DES1: return kCCAlgorithmDES
-        case DES(let keyLength) where keyLength == DESKeyLength.DES3: return kCCAlgorithm3DES
+        case .aes( _): return kCCAlgorithmAES
+        case .des(let keyLength) where keyLength == DESKeyLength.des1: return kCCAlgorithmDES
+        case .des(let keyLength) where keyLength == DESKeyLength.des3: return kCCAlgorithm3DES
         default: assertionFailure("Logic error - this code should not be called"); return 0
         }
     }
     public var blockSize: Int {
         switch self {
-        case AES( _): return kCCBlockSizeAES128
-        case DES(let keyLength) where keyLength == DESKeyLength.DES1: return kCCBlockSizeDES
-        case DES(let keyLength) where keyLength == DESKeyLength.DES3: return kCCBlockSize3DES
+        case .aes( _): return kCCBlockSizeAES128
+        case .des(let keyLength) where keyLength == DESKeyLength.des1: return kCCBlockSizeDES
+        case .des(let keyLength) where keyLength == DESKeyLength.des3: return kCCBlockSize3DES
         default: assertionFailure("Logic error - this code should not be called"); return 0
         }
     }
 }
 
 public enum CipherMode : RawRepresentable {
-    case ECB, CBC
+    case ecb, cbc
     public init?(rawValue: Int) {
         switch rawValue {
-        case kCCOptionECBMode:  self = ECB
-        case 0:                 self = CBC
+        case kCCOptionECBMode:  self = .ecb
+        case 0:                 self = .cbc
         default: return nil
         }
     }
     public var rawValue: Int {
         switch self {
-        case ECB:  return kCCOptionECBMode
-        case CBC:  return 0
+        case .ecb:  return kCCOptionECBMode
+        case .cbc:  return 0
         }
     }
 }
 
 public enum Padding : RawRepresentable {
-    case None, PKCS7
+    case none, pkcs7
     public init?(rawValue: Int) {
         switch rawValue {
-        case 0: self = None
-        case kCCOptionPKCS7Padding: self = PKCS7
+        case 0: self = .none
+        case kCCOptionPKCS7Padding: self = .pkcs7
         default: return nil
         }
     }
     public var rawValue: Int {
         switch self {
-        case None:  return 0
-        case PKCS7: return kCCOptionPKCS7Padding
+        case .none:  return 0
+        case .pkcs7: return kCCOptionPKCS7Padding
         }
     }
 }
 
-public func generateRandomBytes(size: Int) -> Buffer<Byte> {
+public func generateRandomBytes(_ size: Int) -> Buffer<Byte> {
     do {
         let keyBuffer = Buffer<Byte>(size: size)
         try secEnsureOK(SecRandomCopyBytes(kSecRandomDefault, size, keyBuffer.mutablePointer))
@@ -173,12 +173,12 @@ public func generateRandomBytes(size: Int) -> Buffer<Byte> {
 }
 
 
-public class KeyStorageWrapper {
+open class KeyStorageWrapper {
     /**
     Returns a raw, storable representation of the key material
     The buffer stores (1) The type of Key, (2) A Key Check Value (KCV) (3) the actual cryptographic key
     */
-    public class func wrap(key: CryptoKey) -> Buffer<Byte> {
+    open class func wrap(_ key: CryptoKey) -> Buffer<Byte> {
         var buffer = Buffer<Byte>()
         buffer.append(key.keyType.rawValue)             // Type and length of Key (Two bytes)
         buffer.append(key.keyMaterial.values)
@@ -187,38 +187,38 @@ public class KeyStorageWrapper {
         return buffer
     }
 
-    public class func unwrap(buffer: Buffer<Byte>) throws -> CryptoKey {
+    open class func unwrap(_ buffer: Buffer<Byte>) throws -> CryptoKey {
         if let keyType = CryptoKeyType.init(keyTypeCode: buffer.values[0], keyLength: buffer.values[1]) {
             var startIndex  = buffer.values.startIndex
-            startIndex = startIndex.advancedBy(2) // Skip keyTypeCode, keyLength
-            var endIndex = startIndex.advancedBy(Int(buffer.values[1]))
+            startIndex = startIndex.advanced(by: 2) // Skip keyTypeCode, keyLength
+            var endIndex = startIndex.advanced(by: Int(buffer.values[1]))
             let keyData = buffer.values[startIndex..<endIndex]
             let kvcLength = buffer.values[endIndex]
             if kvcLength != kKeyCheckValueByteCount {
                 //TODO: Raise Error
             }
-            startIndex = endIndex.advancedBy(1)
-            endIndex = startIndex.advancedBy(Int(kvcLength))
+            startIndex = endIndex.advanced(by: 1)
+            endIndex = startIndex.advanced(by: Int(kvcLength))
 
             let kvcData = buffer.values[startIndex..<endIndex]
             let key = try CryptoKey(keyType: keyType, keyData: Array(keyData))
             if key.keyCheckValue == Array(kvcData) {
                 return key
             }
-            throw CryptoError.KVCMismatch(expected: Array(kvcData), got: key.keyCheckValue)
+            throw CryptoError.kvcMismatch(expected: Array(kvcData), got: key.keyCheckValue)
         }
-        throw CryptoError.NoKeyFound
+        throw CryptoError.noKeyFound
     }
 }
 
 public let kNumberOfRounds : UInt32 = 20000
 
 
-public func PBKDFDeriveKey(passphrase: String, salt: String, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
+public func PBKDFDeriveKey(_ passphrase: String, salt: String, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
     do {
-        let utf8data = passphrase.dataUsingEncoding(NSUTF8StringEncoding)
+        let utf8data = passphrase.data(using: String.Encoding.utf8)
         let buffer = try Buffer<Byte>(data: utf8data!)
-        let utf8salt = salt.dataUsingEncoding(NSUTF8StringEncoding)
+        let utf8salt = salt.data(using: String.Encoding.utf8)
         let saltBuffer = try Buffer<Byte>(data: utf8salt!)
         return PBKDFDeriveKey(buffer, salt: saltBuffer, rounds: rounds, size: size, algorithm: algorithm)
     } catch {
@@ -226,7 +226,7 @@ public func PBKDFDeriveKey(passphrase: String, salt: String, rounds: UInt32, siz
     }
 
 }
-public func PBKDFDeriveKey(buffer: Buffer<Byte>, salt: Buffer<Byte>, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
+public func PBKDFDeriveKey(_ buffer: Buffer<Byte>, salt: Buffer<Byte>, rounds: UInt32, size: Int, algorithm : UInt32 = UInt32(kCCPRFHmacAlgSHA1)) -> Buffer<Byte>! {
     do {
         let bufferPointer = UnsafePointer<Int8>(buffer.voidPointer)
         let derivedKeyBuffer = Buffer<Byte>(size: size)
@@ -253,7 +253,7 @@ public struct CryptoKey {
     public init(keyType: CryptoKeyType, hexKeyData: String) throws {
         self.keyType = keyType
         if hexKeyData.characters.count != keyType.keySize * 2 {
-            throw KeychainError.DataExceedsBlockSize(size: keyType.keySize * 2)
+            throw KeychainError.dataExceedsBlockSize(size: keyType.keySize * 2)
         }
         try self.keyMaterial = Buffer<Byte>(hexData: hexKeyData)
         self.keyCheckValue = makeCheckValue()
@@ -262,7 +262,7 @@ public struct CryptoKey {
     public init(keyType: CryptoKeyType, keyData: [Byte]) throws {
         self.keyType = keyType
         if keyData.count != keyType.keySize {
-            throw CryptoError.KeySizeMismatch(expected: keyType.keySize, got: keyData.count)
+            throw CryptoError.keySizeMismatch(expected: keyType.keySize, got: keyData.count)
         }
 
         self.keyMaterial = Buffer<Byte>(bytes: keyData)
@@ -273,7 +273,7 @@ public struct CryptoKey {
     //See http://robnapier.net/aes-commoncrypto
     public init(deriveKeyFromPassphrase passphrase: String, salt: String, n rounds: UInt32 = kNumberOfRounds) {
         self.keyMaterial = PBKDFDeriveKey(passphrase, salt: salt, rounds: rounds, size: 16)
-        self.keyType = CryptoKeyType.AES(keyLength: .AES128)
+        self.keyType = CryptoKeyType.aes(keyLength: .aes128)
         self.keyCheckValue = makeCheckValue()
     }
 
@@ -284,7 +284,7 @@ public struct CryptoKey {
     func makeCheckValue() -> [Byte] {
         do {
             let zeroBuffer = Buffer<Byte>(size: self.keyType.blockSize)
-            let cryptoText = try Cryptor.encrypt(zeroBuffer, key: self, mode: .CBC, padding: .None, initialVector: nil)
+            let cryptoText = try Cryptor.encrypt(zeroBuffer, key: self, mode: .cbc, padding: .none, initialVector: nil)
             return Array(cryptoText.values[0..<Int(kKeyCheckValueByteCount)])
         } catch {
             fatalError("Unable to generate key check value. Crypto is not working")
@@ -295,8 +295,8 @@ public struct CryptoKey {
         get {
             let buffer = Buffer<Byte>(bytes: self.keyCheckValue)
             let hexString = buffer.hexString
-            let index = hexString.startIndex.advancedBy(Int(kKeyCheckValueByteCount * 2)) // First 6 characters is the KCV
-            return hexString.substringToIndex(index)
+            let index = hexString.characters.index(hexString.startIndex, offsetBy: Int(kKeyCheckValueByteCount * 2)) // First 6 characters is the KCV
+            return hexString.substring(to: index)
         }
     }
 }

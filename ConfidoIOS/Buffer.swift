@@ -10,12 +10,12 @@ import Foundation
 
 public typealias Byte = UInt8
 
-public enum BufferError : ErrorType, CustomStringConvertible {
-    case WordLengthMismatch
+public enum BufferError : Error, CustomStringConvertible {
+    case wordLengthMismatch
 
     public var description: String {
         switch self {
-        case .WordLengthMismatch: return "WordLengthMismatch"
+        case .wordLengthMismatch: return "WordLengthMismatch"
         }
     }
 }
@@ -32,7 +32,7 @@ public protocol BufferType {
 //    init(data: NSData) throws
 //    init(hexData: String) throws
     var size: Int { get }
-    var data: NSData { get }
+    var data: Data { get }
     var base64String: String  { get }
     var hexString: String { get }
 }
@@ -48,16 +48,16 @@ public protocol MutableBufferType: BufferType {
 }
 */
 
-public struct Buffer<T:UnsignedIntegerType> {
-    public private(set) var values: [T]
+public struct Buffer<T:UnsignedInteger> {
+    public fileprivate(set) var values: [T]
     public var pointer: UnsafeMutablePointer<T> {
         get {
-            return UnsafeMutablePointer<T>(values)
+            return UnsafeMutablePointer<T>(mutating: values)
         }
     }
     public var mutablePointer: UnsafeMutablePointer<T> {
         get {
-            return UnsafeMutablePointer<T>(values)
+            return UnsafeMutablePointer<T>(mutating: values)
         }
     }
     public var bufferPointer: UnsafeBufferPointer<Byte> {
@@ -65,9 +65,9 @@ public struct Buffer<T:UnsignedIntegerType> {
             return UnsafeBufferPointer<Byte>(start: UnsafeMutablePointer(values), count: self.byteCount)
         }
     }
-    public var voidPointer: UnsafePointer<Void> {
+    public var voidPointer: UnsafeRawPointer {
         get {
-            return UnsafePointer<Void>(values)
+            return UnsafeRawPointer(values)
         }
     }
 
@@ -75,7 +75,7 @@ public struct Buffer<T:UnsignedIntegerType> {
         values = []
     }
     public init(size: Int) {
-        values = [T](count:size, repeatedValue: 0)
+        values = [T](repeating: 0, count: size)
     }
     public init(bytes: [T]) {
         self.values = bytes
@@ -84,13 +84,13 @@ public struct Buffer<T:UnsignedIntegerType> {
     public init(buffer: Buffer<T>) {
         self.values = buffer.values
     }
-    public init(data: NSData) throws {
-        let numberOfWords = data.length / sizeof(T)
-        if data.length % sizeof(T) != 0 {
-            throw BufferError.WordLengthMismatch
+    public init(data: Data) throws {
+        let numberOfWords = data.count / MemoryLayout<T>.size
+        if data.count % MemoryLayout<T>.size != 0 {
+            throw BufferError.wordLengthMismatch
         }
         self.init(size: numberOfWords)
-        data.getBytes(&values, length:data.length)
+        (data as NSData).getBytes(&values, length:data.count)
     }
     public init(hexData: String) throws {
             let data = NSMutableData()
@@ -98,28 +98,28 @@ public struct Buffer<T:UnsignedIntegerType> {
             for char in hexData.characters {
                 temp+=String(char)
                 if(temp.characters.count == 2) {
-                    let scanner = NSScanner(string: temp)
+                    let scanner = Scanner(string: temp)
                     var value: UInt32 = 0
-                    scanner.scanHexInt(&value)
-                    data.appendBytes(&value, length: 1)
+                    scanner.scanHexInt32(&value)
+                    data.append(&value, length: 1)
                     temp = ""
                 }
 
             }
-        try self.init(data: data)
+        try self.init(data: data as Data)
     }
-    public var data: NSData {
-        get { return NSData(bytes: values, length: byteCount) }
+    public var data: Data {
+        get { return Data(bytes: UnsafePointer<UInt8>(values), count: byteCount) }
     }
     public var base64String: String {
-        get { return data.base64EncodedStringWithOptions([]) }
+        get { return data.base64EncodedString(options: []) }
     }
     public var hexString: String {
         get {
             var hexString = ""
             let pointer = self.bufferPointer
             pointer.forEach { (byte) -> () in
-                hexString.appendContentsOf(String(format:"%02x", byte))
+                hexString.append(String(format:"%02x", byte))
             }
             return hexString
         }
@@ -133,9 +133,9 @@ public struct Buffer<T:UnsignedIntegerType> {
                 //truncate the buffer to the new size
                 values = Array(values[0..<newValue])
             } else if newValue > values.count {
-                let newBuffer = [T](count:newValue, repeatedValue: 0)
-                let newBufferPointer = UnsafeMutablePointer<T>(newBuffer)
-                newBufferPointer.moveInitializeFrom(self.pointer, count: values.count)
+                let newBuffer = [T](repeating: 0, count: newValue)
+                let newBufferPointer = UnsafeMutablePointer<T>(mutating: newBuffer)
+                newBufferPointer.moveInitialize(from: self.pointer, count: values.count)
                 values = newBuffer
             }
         }
@@ -146,23 +146,23 @@ public struct Buffer<T:UnsignedIntegerType> {
         }
     }
 
-    public mutating func append(bytes: [T])  {
+    public mutating func append(_ bytes: [T])  {
         let currentSize = self.size
         let newSize = self.size + bytes.count
         self.size = newSize
-        let appendLocation = self.pointer.advancedBy(currentSize)
-        appendLocation.moveAssignFrom(UnsafeMutablePointer(bytes), count: bytes.count)
+        let appendLocation = self.pointer.advanced(by: currentSize)
+        appendLocation.moveAssign(from: UnsafeMutablePointer(mutating: bytes), count: bytes.count)
 
     }
     public var elementSize: Int {
         get {
-            return sizeof(T)
+            return MemoryLayout<T>.size
         }
     }
 }
 
 
-extension Array  where Element : UnsignedIntegerType {
+extension Array  where Element : UnsignedInteger {
     var buffer: Buffer<Element> {
         get { return Buffer(size: 0) }
     }
