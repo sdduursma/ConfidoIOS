@@ -8,11 +8,11 @@
 import Foundation
 
 
-@objc public class OpenSSLIdentity : OpenSSLObject {
-    @objc public private(set) var p12identityData: NSData
-    @objc public private(set) var friendlyName: String
+@objc open class OpenSSLIdentity : OpenSSLObject {
+    @objc open fileprivate(set) var p12identityData: Data
+    @objc open fileprivate(set) var friendlyName: String
 
-    public init(p12EncodedIdentityData data: NSData, friendlyName name: String) {
+    public init(p12EncodedIdentityData data: Data, friendlyName name: String) {
         self.p12identityData = data
         self.friendlyName = name
         super.init()

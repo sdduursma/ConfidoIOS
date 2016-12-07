@@ -10,7 +10,7 @@ import Foundation
 import CommonCrypto
 
 
-extension SecIdentityRef {
+extension SecIdentity {
     func certificateRef() throws -> SecCertificate {
         var certificateRef: SecCertificate? = nil
         try ensureOK(SecIdentityCopyCertificate(self, &certificateRef))
@@ -25,12 +25,12 @@ extension SecIdentityRef {
 }
 
 
-public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
-    public class func keychainKeyFromAttributes(SecItemAttributes attributes: SecItemAttributes) throws -> KeychainKey {
+open class KeychainKey : KeychainItem, KeychainKeyClassProperties {
+    open class func keychainKeyFromAttributes(SecItemAttributes attributes: SecItemAttributes) throws -> KeychainKey {
         let keyClass = KeyClass.keyClass(attributes[String(kSecAttrKeyClass)])
         switch keyClass {
-        case .PrivateKey: return try KeychainPrivateKey(SecItemAttributes: attributes)
-        case .PublicKey:  return try KeychainPublicKey(SecItemAttributes: attributes)
+        case .privateKey: return try KeychainPrivateKey(SecItemAttributes: attributes)
+        case .publicKey:  return try KeychainPublicKey(SecItemAttributes: attributes)
         default:          return try KeychainKey(SecItemAttributes: attributes)
         }
     }
@@ -39,19 +39,19 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
 
     public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
         keySecKey = keyRef
-        super.init(securityClass: .Key,  byCopyingAttributes: descriptor)
+        super.init(securityClass: .key,  byCopyingAttributes: descriptor)
     }
 
     public init(SecItemAttributes attributes: SecItemAttributes) throws {
-        super.init(securityClass: SecurityClass.Key, SecItemAttributes: attributes)
-        self.keySecKey = try KeychainKey.getKeySecKey(SecItemAttributes: attributes)
+        super.init(securityClass: SecurityClass.key, SecItemAttributes: attributes)
+        self.keySecKey = try KeychainKey.getKeySecKey(SecItemAttributes: attributes as NSDictionary)
     }
 
     class func getKeySecKey(SecItemAttributes attributes: NSDictionary) throws -> SecKey {
-        if let valueRef: AnyObject = attributes[String(kSecValueRef)] {
-            if CFGetTypeID(valueRef) == SecKeyGetTypeID() {
+        if let valueRef = attributes[String(kSecValueRef)] {
+            if CFGetTypeID(valueRef as CFTypeRef!) == SecKeyGetTypeID() {
                 return (valueRef as! SecKey)
-            } else if CFGetTypeID(valueRef) == SecIdentityGetTypeID() {
+            } else if CFGetTypeID(valueRef as CFTypeRef!) == SecIdentityGetTypeID() {
                 let secIdentity = (valueRef as! SecIdentity)
                 return try secIdentity.privateKeyRef()
             }
@@ -59,36 +59,36 @@ public class KeychainKey : KeychainItem, KeychainKeyClassProperties {
         fatalError("No SecKey Reference")
     }
 
-    override public func specifierMatchingProperties() -> Set<String> {
+    override open func specifierMatchingProperties() -> Set<String> {
        return kKeyItemMatchingProperties
     }
 
     func ensureRSAOrECKey() throws {
-        if (self.keyType == KeyType.RSA) { return }
-        if (self.keyType == KeyType.ElypticCurve) { return }
+        if (self.keyType == KeyType.rsa) { return }
+        if (self.keyType == KeyType.elypticCurve) { return }
 
-        throw KeychainError.UnimplementedKeyType(reason: "Not implemented for key types other than RSA or EC")
+        throw KeychainError.unimplementedKeyType(reason: "Not implemented for key types other than RSA or EC")
     }
 }
 
 /**
 An instance of an IOS Keychain Public Key
 */
-public class KeychainSymmetricKey : KeychainKey, KeychainFindable, GenerateKeychainFind {
+open class KeychainSymmetricKey : KeychainKey, KeychainFindable, GenerateKeychainFind {
     //This specifies the argument type and return value for the generated functions
     public typealias QueryType = KeychainKeyDescriptor
     public typealias ResultType = KeychainSymmetricKey
 
     override public init(descriptor: KeychainKeyDescriptor, keyRef: SecKey) {
         super.init(descriptor: descriptor, keyRef: keyRef)
-        attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.SymmetricKey)
+        attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.symmetricKey)
     }
 
     public override init(SecItemAttributes attributes: SecItemAttributes) throws {
         try super.init(SecItemAttributes: attributes)
-        self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.SymmetricKey)
+        self.attributes[String(kSecAttrKeyClass)] = KeyClass.kSecAttrKeyClass(.symmetricKey)
     }
-    public func withKeyDataDo(closure : (NSData)-> Void ) throws {
+    open func withKeyDataDo(_ closure : (Data)-> Void ) throws {
         // this key's keyData is cryptographic key material and should not be passed around or stored.
         // Use this very carefully
         let keyData = try fetchKeyData(self)
@@ -96,7 +96,7 @@ public class KeychainSymmetricKey : KeychainKey, KeychainFindable, GenerateKeych
     }
 }
 
-func fetchKeyData(key: KeychainKey) throws -> NSData {
+func fetchKeyData(_ key: KeychainKey) throws -> Data {
     var query : KeyChainPropertiesData = [ : ]
 
     let descriptor = key.keychainMatchPropertyValues()
@@ -105,7 +105,7 @@ func fetchKeyData(key: KeychainKey) throws -> NSData {
     query[String(kSecMatchLimit)]       = kSecMatchLimitOne
     query += descriptor.keychainMatchPropertyValues()
 
-    let keyData: NSData = try SecurityWrapper.secItemCopyMatching(query)
+    let keyData: Data = try SecurityWrapper.secItemCopyMatching(query)
     return keyData
 
 }

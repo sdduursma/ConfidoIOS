@@ -9,15 +9,15 @@
 import Foundation
 
 
-@objc public class OpenSSLCertificate : OpenSSLObject {
-    @objc public private(set) var certificateData: NSData
-    public init(certificateData: NSData) {
+@objc open class OpenSSLCertificate : OpenSSLObject {
+    @objc open fileprivate(set) var certificateData: Data
+    public init(certificateData: Data) {
         self.certificateData = certificateData
         super.init()
     }
 }
 
-@objc public class OpenSSLCertificateSigningRequest : OpenSSLObject {
+@objc open class OpenSSLCertificateSigningRequest : OpenSSLObject {
 }
 
 

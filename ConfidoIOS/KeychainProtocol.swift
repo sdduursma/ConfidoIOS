@@ -38,7 +38,7 @@ public protocol KeychainMatchable {
 public protocol KeychainFindable {
     associatedtype QueryType : KeychainMatchable
     associatedtype ResultType : KeychainItem
-    static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?
+    static func findInKeychain(_ matchingProperties: QueryType) throws -> ResultType?
 }
 
 // This is used to flag specific classes to use the generic findInKeychain() below, otherwise the method needs ot be written by hand
@@ -46,12 +46,12 @@ public protocol GenerateKeychainFind : KeychainFindable {
 }
 
 extension KeychainFindable where Self : KeychainFindable, Self : GenerateKeychainFind {
-    public static func findInKeychain(matchingProperties: QueryType) throws -> ResultType?  {
+    public static func findInKeychain(_ matchingProperties: QueryType) throws -> ResultType?  {
         let keychainItem = try Keychain.fetchItem(matchingDescriptor: matchingProperties)
         if let result = keychainItem as? ResultType {
             return result
         }
-        throw KeychainError.MismatchedResultType(returnedType: keychainItem.dynamicType.self, declaredType: QueryType.self)
+        throw KeychainError.mismatchedResultType(returnedType: type(of: keychainItem).self, declaredType: QueryType.self)
    }
 }
 
@@ -94,11 +94,12 @@ public protocol KeychainAddable {
 // MARK: SecItemAddable
 // Generic Protocol to mark that the item can be added to the IOS Keychain
 public protocol SecItemAddable : KeyChainAttributeStorage {
-    func secItemAdd() throws -> AnyObject?
+    @discardableResult func secItemAdd() throws -> AnyObject?
 }
 
 extension SecItemAddable where Self : SecItemAddable, Self : KeychainMatchable {
-    public func secItemAdd() throws -> AnyObject? {
+
+    @discardableResult public func secItemAdd() throws -> AnyObject? {
         var item : KeyChainPropertiesData = [ : ]
         item += self.attributes
         item[String(kSecClass)] = SecurityClass.kSecClass(securityClass)
@@ -182,17 +183,17 @@ extension KeychainCommonClassProperties where Self : KeychainCommonClassProperti
 
 // MARK: KeychainItemMetaData
 public protocol KeychainItemMetaData : KeyChainAttributeStorage {
-    var itemCreationDate: NSDate? { get }
-    var itemModificationDate: NSDate? { get }
+    var itemCreationDate: Date? { get }
+    var itemModificationDate: Date? { get }
 }
 
 extension KeychainItemMetaData where Self : KeychainItemMetaData {
-    public var itemCreationDate: NSDate? {
-        get { return attributes[String(kSecAttrCreationDate)] as? NSDate }
+    public var itemCreationDate: Date? {
+        get { return attributes[String(kSecAttrCreationDate)] as? Date }
     }
 
-    public var itemModificationDate: NSDate? {
-        get { return attributes[String(kSecAttrModificationDate)] as? NSDate }
+    public var itemModificationDate: Date? {
+        get { return attributes[String(kSecAttrModificationDate)] as? Date }
     }
 }
 
@@ -218,16 +219,16 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
 
     public var keyAppLabelString: String? {
         get {
-            if let data = attributes[String(kSecAttrApplicationLabel)] as? NSData {
-                return NSString(data: data, encoding: NSUTF8StringEncoding) as? String
+            if let data = attributes[String(kSecAttrApplicationLabel)] as? Data {
+                return NSString(data: data, encoding: String.Encoding.utf8.rawValue) as? String
             } else {
                 return nil
             }
         }
     }
-    public var keyAppLabelData: NSData? {
+    public var keyAppLabelData: Data? {
         get {
-            if let data = attributes[String(kSecAttrApplicationLabel)] as? NSData {
+            if let data = attributes[String(kSecAttrApplicationLabel)] as? Data {
                 return data
             } else {
                 return nil
@@ -247,8 +248,8 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
         get {
             if let intValue = attributes[String(kSecAttrKeyType)] as? Int {
                 switch intValue {
-                case 42: return KeyType.RSA
-                case 73: return KeyType.ElypticCurve
+                case 42: return KeyType.rsa
+                case 73: return KeyType.elypticCurve
                 default : return nil
                 }
             } else if let stringValue = attributes[String(kSecAttrKeyType)] as? String {
@@ -260,7 +261,7 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
 
     public var keySize: Int {
         get {
-            return (attributes[String(kSecAttrKeySizeInBits)] as? NSNumber)!.integerValue
+            return (attributes[String(kSecAttrKeySizeInBits)] as? NSNumber)!.intValue
         }
     }
 
@@ -278,9 +279,9 @@ extension KeychainKeyClassProperties where Self : KeychainKeyClassProperties, Se
 Properties for Keychain Items of class kSecClassCertificate
 */
 public protocol KeychainCertificateClassProperties {
-    var subjectX509Data: NSData { get }
-    var issuerX509Data: NSData { get }
-    var serialNumberX509Data: NSData { get }
+    var subjectX509Data: Data { get }
+    var issuerX509Data: Data { get }
+    var serialNumberX509Data: Data { get }
     var subjectKeyID: AnyObject { get }
     var publicKeyHash: AnyObject { get }
 }
@@ -290,14 +291,14 @@ public protocol KeychainCertificateClassProperties {
 Injects IOS Keychain kSecClassCertificate properties into conforming items
 */
 extension KeychainCertificateClassProperties where Self : KeychainCertificateClassProperties, Self : KeyChainAttributeStorage {
-    public var subjectX509Data: NSData {
-        get { return attributes[kSecAttrSubject as String] as! NSData }
+    public var subjectX509Data: Data {
+        get { return attributes[kSecAttrSubject as String] as! Data }
     }
-    public var issuerX509Data: NSData {
-        get { return attributes[kSecAttrIssuer as String] as! NSData }
+    public var issuerX509Data: Data {
+        get { return attributes[kSecAttrIssuer as String] as! Data }
     }
-    public var serialNumberX509Data: NSData {
-        get { return attributes[kSecAttrSerialNumber as String] as! NSData }
+    public var serialNumberX509Data: Data {
+        get { return attributes[kSecAttrSerialNumber as String] as! Data }
     }
     public var subjectKeyID: AnyObject {
         get { return attributes[kSecAttrSubjectKeyID as String]! }

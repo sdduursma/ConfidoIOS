@@ -110,98 +110,96 @@ public let kKeyItemMatchingProperties :     Set<String> = [ String(kSecAttrLabel
 //    .KeySizeInBits, .EffectiveKeySize, .CanEncrypt, .CanDecrypt,
 //    .CanDerive, .CanSign, .CanVerify, .CanWrap, .CanUnwrap  ]
 
-public enum KeychainStatus : ErrorType {
-    case UnimplementedError, ParamError, AllocateError, NotAvailableError,
-    AuthFailedError, DuplicateItemError, ItemNotFoundError, InteractionNotAllowedError,
-    DecodeError, UnknownError, OK
+public enum KeychainStatus : Error {
+    case unimplementedError, paramError, allocateError, notAvailableError,
+    authFailedError, duplicateItemError, itemNotFoundError, interactionNotAllowedError,
+    decodeError, unknownError, ok
 
-    static func statusFromOSStatus(rawStatus: OSStatus) ->
+    static func statusFromOSStatus(_ rawStatus: OSStatus) ->
         KeychainStatus {
             if rawStatus == errSecSuccess {
-                return OK
+                return ok
             } else {
-                return mapping[rawStatus] ?? .UnknownError
+                return mapping[rawStatus] ?? .unknownError
             }
     }
 
-    static func messageForStatus(keychainStatus: KeychainStatus) ->
+    static func messageForStatus(_ keychainStatus: KeychainStatus) ->
         String? {
             return messages[keychainStatus]
     }
 
     static let mapping: [OSStatus: KeychainStatus] = [
-        errSecUnimplemented:         .UnimplementedError,
-        errSecParam:                 .ParamError,
-        errSecAllocate:              .AllocateError,
-        errSecNotAvailable:          .NotAvailableError,
-        errSecAuthFailed:            .AuthFailedError,
-        errSecDuplicateItem:         .DuplicateItemError,
-        errSecItemNotFound:          .ItemNotFoundError,
-        errSecInteractionNotAllowed: .InteractionNotAllowedError,
-        errSecDecode:                .DecodeError,
-        errSecSuccess:               .OK
+        errSecUnimplemented:         .unimplementedError,
+        errSecParam:                 .paramError,
+        errSecAllocate:              .allocateError,
+        errSecNotAvailable:          .notAvailableError,
+        errSecAuthFailed:            .authFailedError,
+        errSecDuplicateItem:         .duplicateItemError,
+        errSecItemNotFound:          .itemNotFoundError,
+        errSecInteractionNotAllowed: .interactionNotAllowedError,
+        errSecDecode:                .decodeError,
+        errSecSuccess:               .ok
     ]
 
     static let messages: [KeychainStatus: String] = [
-        UnimplementedError:         "Function or operation not implemented.",
-        ParamError:                 "One or more parameters passed to the function were not valid.",
-        AllocateError:              "Failed to allocate memory.",
-        NotAvailableError:          "No trust results are available.",
-        AuthFailedError:            "Authorization/Authentication failed.",
-        DuplicateItemError:         "The item already exists.",
-        ItemNotFoundError:          "The item cannot be found.",
-        InteractionNotAllowedError: "Interaction with the Security Server is not allowed.",
-        DecodeError:                "Unable to decode the provided data.",
-        UnknownError:               "Unknown Error"
+        unimplementedError:         "Function or operation not implemented.",
+        paramError:                 "One or more parameters passed to the function were not valid.",
+        allocateError:              "Failed to allocate memory.",
+        notAvailableError:          "No trust results are available.",
+        authFailedError:            "Authorization/Authentication failed.",
+        duplicateItemError:         "The item already exists.",
+        itemNotFoundError:          "The item cannot be found.",
+        interactionNotAllowedError: "Interaction with the Security Server is not allowed.",
+        decodeError:                "Unable to decode the provided data.",
+        unknownError:               "Unknown Error"
     ]
 }
 
 
 
 public enum SecurityClass {
-    case GenericPassword, InternetPassword, Certificate, Key, Identity
+    case genericPassword, internetPassword, certificate, key, identity
 
-    static func kSecClass(securityClass: SecurityClass) -> CFStringRef {
+    static func kSecClass(_ securityClass: SecurityClass) -> CFString {
         return forwardMapping[securityClass]!
     }
 
-    static func securityClass(kSecClass: AnyObject) -> SecurityClass? {
-        if kSecClass is CFStringRef {
-            let secClass = kSecClass as! CFStringRef
-            if secClass == kSecClassGenericPassword  { return GenericPassword }
-            if secClass == kSecClassInternetPassword { return InternetPassword }
-            if secClass == kSecClassCertificate      { return Certificate }
-            if secClass == kSecClassKey              { return Key }
-            if secClass == kSecClassIdentity         { return Identity }
-        }
+    static func securityClass(_ secClass: AnyObject) -> SecurityClass? {
+        guard let secClass = secClass as? NSString else { return nil }
+        if secClass == kSecClassGenericPassword  { return genericPassword }
+        if secClass == kSecClassInternetPassword { return internetPassword }
+        if secClass == kSecClassCertificate      { return certificate }
+        if secClass == kSecClassKey              { return key }
+        if secClass == kSecClassIdentity         { return identity }
         return nil
     }
 
-    static let forwardMapping: [SecurityClass: CFStringRef] = [
-        GenericPassword:  kSecClassGenericPassword,
-        InternetPassword: kSecClassInternetPassword ,
-        Certificate:      kSecClassCertificate,
-        Key:              kSecClassKey,
-        Identity:         kSecClassIdentity
+    static let forwardMapping: [SecurityClass: CFString] = [
+        genericPassword:  kSecClassGenericPassword,
+        internetPassword: kSecClassInternetPassword ,
+        certificate:      kSecClassCertificate,
+        key:              kSecClassKey,
+        identity:         kSecClassIdentity
     ]
     static let reverseMapping: [String: SecurityClass] = [
-        kSecClassGenericPassword as String:  GenericPassword,
-        kSecClassInternetPassword as String: InternetPassword,
-        kSecClassCertificate as String:      Certificate,
-        kSecClassKey as String:              Key,
-        kSecClassIdentity as String:         Identity
+        kSecClassGenericPassword as String:  genericPassword,
+        kSecClassInternetPassword as String: internetPassword,
+        kSecClassCertificate as String:      certificate,
+        kSecClassKey as String:              key,
+        kSecClassIdentity as String:         identity
     ]
 
 }
 
 public enum KeyClass {
-    case SymmetricKey, PublicKey, PrivateKey
+    case symmetricKey, publicKey, privateKey
 
-    static func kSecAttrKeyClass(keyClass: KeyClass) -> CFStringRef {
+    static func kSecAttrKeyClass(_ keyClass: KeyClass) -> CFString {
         return forwardMapping[keyClass]!
     }
 
-    static func keyClass(kKeyClass: AnyObject?) -> KeyClass {
+    static func keyClass(_ kKeyClass: AnyObject?) -> KeyClass {
         if let keyClass = kKeyClass as? Int {
             //kKeyClass comes through as an NSNumber, despite the documentation saying it is a String
             if let reverse = self.reverseMapping[keyClass] {
@@ -209,19 +207,19 @@ public enum KeyClass {
             }
         }
         else if kKeyClass is NSString {
-            let keyClass = kKeyClass as! CFStringRef
-            if keyClass == kSecAttrKeyClassSymmetric  { return SymmetricKey }
-            if keyClass == kSecAttrKeyClassPublic     { return PublicKey }
-            if keyClass == kSecAttrKeyClassPrivate    { return PrivateKey }
+            let keyClass = kKeyClass as! CFString
+            if keyClass == kSecAttrKeyClassSymmetric  { return symmetricKey }
+            if keyClass == kSecAttrKeyClassPublic     { return publicKey }
+            if keyClass == kSecAttrKeyClassPrivate    { return privateKey }
         }
         assertionFailure("Unknown keyClass \(kKeyClass!)")
-        return PublicKey
+        return publicKey
     }
 
-    static let forwardMapping: [KeyClass: CFStringRef] = [
-        SymmetricKey: kSecAttrKeyClassSymmetric,
-        PublicKey:    kSecAttrKeyClassPublic,
-        PrivateKey:   kSecAttrKeyClassPrivate
+    static let forwardMapping: [KeyClass: CFString] = [
+        symmetricKey: kSecAttrKeyClassSymmetric,
+        publicKey:    kSecAttrKeyClassPublic,
+        privateKey:   kSecAttrKeyClassPrivate
     ]
 
 //    SEC_CONST_DECL (kSecAttrKeyClassPublic, "0");
@@ -229,41 +227,41 @@ public enum KeyClass {
 //    SEC_CONST_DECL (kSecAttrKeyClassSymmetric, "2");
 
     static let reverseMapping: [Int: KeyClass] = [
-        0: PublicKey,
-        1: PrivateKey,
-        2: SymmetricKey
+        0: publicKey,
+        1: privateKey,
+        2: symmetricKey
     ]
 }
 
 
 public enum KeyType: RawRepresentable {
-    case RSA, ElypticCurve
+    case rsa, elypticCurve
 
     public init?(rawValue: String) {
         switch rawValue {
         case String(kSecAttrKeyTypeRSA):
-            self = RSA
+            self = .rsa
         case String(kSecAttrKeyTypeEC):
-            self = ElypticCurve
+            self = .elypticCurve
         default:
             print("Accessible: invalid rawValue provided. Defaulting to KeyType.RSA")
-            self = RSA
+            self = .rsa
         }
     }
 
     public var rawValue: String {
         switch self {
-        case .RSA:
+        case .rsa:
             return String(kSecAttrKeyTypeRSA)
-        case .ElypticCurve:
+        case .elypticCurve:
             return String(kSecAttrKeyTypeEC)
         }
     }
-    public func signatureMaxSize(keySize: Int) -> Int {
+    public func signatureMaxSize(_ keySize: Int) -> Int {
         switch self {
-        case .RSA: return keySize / 8
+        case .rsa: return keySize / 8
         //Overhead should not be more than ~16 bytes, plus twice the number of EC field size of course (for example, for SECP256 it will be 256/8=32, 32*2 + 16 bytes ~ 80 bytes).
-        case .ElypticCurve: return 80
+        case .elypticCurve: return 80
         }
     }
 }
@@ -271,31 +269,31 @@ public enum KeyType: RawRepresentable {
 
 
 public enum Accessible : RawRepresentable {
-    case WhenUnlocked, AfterFirstUnlock, Always,
-    WhenPasscodeSetThisDeviceOnly, WhenUnlockedThisDeviceOnly,
-    AfterFirstUnlockThisDeviceOnly, AlwaysThisDeviceOnly
+    case whenUnlocked, afterFirstUnlock, always,
+    whenPasscodeSetThisDeviceOnly, whenUnlockedThisDeviceOnly,
+    afterFirstUnlockThisDeviceOnly, alwaysThisDeviceOnly
 
     public init?(rawValue: String) {
         if rawValue == String(kSecAttrAccessibleWhenUnlocked) {
-            self = WhenUnlocked
+            self = .whenUnlocked
         }
         else if rawValue == String(kSecAttrAccessibleAfterFirstUnlock) {
-            self = AfterFirstUnlock
+            self = .afterFirstUnlock
         }
         else if rawValue == String(kSecAttrAccessibleAlways) {
-            self = Always
+            self = .always
         }
         else if rawValue == String(kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly) {
-            self = WhenPasscodeSetThisDeviceOnly
+            self = .whenPasscodeSetThisDeviceOnly
         }
         else if rawValue == String(kSecAttrAccessibleWhenUnlockedThisDeviceOnly) {
-            self = WhenUnlockedThisDeviceOnly
+            self = .whenUnlockedThisDeviceOnly
         }
         else if rawValue == String(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly) {
-            self = AfterFirstUnlockThisDeviceOnly
+            self = .afterFirstUnlockThisDeviceOnly
         }
         else if rawValue == String(kSecAttrAccessibleAlwaysThisDeviceOnly) {
-            self = AlwaysThisDeviceOnly
+            self = .alwaysThisDeviceOnly
         }
         else {
             return nil
@@ -304,19 +302,19 @@ public enum Accessible : RawRepresentable {
 
     public var rawValue: String {
         switch self {
-        case WhenUnlocked:
+        case .whenUnlocked:
             return String(kSecAttrAccessibleWhenUnlocked)
-        case AfterFirstUnlock:
+        case .afterFirstUnlock:
             return String(kSecAttrAccessibleAfterFirstUnlock)
-        case Always:
+        case .always:
             return String(kSecAttrAccessibleAlways)
-        case WhenPasscodeSetThisDeviceOnly:
+        case .whenPasscodeSetThisDeviceOnly:
             return String(kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly)
-        case WhenUnlockedThisDeviceOnly:
+        case .whenUnlockedThisDeviceOnly:
             return String(kSecAttrAccessibleWhenUnlockedThisDeviceOnly)
-        case AfterFirstUnlockThisDeviceOnly: 
+        case .afterFirstUnlockThisDeviceOnly: 
             return String(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
-        case AlwaysThisDeviceOnly: 
+        case .alwaysThisDeviceOnly: 
             return String(kSecAttrAccessibleAlwaysThisDeviceOnly)
         }
     }	

@@ -73,7 +73,7 @@ class CertificateTests: BaseTests {
 
 
     func testCertificateFromCERFileWithLabel() {
-        self.clearKeychainItems(.Certificate)
+        self.clearKeychainItems(.certificate)
         let certificateDERData = try! contentsOfBundleResource(kFinalPinnedCACertificateName, ofType: "cer")
         let transportCertificate = try! KeychainCertificate.certificate(certificateDERData, itemLabel: "certificate")
         XCTAssertEqual(transportCertificate.subject, kFinalPinnedCASubject)
@@ -83,21 +83,21 @@ class CertificateTests: BaseTests {
 
         XCTAssertEqual(certificate!.subject, kFinalPinnedCASubject)
         XCTAssertNotNil(certificate!.secCertificate)
-        XCTAssertEqual(self.keychainItems(.Certificate).count,1)
+        XCTAssertEqual(self.keychainItems(.certificate).count,1)
 
         let storedCertificate = try! KeychainCertificate.findInKeychain(CertificateDescriptor(certificateLabel: "certificate"))
         XCTAssertNotNil(storedCertificate)
     }
 
     func testCertificateFromCERFileWithoutLabel() {
-        self.clearKeychainItems(.Certificate)
+        self.clearKeychainItems(.certificate)
         let certificateDERData = try! contentsOfBundleResource(kFinalPinnedCACertificateName, ofType: "cer")
         let transportCertificate = try! KeychainCertificate.certificate(certificateDERData)
         XCTAssertEqual(transportCertificate.subject, kFinalPinnedCASubject)
 
         let certificate = try! transportCertificate.addToKeychain()
         XCTAssertNil(certificate) // The certificate does not have label, so we can't get a reference this way
-        let items = self.keychainItems(.Certificate)
+        let items = self.keychainItems(.certificate)
 
         XCTAssertEqual(items.count,1)
         let actualCertificate = items[0] as! KeychainCertificate
@@ -107,7 +107,7 @@ class CertificateTests: BaseTests {
     }
 
 
-    func bundledCertificate(filename: String) throws -> TransportCertificate {
+    func bundledCertificate(_ filename: String) throws -> TransportCertificate {
         let certificateDERData = try contentsOfBundleResource(filename, ofType: "cer")
         return try KeychainCertificate.certificate(certificateDERData)
     }
@@ -127,7 +127,7 @@ class CertificateTests: BaseTests {
     }
 
     func testEvaluateTrustForClientCertificate()  {
-        self.clearKeychainItems(.Certificate)
+        self.clearKeychainItems(.certificate)
 
         let p12Data = try! contentsOfBundleResource("Device Identity", ofType: "p12")
         let transportIdentity = try! KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
@@ -135,18 +135,18 @@ class CertificateTests: BaseTests {
 
         //Evaluate against the Root CA, with missing intermediaries
         var result = try! trustPoint.evaluateTrust(rootAnchor())
-        XCTAssertEqual(result, TrustResult.Deny)
+        XCTAssertEqual(result, TrustResult.deny)
 
         //Evaluate against the Issuer
         result = try! trustPoint.evaluateTrust(level3IssuerCA())
-        XCTAssertEqual(result, TrustResult.Unspecified)
+        XCTAssertEqual(result, TrustResult.unspecified)
     }
 
     func testEvaluateTrustForClientCertificatePinnedAtRoot() {
         let deviceCert = try! bundledCertificate("test keypair 1 certificate")
 
-        let trustNoAdditionalCerts = try! deviceCert.trustPoint(.SSLClient(name: nil), additionalCertificates:[] )
-        let trustAllCerts          = try! deviceCert.trustPoint(.SSLClient(name: nil),
+        let trustNoAdditionalCerts = try! deviceCert.trustPoint(.sslClient(name: nil), additionalCertificates:[] )
+        let trustAllCerts          = try! deviceCert.trustPoint(.sslClient(name: nil),
             additionalCertificates:[
                 level3IssuerCA().anchorCertificate,
                 level2CustomCA().anchorCertificate,
@@ -154,24 +154,24 @@ class CertificateTests: BaseTests {
             ] )
 
         var result = try! trustNoAdditionalCerts.evaluateTrust(rootAnchor())
-        XCTAssertEqual(result, TrustResult.Deny)
+        XCTAssertEqual(result, TrustResult.deny)
 
         result = try! trustAllCerts.evaluateTrust(rootAnchor())
-        XCTAssertEqual(result, TrustResult.Unspecified)
+        XCTAssertEqual(result, TrustResult.unspecified)
     }
 
     func testRealCertificateAgainstCustomRootCAAnchor() {
         /*
         Tests that the policies reject a real certificate (valid under ordinary circumstances) against a pinned anchor
         */
-        let trust = try! appleCert().trustPoint(TrustPolicy.SSLServer(hostname: nil),
+        let trust = try! appleCert().trustPoint(TrustPolicy.sslServer(hostname: nil),
             additionalCertificates: [symantecRealCert()])
 
         var result = try! trust.evaluateTrust() // This should be allowed because we are checking a real certificate
-        XCTAssertEqual(result, TrustResult.Unspecified)
+        XCTAssertEqual(result, TrustResult.unspecified)
 
         result = try! trust.evaluateTrust(rootAnchor())
-        XCTAssertEqual(result, TrustResult.Deny)
+        XCTAssertEqual(result, TrustResult.deny)
     }
 
 
@@ -179,19 +179,19 @@ class CertificateTests: BaseTests {
         /*
         Tests that the policies reject a real certificate (valid under ordinary circumstances) against a pinned anchor (also real)
         */
-        let trust = try! appleCert().trustPoint(TrustPolicy.SSLServer(hostname: nil),
+        let trust = try! appleCert().trustPoint(TrustPolicy.sslServer(hostname: nil),
             additionalCertificates: [symantecRealCert()])
         let result = try! trust.evaluateTrust(googleCAAnchor())
-        XCTAssertEqual(result, TrustResult.Deny)
+        XCTAssertEqual(result, TrustResult.deny)
     }
 
 
     func testRealCertificateChainAnchored() {
-        let trust = try! googleCert().trustPoint(TrustPolicy.SSLServer(hostname: nil),
+        let trust = try! googleCert().trustPoint(TrustPolicy.sslServer(hostname: nil),
             additionalCertificates: [])
         
         let result = try! trust.evaluateTrust(googleCAAnchor())
-        XCTAssertEqual(result, TrustResult.Unspecified)
+        XCTAssertEqual(result, TrustResult.unspecified)
     }
     
 }

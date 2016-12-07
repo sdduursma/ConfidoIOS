@@ -14,21 +14,21 @@ class IdentityTests: BaseTests {
 
 
     func testImportPKCS12Identity() {
-            clearKeychainItems(.Identity)
-            clearKeychainItems(.Key)
-            clearKeychainItems(.Certificate)
+            clearKeychainItems(.identity)
+            clearKeychainItems(.key)
+            clearKeychainItems(.certificate)
 
             let p12Data = try! contentsOfBundleResource("Device Identity", ofType: "p12")
 
             let transportIdentity = try! KeychainIdentity.importIdentity(p12Data, protectedWithPassphrase: "password", label: "identity")
             let keychainIdentity = try! transportIdentity.addToKeychain()
             XCTAssertEqual(keychainIdentity.certificate!.subject, "Expend Device ABCD")
-            XCTAssertEqual(self.keychainItems(.Identity).count, 1)
-            let keys = self.keychainItems(.Key)
+            XCTAssertEqual(self.keychainItems(.identity).count, 1)
+            let keys = self.keychainItems(.key)
             XCTAssertEqual(keys.count,1)
             let storedIdentity = try! KeychainIdentity.identity(IdentityDescriptor(identityLabel: "identity"))
             XCTAssertNotNil(storedIdentity)
-            let items = self.keychainItems(.Identity)
+            let items = self.keychainItems(.identity)
             XCTAssertEqual(items.count,1)
     }
     

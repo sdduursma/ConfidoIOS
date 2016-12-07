@@ -18,50 +18,50 @@ class CryptoTests: XCTestCase {
         XCTAssertNotEqual(buffer1.hexString, buffer2.hexString)
     }
     func testGenerateAESKey() {
-        let key = CryptoKey(keyType: .AES(keyLength: .AES128))
+        let key = CryptoKey(keyType: .aes(keyLength: .aes128))
         print(key.keyCheckValueString)
-        let zeroBuffer = Buffer<Byte>(size: key.keyType.blockSize)
+        let zeroBuffer = ByteBuffer(size: key.keyType.blockSize)
 
-        var cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .CBC, padding: .None, initialVector: nil)
+        var cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .cbc, padding: .none, initialVector: nil)
         let cryptoHexNilVector = cryptoText.hexString
-        var decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .CBC, padding: .None, initialVector: nil)
+        var decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .cbc, padding: .none, initialVector: nil)
 
         XCTAssertEqual(decryptedText.hexString, "00000000000000000000000000000000")
 
-        let nilInitialVector = Buffer<Byte>(size: key.keyType.blockSize)
+        let nilInitialVector = ByteBuffer(size: key.keyType.blockSize)
 
-        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .CBC, padding: .None, initialVector: nilInitialVector)
-        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .CBC, padding: .None, initialVector: nilInitialVector)
+        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .cbc, padding: .none, initialVector: nilInitialVector)
+        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .cbc, padding: .none, initialVector: nilInitialVector)
         XCTAssertEqual(decryptedText.hexString, "00000000000000000000000000000000")
         XCTAssertEqual(cryptoText.hexString, cryptoHexNilVector)
 
         let randomInitialVector = generateRandomBytes(key.keyType.blockSize)
-        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .CBC, padding: .None, initialVector: randomInitialVector)
-        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .CBC, padding: .None, initialVector: randomInitialVector)
+        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .cbc, padding: .none, initialVector: randomInitialVector)
+        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .cbc, padding: .none, initialVector: randomInitialVector)
         XCTAssertEqual(decryptedText.hexString, "00000000000000000000000000000000")
         XCTAssertNotEqual(cryptoText.hexString, cryptoHexNilVector)
     }
     func testGenerateDESKey() {
-        let key = CryptoKey(keyType: .DES(keyLength: .DES1))
+        let key = CryptoKey(keyType: .des(keyLength: .des1))
         print(key.keyCheckValueString)
-        let zeroBuffer = Buffer<Byte>(size: key.keyType.blockSize)
+        let zeroBuffer = ByteBuffer(size: key.keyType.blockSize)
 
-        var cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .CBC, padding: .None, initialVector: nil)
+        var cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .cbc, padding: .none, initialVector: nil)
         let cryptoHexNilVector = cryptoText.hexString
-        var decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .CBC, padding: .None,initialVector: nil)
+        var decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .cbc, padding: .none,initialVector: nil)
 
         XCTAssertEqual(decryptedText.hexString, "0000000000000000")
 
-        let nilInitialVector = Buffer<Byte>(size: key.keyType.blockSize)
+        let nilInitialVector = ByteBuffer(size: key.keyType.blockSize)
 
-        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .CBC, padding: .None, initialVector: nilInitialVector)
-        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .CBC, padding: .None, initialVector: nilInitialVector)
+        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .cbc, padding: .none, initialVector: nilInitialVector)
+        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .cbc, padding: .none, initialVector: nilInitialVector)
         XCTAssertEqual(decryptedText.hexString, "0000000000000000")
         XCTAssertEqual(cryptoText.hexString, cryptoHexNilVector)
 
         let randomInitialVector = generateRandomBytes(key.keyType.blockSize)
-        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .CBC, padding: .None, initialVector: randomInitialVector)
-        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .CBC, padding: .None, initialVector: randomInitialVector)
+        cryptoText    = try! Cryptor.encrypt(zeroBuffer, key: key, mode: .cbc, padding: .none, initialVector: randomInitialVector)
+        decryptedText = try! Cryptor.decrypt(cryptoText, key: key, mode: .cbc, padding: .none, initialVector: randomInitialVector)
         XCTAssertEqual(decryptedText.hexString, "0000000000000000")
         XCTAssertNotEqual(cryptoText.hexString, cryptoHexNilVector)
     }
@@ -82,7 +82,7 @@ class CryptoTests: XCTestCase {
         PLAINTEXT = 9798c4640bad75c7c3227db910174e72
         CIPHERTEXT = a9a1631bf4996954ebc093957b234589
         */
-        let key = try! CryptoKey(keyType: .AES(keyLength: .AES128), hexKeyData: "00000000000000000000000000000000")
+        let key = try! CryptoKey(keyType: .aes(keyLength: .aes128), hexKeyData: "00000000000000000000000000000000")
         XCTAssertEqual(key.keyCheckValueString, "66e94b")
         XCTAssertEqual(doCrypt("00000000000000000000000000000000",testVector: "f34481ec3cc627bacd5dc3fb08f273e6",key: key), "0336763e966d92595a567cc9ce537f5e")
         XCTAssertEqual(doCrypt("00000000000000000000000000000000",testVector: "9798c4640bad75c7c3227db910174e72",key: key), "a9a1631bf4996954ebc093957b234589")
@@ -108,7 +108,7 @@ class CryptoTests: XCTestCase {
         PLAINTEXT = 00000000000000000000000000000000
         CIPHERTEXT = f60e91fc3269eecf3231c6e9945697c6
         */
-        let key = try! CryptoKey(keyType: CryptoKeyType.AES(keyLength: AESKeyLength.AES128), hexKeyData: "ffffffffffffffffe000000000000000")
+        let key = try! CryptoKey(keyType: CryptoKeyType.aes(keyLength: AESKeyLength.aes128), hexKeyData: "ffffffffffffffffe000000000000000")
         XCTAssertEqual(key.keyCheckValueString, "d9bff7")
 
         XCTAssertEqual(doCrypt("00000000000000000000000000000000",
@@ -124,7 +124,7 @@ class CryptoTests: XCTestCase {
     73BED6B8E3C1743B7116E69E22229516	f69f2445df4f9b17ad2b417be66c3710	3ff1caa1681fac09120eca307586e1a7
     */
     func testAESTestVectors() {
-        let key = try! CryptoKey(keyType: .AES(keyLength: .AES128), hexKeyData: "2b7e151628aed2a6abf7158809cf4f3c")
+        let key = try! CryptoKey(keyType: .aes(keyLength: .aes128), hexKeyData: "2b7e151628aed2a6abf7158809cf4f3c")
         XCTAssertEqual(doCrypt("000102030405060708090A0B0C0D0E0F",
             testVector: "6bc1bee22e409f96e93d7e117393172a",key: key),
             "7649abac8119b246cee98e9b12e9197d")
@@ -132,20 +132,20 @@ class CryptoTests: XCTestCase {
             testVector: "ae2d8a571e03ac9c9eb76fac45af8e51",key: key),
             "5086cb9b507219ee95db113a917678b2")
     }
-    func doCrypt(initialVector: String, testVector: String,key: CryptoKey) -> String {
-        let initialVectorBuffer = try! Buffer<Byte>(hexData: initialVector)
-        let dataBuffer          = try! Buffer<Byte>(hexData: testVector)
-        let cryptoText = try! Cryptor.encrypt(dataBuffer, key: key, mode: .CBC, padding: .None, initialVector: initialVectorBuffer)
+    func doCrypt(_ initialVector: String, testVector: String,key: CryptoKey) -> String {
+        let initialVectorBuffer = try! ByteBuffer(hexData: initialVector)
+        let dataBuffer          = try! ByteBuffer(hexData: testVector)
+        let cryptoText = try! Cryptor.encrypt(dataBuffer, key: key, mode: .cbc, padding: .none, initialVector: initialVectorBuffer)
         return cryptoText.hexString
     }
 
     func testStorageWrapper() {
-        let key = try! CryptoKey(keyType: .AES(keyLength: .AES128), hexKeyData: "00000000000000000000000000000000")
+        let key = try! CryptoKey(keyType: .aes(keyLength: .aes128), hexKeyData: "00000000000000000000000000000000")
         XCTAssertEqual(key.keyCheckValueString, "66e94b")
         let wrappedKey = KeyStorageWrapper.wrap(key)
         XCTAssertEqual("0110000000000000000000000000000000000366e94b", wrappedKey.hexString)
 
-        let buffer = Buffer<Byte>(buffer: wrappedKey)
+        let buffer = ByteBuffer(wrappedKey)
         let unwrappedKey = try! KeyStorageWrapper.unwrap(buffer)
         XCTAssertEqual(unwrappedKey.keyCheckValueString, "66e94b")
     }
@@ -159,7 +159,7 @@ class CryptoTests: XCTestCase {
     */
     func testPBKDFVectors() {
         //https://www.ietf.org/rfc/rfc6070.txt
-        self.measureBlock {
+        self.measure {
             XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds:        1, size: 20).hexString, "0c60c80f961f0e71f3a9b524af6012062fe037a6" )
             XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds:        2, size: 20).hexString, "ea6c014dc72d6f8ccd1ed92ace1d41f0d8de8957" )
             XCTAssertEqual(PBKDFDeriveKey("password", salt: "salt", rounds:     4096, size: 20).hexString, "4b007901b765489abead49d926f721d065a429c1" )
@@ -175,7 +175,7 @@ class CryptoTests: XCTestCase {
     }
 
     func testDerivedAESKeyPerformance() {
-        self.measureBlock {
+        self.measure {
             let key = CryptoKey(deriveKeyFromPassphrase: "ABC", salt: "ASDASDASD")
             XCTAssertEqual(key.keyCheckValueString, "90ff0b")
         }

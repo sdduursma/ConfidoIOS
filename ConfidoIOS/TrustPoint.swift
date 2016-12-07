@@ -9,24 +9,24 @@ import Foundation
 import Security
 
 
-public enum TrustResult: RawRepresentable, CustomStringConvertible, ErrorType {
-    case Invalid, Proceed,
-        Deny, Unspecified, RecoverableTrustFailure,
-        FatalTrustFailure, OtherError
+public enum TrustResult: RawRepresentable, CustomStringConvertible, Error {
+    case invalid, proceed,
+        deny, unspecified, recoverableTrustFailure,
+        fatalTrustFailure, otherError
 
     public static let allValues: [TrustResult] =
-    [Invalid, Proceed,
-        Deny, Unspecified, RecoverableTrustFailure,
-        FatalTrustFailure, OtherError]
+    [invalid, proceed,
+        deny, unspecified, recoverableTrustFailure,
+        fatalTrustFailure, otherError]
 
     public init?(rawValue: Int) {
-        if rawValue == kSecTrustResultInvalid                        { self = Invalid }
-        else if rawValue == kSecTrustResultProceed                 { self = Proceed }
-        else if rawValue == kSecTrustResultDeny                    { self = Deny}
-        else if rawValue == kSecTrustResultUnspecified             { self = Unspecified}
-        else if rawValue == kSecTrustResultRecoverableTrustFailure { self = RecoverableTrustFailure}
-        else if rawValue == kSecTrustResultFatalTrustFailure       { self = FatalTrustFailure}
-        else if rawValue == kSecTrustResultOtherError              { self = OtherError}
+        if rawValue == Int(SecTrustResultType.invalid.rawValue)                        { self = .invalid }
+        else if rawValue == Int(SecTrustResultType.proceed.rawValue)              { self = .proceed }
+        else if rawValue == Int(SecTrustResultType.deny.rawValue)                    { self = .deny}
+        else if rawValue == Int(SecTrustResultType.unspecified.rawValue)             { self = .unspecified}
+        else if rawValue == Int(SecTrustResultType.recoverableTrustFailure.rawValue) { self = .recoverableTrustFailure}
+        else if rawValue == Int(SecTrustResultType.fatalTrustFailure.rawValue)       { self = .fatalTrustFailure}
+        else if rawValue == Int(SecTrustResultType.otherError.rawValue)              { self = .otherError}
         else {
             return nil
         }
@@ -34,52 +34,52 @@ public enum TrustResult: RawRepresentable, CustomStringConvertible, ErrorType {
 
     public var rawValue: Int {
         switch self {
-        case Invalid:                  return kSecTrustResultInvalid
-        case Proceed:                  return kSecTrustResultProceed
-        case Deny:                     return kSecTrustResultDeny
-        case Unspecified:              return kSecTrustResultUnspecified
-        case RecoverableTrustFailure:  return kSecTrustResultRecoverableTrustFailure
-        case OtherError:               return kSecTrustResultOtherError
-        default: return kSecTrustResultOtherError
+        case .invalid:                  return Int(SecTrustResultType.invalid.rawValue)
+        case .proceed:                  return Int(SecTrustResultType.proceed.rawValue)
+        case .deny:                     return Int(SecTrustResultType.deny.rawValue)
+        case .unspecified:              return Int(SecTrustResultType.unspecified.rawValue)
+        case .recoverableTrustFailure:  return Int(SecTrustResultType.recoverableTrustFailure.rawValue)
+        case .otherError:               return Int(SecTrustResultType.otherError.rawValue)
+        default: return Int(SecTrustResultType.otherError.rawValue)
         }
     }
 
     public var description : String {
         switch self {
-        case Invalid:                  return "Invalid"
-        case Proceed:                  return "Proceed"
-        case Deny:                     return "Deny"
-        case Unspecified:              return "Unspecified"
-        case RecoverableTrustFailure:  return "RecoverableTrustFailure"
+        case .invalid:                  return "Invalid"
+        case .proceed:                  return "Proceed"
+        case .deny:                     return "Deny"
+        case .unspecified:              return "Unspecified"
+        case .recoverableTrustFailure:  return "RecoverableTrustFailure"
         default:                       return "OtherError"
         }
     }
 }
 
 
-func trustEnsureOK(status: OSStatus) throws {
+func trustEnsureOK(_ status: OSStatus) throws {
     if status != 0 { throw KeychainStatus.statusFromOSStatus(status)}
 }
 
 
 public enum TrustPolicy {
-    case Generic
-    case SSLClient(name: String?)
-    case SSLServer(hostname: String?)
+    case generic
+    case sslClient(name: String?)
+    case sslServer(hostname: String?)
 }
 
 extension Certificate where Self:Certificate {
-    public func trustPoint(policy: TrustPolicy, additionalCertificates certificates: [Certificate]) throws -> TrustPoint {
+    public func trustPoint(_ policy: TrustPolicy, additionalCertificates certificates: [Certificate]) throws -> TrustPoint {
         let trustPolicies: [ SecPolicy]
         switch policy {
-        case .Generic:                 trustPolicies = [SecPolicyCreateBasicX509()]
-        case .SSLClient(let name):     trustPolicies = [SecPolicyCreateSSL(false, name)]
-        case .SSLServer(let hostname): trustPolicies = [SecPolicyCreateSSL(true, hostname)]
+        case .generic:                 trustPolicies = [SecPolicyCreateBasicX509()]
+        case .sslClient(let name):     trustPolicies = [SecPolicyCreateSSL(false, name as CFString?)]
+        case .sslServer(let hostname): trustPolicies = [SecPolicyCreateSSL(true, hostname as CFString?)]
         }
 
         let certificateRefs = certificates.map { $0.secCertificate } + [self.secCertificate]
         var secTrustResult : SecTrust? = nil
-        try trustEnsureOK(SecTrustCreateWithCertificates(certificateRefs, trustPolicies, &secTrustResult))
+        try trustEnsureOK(SecTrustCreateWithCertificates(certificateRefs as CFTypeRef, trustPolicies as CFTypeRef?, &secTrustResult))
         return try CertificateTrustPoint(secTrust: secTrustResult!)
     }
 }
@@ -92,13 +92,13 @@ public protocol Trustable {
 public protocol TrustPoint {
     var secTrust : SecTrust { get }
     func ensureTrusted() throws
-    func ensureTrusted(trustAnchor: TrustAnchor) throws
+    func ensureTrusted(_ trustAnchor: TrustAnchor) throws
     func evaluateTrust() throws -> TrustResult
-    func evaluateTrust(trustAnchor: TrustAnchor) throws -> TrustResult
+    func evaluateTrust(_ trustAnchor: TrustAnchor) throws -> TrustResult
 }
 
 public struct CertificateTrustPoint: TrustPoint {
-    public private(set) var secTrust: SecTrust
+    public fileprivate(set) var secTrust: SecTrust
     public init(secTrust: SecTrust) throws {
         self.secTrust = secTrust
     }
@@ -108,7 +108,7 @@ public struct CertificateTrustPoint: TrustPoint {
     */
     public func ensureTrusted() throws {
         let result = try self.evaluateTrust()
-        if result == TrustResult.Proceed || result == TrustResult.Unspecified {
+        if result == TrustResult.proceed || result == TrustResult.unspecified {
             return
         }
         throw result
@@ -117,9 +117,9 @@ public struct CertificateTrustPoint: TrustPoint {
     /**
     Ensures that the TrustPoint is trusted against trustAnchor, otherwise throws a TrustResult Exception
     */
-    public func ensureTrusted(trustAnchor: TrustAnchor) throws {
+    public func ensureTrusted(_ trustAnchor: TrustAnchor) throws {
         let result = try self.evaluateTrust(trustAnchor)
-        if result == TrustResult.Proceed || result == TrustResult.Unspecified {
+        if result == TrustResult.proceed || result == TrustResult.unspecified {
             return
         }
         throw result
@@ -137,7 +137,7 @@ public struct CertificateTrustPoint: TrustPoint {
     /**
     Evaluates the trust of the TrustPoint against a TrustAnchor
     */
-    public func evaluateTrust(trustAnchor: TrustAnchor) throws -> TrustResult {
+    public func evaluateTrust(_ trustAnchor: TrustAnchor) throws -> TrustResult {
         if let anchorCertificate = trustAnchor.anchorCertificate {
             try setTrustAnchorCertificates([anchorCertificate])
         }
@@ -146,28 +146,28 @@ public struct CertificateTrustPoint: TrustPoint {
     }
 
     func evaluateSecTrust() throws -> TrustResult {
-        var secTrustResultType : SecTrustResultType = 0
+        var secTrustResultType : SecTrustResultType = SecTrustResultType(rawValue: 0)!
         try trustEnsureOK(SecTrustEvaluate(secTrust, &secTrustResultType))
-        let trustResult = TrustResult(rawValue: Int(secTrustResultType))!
-        if trustResult == .Proceed || trustResult == .Unspecified {
+        let trustResult = TrustResult(rawValue: Int(secTrustResultType.rawValue))!
+        if trustResult == .proceed || trustResult == .unspecified {
             return trustResult
-        } else if trustResult == TrustResult.RecoverableTrustFailure {
-            return TrustResult.Deny
+        } else if trustResult == TrustResult.recoverableTrustFailure {
+            return TrustResult.deny
         }
-        throw KeychainError.TrustError(trustResult: trustResult, reason: getLastTrustError())
+        throw KeychainError.trustError(trustResult: trustResult, reason: getLastTrustError())
     }
 
 
-    func getTrustExceptions() -> NSData  {
-        return SecTrustCopyExceptions(secTrust)
+    func getTrustExceptions() -> Data  {
+        return SecTrustCopyExceptions(secTrust) as Data
     }
 
-    func setTrustAnchorCertificates(anchors: [Certificate]) throws {
+    func setTrustAnchorCertificates(_ anchors: [Certificate]) throws {
         let anchorRefs: [SecCertificate] = anchors.map { $0.secCertificate }
-        try trustEnsureOK(SecTrustSetAnchorCertificates(secTrust, anchorRefs))
+        try trustEnsureOK(SecTrustSetAnchorCertificates(secTrust, anchorRefs as CFArray))
     }
 
-    func setTrustAnchorCertificatesOnly(only: Bool) throws {
+    func setTrustAnchorCertificatesOnly(_ only: Bool) throws {
         try trustEnsureOK(SecTrustSetAnchorCertificatesOnly(secTrust, only))
     }
 
@@ -186,9 +186,9 @@ public struct CertificateTrustPoint: TrustPoint {
 
 
 
-public class TrustAnchor {
+open class TrustAnchor {
     let name : String
-    public private(set) var anchorCertificate: Certificate! = nil
+    open fileprivate(set) var anchorCertificate: Certificate! = nil
     let parentTrustAnchor: TrustAnchor?
 
     init(parentTrustAnchor: TrustAnchor?, anchorCertificate: Certificate?, name: String? = nil) {
@@ -223,21 +223,21 @@ public class TrustAnchor {
     :param: name The name of the new TrustAnchor
     :returns: A new TrustAnchor anchored on the current anchor
     */
-    public func extendAnchor(certificate: Certificate, name: String? = nil) throws -> TrustAnchor {
-        let trust = try certificate.trustPoint(TrustPolicy.Generic,additionalCertificates:[])
+    open func extendAnchor(_ certificate: Certificate, name: String? = nil) throws -> TrustAnchor {
+        let trust = try certificate.trustPoint(TrustPolicy.generic,additionalCertificates:[])
         try trust.ensureTrusted(self)
         return TrustAnchor(parentTrustAnchor: self, anchorCertificate: certificate, name: name)
     }
 
     // Recursively construct the certificate chain from which this certificate derives
-    public var certificateChain: [Certificate] {
+    open var certificateChain: [Certificate] {
         get {
             var certificates : [ Certificate ] = []
             if let anchorCertificate = anchorCertificate {
                 certificates = [anchorCertificate]
             }
             if let certificateChain = parentTrustAnchor?.certificateChain {
-                certificates.appendContentsOf(certificateChain)
+                certificates.append(contentsOf: certificateChain)
             }
             return certificates
         }
