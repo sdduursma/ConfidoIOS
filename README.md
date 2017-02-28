@@ -1,4 +1,4 @@
-# ConfidoIOS [![Build Status](https://www.bitrise.io/app/e6ce6063a5c21539.svg?token=rE2YCzi0GQ9GqP5lDsMlkg&branch=master)](https://www.bitrise.io/app/e6ce6063a5c21539)
+# ConfidoIOS [![Build Status](https://www.bitrise.io/app/5c8b0db6621045f2.svg?token=WmG2LE5k38P-S70KP8crjQ&branch=master)](https://www.bitrise.io/app/5c8b0db6621045f2)
 
 # TODO
 - [ ] Add skeletons for other Keychain classes that might be needed in future (Passwords)
