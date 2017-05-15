@@ -349,7 +349,7 @@ open class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
         class kSecAttrKeyClassPublic and kSecAttrKeyClassPrivate, the value of
         this attribute is the hash of the public key.
         */
-        publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel as AnyObject?
+//        publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel as AnyObject?
 
         if let privateKeyAccessControl = privateKeyAccessControl {
             privateAttrs[ String(kSecAttrAccessControl)] =  privateKeyAccessControl
@@ -379,7 +379,7 @@ open class PermanentKeychainKeyPairDescriptor : KeychainKeyPairDescriptor {
             The mechanism uses a query " WHERE keys.priv == 1 AND cert.pkhh == keys.klbl" to find matching keys. By overiding the
             public key's KeyAppLabel, it won't match, and only the correct identity is returned
             */
-            publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel as AnyObject?
+//            publicAttrs [String(kSecAttrApplicationLabel)] = publicKeyAppLabel as AnyObject?
 
             if let privateKeyAccessControl = privateKeyAccessControl {
                 privateAttrs[ String(kSecAttrAccessControl)] = privateKeyAccessControl
